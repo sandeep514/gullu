@@ -1,0 +1,38 @@
+import React, { useEffect } from 'react';
+
+import {
+    Image,
+  Pressable,
+  Text,
+  TextInput, View,
+} from 'react-native';
+import { h4, height10, height4, justifyContentCenter, margin10, padding10, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
+
+
+function FooterComponent( {navigation}): JSX.Element {
+    return (
+        <View style={[{ backgroundColor: secondaryBackgroundColor,borderRadius: 10},padding10,margin10]}>
+            <View style={[{flexDirection: 'row',justifyContent: 'space-between'}]}>
+                <Pressable style={[{alignItems:'center'}]} onPress={() => {navigation.navigate('Home')}}>
+                    <Image source={require('../assets/images/NicePng_logo-instagram-blanco-png_3953291.png')} style={{ height: 20,width: 20 }} />
+                    <Text style={[{color: 'white'},h4,textAlignCenter]}>Home</Text>
+
+                </Pressable>
+                <Pressable style={[{alignItems:'center'}]} onPress={() => { navigation.navigate('ordercreate') }}>
+                    <Image source={require('../assets/images/67-679828_white-plus-png-plus-icon-white-png-transparent-removebg-preview.png')} style={{ height: 20,width: 20 }} />
+                    <Text style={[{color: 'white'},h4,textAlignCenter]}>Order</Text>
+                </Pressable>
+                <Pressable style={[{alignItems:'center'}]} onPress={() => { navigation.navigate('vendorlist') }}>
+                    <Image source={require('../assets/images/NicePng_logo-instagram-blanco-png_3953291.png')} style={{ height: 20,width: 20 }} />
+                    <Text style={[{color: 'white'},h4,textAlignCenter]}>Vendor</Text>
+                </Pressable>
+                <Pressable style={[{alignItems:'center'}]} onPress={() => { navigation.navigate('salesmanlist') }}>
+                    <Image source={require('../assets/images/NicePng_logo-instagram-blanco-png_3953291.png')} style={{ height: 20,width: 20 }} />
+                    <Text style={[{color: 'white'},h4,textAlignCenter]}>Salesman</Text>
+                </Pressable>
+            </View>
+        </View>
+    );
+}
+
+export default FooterComponent;
