@@ -1,10 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React, { useEffect, useState } from 'react';
 import type {PropsWithChildren} from 'react';
 import {
@@ -18,7 +11,10 @@ import {
   Text,
   TouchableOpacity,
   useColorScheme,
+  ActivityIndicator,
   View,
+  ImageBackground,
+  Dimensions
 } from 'react-native';
 import DocumentPicker, {
 	DirectoryPickerResponse,
@@ -28,12 +24,8 @@ import DocumentPicker, {
   } from 'react-native-document-picker'
 import {
   Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import { cardBackgroundColor, h1, h2, h3, height10, height100, height14, height15, height20, height4, height5, height50, height6, height80, height82, height84, height85, height87, height9, height90, height92, inputStyleBlack, justifyContentCenter, padding15, padding20, primaryBackgroundColor, primaryColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
+import { h3, h4, height100, height6, height85, height9, inputStyleBlack, justifyContentCenter, padding15, primaryBackgroundColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
 import InputConponents from '../components/InputComponents';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
@@ -41,11 +33,13 @@ import {decode as atob, encode as btoa} from 'base-64'
 import { readFile } from "react-native-fs";
 import  Video from 'react-native-video';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { showToast } from '../services/services';
 
 
 
 function OrderCreate({navigation}): JSX.Element {
-	const [order_number , setOrderNumber] = useState("10024");
+	const [ activityIndicator , setActivityIndicator ] = useState(false);
+	const [order_number , setOrderNumber] = useState();
 	const [vendor , setVendor] = useState('1');
 	const [salesman , setSalesman] = useState('1');
 	const [color , setColor] = useState('red');
@@ -66,65 +60,64 @@ function OrderCreate({navigation}): JSX.Element {
 	const [prductPhotoResult, setPrductPhotoResult] = useState();
 	const [productMeasurementResult, setProductMeasurementResult] = useState();
 	const [productVideoResult, setProductVideoResult] = useState();
-	
+	const [apitoken, setApiToken] = useState();
+	const videoPlayer = React.useRef();
+
 	async function getUriToBase64(uri) {
 		const base64String = await readFile(uri, "base64");
 		return base64String
 	}
 	useEffect(() => {
-		// console.log({order_number : order_number,
-		// 	vendor : vendor,
-		// 	salesman : salesman,
-		// 	color : color,
-		// 	item : item,
-		// 	product_photo : product_photo,
-		// 	product_photo_type : product_photo_type,
-		// 	product_measurement : product_measurement,
-		// 	product_measure_type : product_measure_type,
-		// 	product_video : product_video,
-		// 	product_video_type : product_video_type});
+		AsyncStorage.getItem('api_token').then((token) => {
+			setApiToken(token);
+		}).catch((err) => {
+			
+		});
+		
 	})
 	let saveOrder = async () => {
-
-			var formData = new FormData();
-			formData.append('order_number', '999999');
-			formData.append('vendor', 'general');
-			formData.append('salesman', 'previewImg');
-			formData.append('api_token', '9n5VdBylMqd2VLenUsGNaShQJMA6Er8bd1YCzeVBd0sgLHqvrJcgHzRfeR1B');
-			formData.append('color', 'previewImg');
-			formData.append('item', 'previewImg');
-			// Attach file
-			formData.append('product_photo', productPhotoData[0].fileCopyUri); 
-			formData.append('product_measurement', productMeasurementData[0].fileCopyUri); 
-			formData.append('product_video', productVideoData[0].fileCopyUri); 
-
-			var xhr = new XMLHttpRequest();
-			xhr.open('POST', 'http://gullu.suryacontractors.com/public/api/orders/create');
-			xhr.send(formData);
-			console.log("jnk");
-			return false;
-			// console.log(productPhotoData[0].fileCopyUri);
-			// console.log(productMeasurementData[0].fileCopyUri);
-			// console.log(productVideoData[0].fileCopyUri);
-			
-			let res = await fetch('http://gullu.suryacontractors.com/public/api/orders/create', {
-				method: 'POST',
-				body: formData,
-				headers: {
-					'Content-Type': 'multipart/form-data; ',
-				  },
-			});
-			// .then((res) => {
-			// 	console.log("here");
-			// 	// console.log(res.json());
-			// }).catch((err) => {
-			// 	console.log('hnjknk');
-			// 	console.log(err)
-			// });
-			console.log(await res.json());
-			// console.log();
-			
 		
+			setActivityIndicator(true)
+			console.log(order_number)
+			if( order_number != '' && order_number != undefined && vendor != '' && vendor != undefined && salesman != '' && salesman != undefined && color != '' && color != undefined && item != '' && item != undefined ){
+				var formData = new FormData();
+				formData.append('order_number', '999999');
+				formData.append('vendor', 1);
+				formData.append('salesman', 1);
+				formData.append('api_token', apitoken);
+				formData.append('color', 'red');
+				formData.append('item', 'previewImg');
+				// Attach file
+				formData.append('product_photo', productPhotoData[0]); 
+				formData.append('product_measurement', productMeasurementData[0]); 
+				formData.append('product_video', productVideoData[0]); 
+				console.log(formData)
+				// var xhr = new XMLHttpRequest();
+				// xhr.open('POST', 'https://gullu.suryacontractors.com/public/api/orders/create');
+				// xhr.send(formData);
+				// console.log('xhr');
+				// console.log(xhr);
+				let ress = await fetch('https://gullu.suryacontractors.com/public/api/orders/create', {
+					method: 'POST',
+					body: formData,
+					headers: {
+						'Content-Type': 'multipart/form-data; ',
+					  },
+				});
+				let response = await ress.json();
+				if(response.data.status == true || response.data.status == 'true'){
+					showToast('Order generated');
+					setActivityIndicator(false)
+				}else{
+					showToast('error');
+					setActivityIndicator(false)
+				}
+			}else{
+				showToast('Required fields are missing');
+			}
+			
+			return false;
+
 
 	}
 	
@@ -179,15 +172,29 @@ function OrderCreate({navigation}): JSX.Element {
       />
         <View style={[{},height100 ,primaryBackgroundColor,{}]}>
 			<View style={[{} , height100]}>
+
+			{/* {(activityIndicator)? 
+				<View style={{zIndex: 99999}}>
+					<View style={[{position: 'absolute',top: 0,backgroundColor: secondaryBackgroundColor,left: 0,width: '100%',zIndex: 9999999,opacity: 0.8},screenheight,justifyContentCenter ]}>
+						<ActivityIndicator color="white" size={40}></ActivityIndicator>
+						<Text style={[{textAlign: 'center',color: '#fff'},h4]}>Generatig new order...</Text>
+					</View>
+				</View>
+			:
+				null
+			}	 */}
+				
+
+				
 				<View style={[{},height6]}>
                     <HeaderComponent navigation={navigation} title="order create" />
                 </View>
 				<ScrollView>
 					<View style={[{} , height85]} >
-						
-						<InputConponents placeholder="order_number" inputValue={(value:any) => { setOrderNumber(value) }} style={inputStyleBlack} />
-						<InputConponents placeholder="vendor_id" inputValue={(value:any) => { setVendor(value) }} style={inputStyleBlack} />
-						<InputConponents placeholder="salesman_id" inputValue={(value:any) => { setSalesman(value) }} style={inputStyleBlack} />
+							
+						<InputConponents placeholder="order number" inputValue={(value:any) => { setOrderNumber(value) }} style={inputStyleBlack} />
+						<InputConponents placeholder="vendor id" inputValue={(value:any) => { setVendor(value) }} style={inputStyleBlack} />
+						<InputConponents placeholder="salesman id" inputValue={(value:any) => { setSalesman(value) }} style={inputStyleBlack} />
 						<InputConponents placeholder="color" inputValue={(value:any) => { setColor(value) }} style={inputStyleBlack} />
 						<InputConponents placeholder="item" inputValue={(value:any) => { setItem(value) }} style={inputStyleBlack} />
 						<View style={{paddingHorizontal: 20}}>
@@ -210,8 +217,13 @@ function OrderCreate({navigation}): JSX.Element {
 								<Text style={{color: '#fff',textAlign: 'center'}}>Upload Product Image</Text>
 							</TouchableOpacity>
 
-							{(prductPhotoResult != undefined && prductPhotoResult.length > 0)?
-								<Image source={{uri:'data:image/png;base64,'+prductPhotoResult}} style={{ height: 200,width: 200 }}/>
+							{(productPhotoData != undefined && productPhotoData.length > 0)?
+								<View style={{ height: 200,width: 200 }}>
+									<ImageBackground source={{uri:productPhotoData[0].fileCopyUri}} style={{ height: '100%',width: '100%' }} resizeMode="center">
+
+									</ImageBackground>
+								</View>
+								// <Image source={{uri:productPhotoData[0].fileCopyUri}} style={{ height: 200,width: 200 }}/>
 							:
 								null
 							}
@@ -234,8 +246,12 @@ function OrderCreate({navigation}): JSX.Element {
 								<Text style={{color: '#fff',textAlign: 'center'}}>Upload Product Measurement</Text>
 							</TouchableOpacity>
 
-							{(productMeasurementResult != undefined && productMeasurementResult.length > 0)?
-								<Image source={{uri:'data:image/png;base64,'+productMeasurementResult}} style={{ height: 200,width: 200 }}/>
+							{(productMeasurementData != undefined && productMeasurementData.length > 0)?
+								<View style={{ height: 200,width: 200 }}>
+									<ImageBackground source={{uri:productMeasurementData[0].fileCopyUri}} style={{ height: '100%',width: '100%' }} resizeMode="center">
+
+									</ImageBackground>
+								</View>
 							:
 								null
 							}
@@ -258,20 +274,29 @@ function OrderCreate({navigation}): JSX.Element {
 							>
 								<Text style={{color: '#fff',textAlign: 'center'}}>Upload Product Video</Text>
 							</TouchableOpacity>
-							{(productVideoResult != undefined && productVideoResult.length > 0)?
-								<Text>{productVideoResult}here</Text>
-								:
+							{(productVideoData != undefined && productVideoData.length > 0)?
+								<View style={{width: '100%' , height: 400}}>
+									<Video source={{uri: productVideoData[0].fileCopyUri }}
+										
+										style={styles.backgroundVideo}
+										controls={true}
+										ref={ref => (videoPlayer.current = ref)}
+										resizeMode="contain"
+										paused={true}
+									/>
+								</View>
+								
+							:
 								null
 							}
 						</View>
 
-						{/* product_photo */}
-						{/* product_video */}
-						{/* product_measurement */}
+						
 						<View style={{alignItems: 'center'}}>
 							<TouchableOpacity onPress={() => {saveOrder()}} style={[{width: 'auto',backgroundColor: secondaryBackgroundColor,borderRadius: 10},padding15,justifyContentCenter]} >
 								<Text style={[{color: '#fff'} , h3,textAlignCenter]}>Generate New Order</Text>
 							</TouchableOpacity>
+							
 						</View>
 					</View>
 				</ScrollView>
@@ -298,13 +323,13 @@ const styles = StyleSheet.create({
 	},
  
 	backgroundVideo: {
-	  position: 'absolute',
+	//   position: 'absolute',
 	  top: 0,
 	  left: 0,
 	  bottom: 0,
 	  right: 0,
-	  height: 200,
-	  width: 200
+	  height: '100%',
+	  width: '100%'
 	},
   });
 export default OrderCreate;

@@ -27,11 +27,11 @@ import { post, showToast } from '../services/services';
 function VendorCreate({navigation}): JSX.Element {
 	const [loader , setLoader ] = useState(false);
 
-	const [name , setName ] = useState('sandeep22');
-	const [email , setEmail ] = useState('sandeep20@gmal.com');
-	const [code , setCode ] = useState('123');
-	const [password , setPassword ] = useState('123456');
-	const [phone , setPhone ] = useState('1234537890');
+	const [name , setName ] = useState();
+	const [email , setEmail ] = useState();
+	const [code , setCode ] = useState();
+	const [password , setPassword ] = useState();
+	const [phone , setPhone ] = useState();
 	const [role , setRole ] = useState(2);
 
   	const isDarkMode = useColorScheme() === 'dark';

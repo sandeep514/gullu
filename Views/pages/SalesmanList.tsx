@@ -7,6 +7,7 @@ import {
   StatusBar,
   StyleSheet,
   Text,
+  ActivityIndicator,
   useColorScheme,
   View,
 } from 'react-native';
@@ -31,6 +32,8 @@ type SectionProps = PropsWithChildren<{
 
 
 function SalesmanList({navigation}): JSX.Element {
+	const [ activityIndicator , setActivityIndicator ] = useState(false);
+
   	const isDarkMode = useColorScheme() === 'dark';
 	const [ DATA , SetData ] = useState();
   	useEffect(()=> {
@@ -43,11 +46,17 @@ function SalesmanList({navigation}): JSX.Element {
 		getSalesmanList();
 	} , []);
 	const getSalesmanList = () => {
+		setActivityIndicator(true)
+
 		AsyncStorage.getItem('api_token').then((token) => {
 			let postedData = { role: 'salesman',api_token : token};
 			get('users/get' , postedData).then((res) => {
+				setActivityIndicator(false)
+
 				SetData(res.data.data.data);
 			}).catch((err) => {
+				setActivityIndicator(false)
+
 				console.log(err)
 			});
 
@@ -74,12 +83,16 @@ function SalesmanList({navigation}): JSX.Element {
                     <HeaderComponent navigation={navigation} title="Salesman List" />
                 </View>
 				<View style={[{} , height85]} >
+				{(activityIndicator)? 
+					<ActivityIndicator color="white" size={20}></ActivityIndicator>
+				:
 					<FlatList
 						data={DATA}
 						renderItem={({item}) => <Item item={item} />}
 						keyExtractor={item => item.id}
 						showsVerticalScrollIndicator={false}
 					/>
+				}
 				</View>
 				<View style={[{},height9]}>
 					<FooterComponent navigation={navigation} />

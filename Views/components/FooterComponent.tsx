@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect } from 'react';
 
 import {
@@ -6,7 +7,7 @@ import {
   Text,
   TextInput, View,
 } from 'react-native';
-import { h4, height10, height4, justifyContentCenter, margin10, padding10, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
+import { h4, h5, height10, height4, justifyContentCenter, margin10, padding10, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
 
 
 function FooterComponent( {navigation}): JSX.Element {
@@ -15,20 +16,24 @@ function FooterComponent( {navigation}): JSX.Element {
             <View style={[{flexDirection: 'row',justifyContent: 'space-between'}]}>
                 <Pressable style={[{alignItems:'center'}]} onPress={() => {navigation.navigate('Home')}}>
                     <Image source={require('../assets/images/NicePng_logo-instagram-blanco-png_3953291.png')} style={{ height: 20,width: 20 }} />
-                    <Text style={[{color: 'white'},h4,textAlignCenter]}>Home</Text>
+                    <Text style={[{color: 'white'},h5,textAlignCenter]}>Home</Text>
 
                 </Pressable>
                 <Pressable style={[{alignItems:'center'}]} onPress={() => { navigation.navigate('ordercreate') }}>
-                    <Image source={require('../assets/images/67-679828_white-plus-png-plus-icon-white-png-transparent-removebg-preview.png')} style={{ height: 20,width: 20 }} />
-                    <Text style={[{color: 'white'},h4,textAlignCenter]}>Order</Text>
+                    <Image source={require('../assets/images/list.png')} style={{ height: 20,width: 20 }} />
+                    <Text style={[{color: 'white'},h5,textAlignCenter]}>Order</Text>
                 </Pressable>
                 <Pressable style={[{alignItems:'center'}]} onPress={() => { navigation.navigate('vendorlist') }}>
-                    <Image source={require('../assets/images/NicePng_logo-instagram-blanco-png_3953291.png')} style={{ height: 20,width: 20 }} />
-                    <Text style={[{color: 'white'},h4,textAlignCenter]}>Vendor</Text>
+                    <Image source={require('../assets/images/list.png')} style={{ height: 20,width: 20 }} />
+                    <Text style={[{color: 'white'},h5,textAlignCenter]}>Vendor</Text>
                 </Pressable>
                 <Pressable style={[{alignItems:'center'}]} onPress={() => { navigation.navigate('salesmanlist') }}>
-                    <Image source={require('../assets/images/NicePng_logo-instagram-blanco-png_3953291.png')} style={{ height: 20,width: 20 }} />
-                    <Text style={[{color: 'white'},h4,textAlignCenter]}>Salesman</Text>
+                    <Image source={require('../assets/images/list.png')} style={{ height: 20,width: 20 }} />
+                    <Text style={[{color: 'white'},h5,textAlignCenter]}>Salesman</Text>
+                </Pressable>
+                <Pressable style={[{alignItems:'center'}]} onPress={() => { AsyncStorage.clear(), navigation.navigate('login') }}>
+                    <Image source={require('../assets/images/logout.png')} style={{ height: 20,width: 20 }} />
+                    <Text style={[h5,{color: 'red'},textAlignCenter]}>Logout</Text>
                 </Pressable>
             </View>
         </View>

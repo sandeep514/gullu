@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Text,
   useColorScheme,
+  ImageBackground,
   View,
 } from 'react-native';
 
@@ -19,10 +20,13 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import { cardBackgroundColor, h1, h2, h3, height10, height100, padding10, height6, height80, height85, height9, height90, justifyContentCenter, padding15, padding20, primaryBackgroundColor, primaryColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
+import { cardBackgroundColor, h1, h2, h3, height10, height100, padding10, height6, height80, height85, height9, height90, justifyContentCenter, padding15, padding20, primaryBackgroundColor, primaryColor, screenheight, secondaryBackgroundColor, textAlignCenter, inputStyle, height15, flexDirectionRow, marginRight10, h5, h4 } from '../assets/styles';
 import InputConponents from '../components/InputComponents';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
+import { get } from '../services/services';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { imagePath } from '../services/Client';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -31,16 +35,69 @@ type SectionProps = PropsWithChildren<{
 
 function OrderList({navigation}): JSX.Element {
   	const isDarkMode = useColorScheme() === 'dark';
-  	useEffect(()=> {
+
+
+	const [pending , setPending] = useState({});
+	const [ready , setReady] = useState({});
+	const [delivered , setDelivered] = useState({});
+	const [ selectedOrderStatus , SetSelectedOrderStatus] = useState('');
+	const [ allOrdersList , setAllOrdersList] = useState([]);
+	const [ searchableData , setSearchableData] = useState([]);
+	
+	const [ selectedOrderData , SetSelectedOrderData] = useState('');
+
+	useEffect(()=> {
 		
 	} , [])
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-  const [ selectedOrderStatus , SetSelectedOrderStatus] = useState('');
-  useEffect(() => {
-	SetSelectedOrderStatus('pending');
-  } , [])
+	const backgroundStyle = {
+		backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+	};
+	useEffect(() => {
+		SetSelectedOrderStatus('pending');
+		AsyncStorage.getItem('api_token').then((token) => {
+			let postedData = { role: 'salesman',api_token : token};
+			get('/orders/list' , postedData).then((res) => {
+				let pending = res.data.data.data['pending'];
+				let ready = res.data.data.data['ready'];
+				let delivered = res.data.data.data['delivered'];
+				
+				setPending(pending);
+				setReady(ready);
+				setDelivered(delivered);
+
+				let mergedArray1 = pending.concat(ready);
+				let mergedArray2 = mergedArray1.concat(delivered);
+				setAllOrdersList(mergedArray2);
+				// console.log(mergedArray2);
+				SetSelectedOrderData(res.data.data.data['pending']);
+				// SetData(res.data.data.data);
+
+			}).catch((err) => {
+				console.log(err)
+			});
+
+		}).catch((err) => {
+
+		});
+	} , [])
+
+
+	const searchOrder = (searchableText) => {
+		let newSearchableArray = [];
+		if( allOrdersList.length > 0 ){
+			allOrdersList.filter((list) => {
+				let searchableLowercase = (list.entry_number).toLowerCase();
+				if(searchableLowercase.includes((searchableText).toLowerCase())){ 
+					newSearchableArray.push(list)
+
+				}
+			});
+			setSearchableData(newSearchableArray);
+			SetSelectedOrderData(newSearchableArray);
+		}
+		
+
+	}
   const DATA = [
 	{
 	  id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
@@ -139,11 +196,52 @@ function OrderList({navigation}): JSX.Element {
 		title: 'Third Items',
 	  },
   ];
-  const Item = ({title}:any) => (
-	<View style={styles.item}>
-	  <Text style={[{},h3]}>{title}</Text>
-	</View>
+  const Item = ({item}:any) => (
+		<Pressable onPress={() => { navigation.navigate('orderEdit' , { 'orderData' : item}) }} style={styles.item}>
+			<View style={[{} , flexDirectionRow]}>
+				<View style={[marginRight10,{width:'60%',overflow: 'hidden' }]}>
+					<View style={[{} , flexDirectionRow]}> 
+						<Text style={[{fontWeight: 'bold'},h5,marginRight10]}>Order Number</Text>
+						<Text style={[{marginTop: 0},h5]}>{item.order_number}</Text>
+					</View>
+					<View style={[{} , flexDirectionRow]}> 
+						<Text style={[{fontWeight: 'bold'},h5,marginRight10]}>Item </Text>
+						<Text style={[{marginTop: 0},h5]}>{item.item} </Text>
+					</View>
+					<View style={[{} , flexDirectionRow]}> 
+						<Text style={[{fontWeight: 'bold'},h5,marginRight10]}>Color</Text>
+						<Text style={[{marginTop: 0},h5]}>{item.color}</Text>
+					</View>
+					<View style={[{} , flexDirectionRow]}> 
+						<Text style={[{fontWeight: 'bold'},h5,marginRight10]}>Salesman</Text>
+						<Text style={[{marginTop: 0},h5]}>{item.salesman.name}</Text>
+					</View>
+					<View style={[{} , flexDirectionRow]}> 
+						<Text style={[{fontWeight: 'bold'},h5,marginRight10]}>Vendor</Text>
+						<Text style={[{marginTop: 0},h5]}>{item.vendor.name}</Text>
+					</View>
+					
+
+				</View>
+				<View style={{width: '40%'}}>
+					{( item.attachments.length > 0)? <ImageBackground source={{uri: imagePath+''+item.attachments[0].attachment }} resizeMode="contain" style={{height: 100 , width: '100%'}} /> : ''}
+				</View>
+			</View>
+			
+			
+		</Pressable>
   );
+	const checkOrderStatus = (changedOrderStatus) => {
+		SetSelectedOrderStatus(changedOrderStatus)
+		if( changedOrderStatus == 'pending' ) {
+			SetSelectedOrderData(pending);
+		}else if(changedOrderStatus == 'ready' ){
+			SetSelectedOrderData(ready);
+		}else if(changedOrderStatus == 'delivered' ){
+			SetSelectedOrderData(delivered);
+
+		}
+	}
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar
@@ -153,28 +251,28 @@ function OrderList({navigation}): JSX.Element {
         <View style={[{},height100 ,primaryBackgroundColor,{}]}>
 			<View style={[{} , height100]}>
 				<View style={[{},height6]}>
-                    <HeaderComponent navigation={navigation} title="title" />
+                    <HeaderComponent navigation={navigation} title="title"  />
                 </View>
 				<View style={[{},height85]} >
 
-					<View style={[{},height10]}>
-						<InputConponents placeholder="search order" />
+					<View style={[{},height15]}>
+						<InputConponents placeholder="search order" style={[{} , inputStyle]} inputValue={(value:any) => { searchOrder(value) }}/>
 					</View>
-					<View style={[{} , height90]}>
+					<View style={[{} , height85]}>
 						<View style={{justifyContent: 'space-around',flexDirection: 'row'}}>
-							<Pressable onPress={() => { SetSelectedOrderStatus('pending') }} style={[{width: '30%',borderRadius: 10},padding10,justifyContentCenter, (selectedOrderStatus == "pending")? {backgroundColor: secondaryBackgroundColor} : {borderColor: secondaryBackgroundColor , borderWidth: 2}]}>
+							<Pressable onPress={() => { checkOrderStatus('pending') }} style={[{width: '30%',borderRadius: 10},padding10,justifyContentCenter, (selectedOrderStatus == "pending")? {backgroundColor: secondaryBackgroundColor} : {borderColor: secondaryBackgroundColor , borderWidth: 2}]}>
 								<Text style={[{textAlign: 'center' , fontSize: 18} , (selectedOrderStatus == "pending")? { } : {color : secondaryBackgroundColor}]}>Pending</Text>
 							</Pressable>
-							<Pressable onPress={() => { SetSelectedOrderStatus('ready') }} style={[{width: '30%',borderRadius: 10},padding10,justifyContentCenter, (selectedOrderStatus == "ready")? {backgroundColor: secondaryBackgroundColor} : {borderColor: secondaryBackgroundColor , borderWidth: 2}]}>
+							<Pressable onPress={() => { checkOrderStatus('ready') }} style={[{width: '30%',borderRadius: 10},padding10,justifyContentCenter, (selectedOrderStatus == "ready")? {backgroundColor: secondaryBackgroundColor} : {borderColor: secondaryBackgroundColor , borderWidth: 2}]}>
 								<Text style={[{textAlign: 'center' , fontSize: 18} , (selectedOrderStatus == "ready")? {} : {color: secondaryBackgroundColor}]}>Ready</Text>
 							</Pressable>
-							<Pressable onPress={() => { SetSelectedOrderStatus('delivered') }} style={[{width: '30%',borderRadius: 10},padding10,justifyContentCenter, (selectedOrderStatus == "delivered")? {backgroundColor: secondaryBackgroundColor} : {borderColor: secondaryBackgroundColor , borderWidth: 2}]}>
+							<Pressable onPress={() => { checkOrderStatus('delivered') }} style={[{width: '30%',borderRadius: 10},padding10,justifyContentCenter, (selectedOrderStatus == "delivered")? {backgroundColor: secondaryBackgroundColor} : {borderColor: secondaryBackgroundColor , borderWidth: 2}]}>
 								<Text style={[{textAlign: 'center' , fontSize: 18} , (selectedOrderStatus == "delivered")? {} : {color: secondaryBackgroundColor}]}>Delivered</Text>
 							</Pressable>
 						</View>
 						<FlatList
-							data={DATA}
-							renderItem={({item}) => <Item title={item.title} />}
+							data={selectedOrderData}
+							renderItem={({item}) => <Item item={item} />}
 							keyExtractor={item => item.id}
 							showsVerticalScrollIndicator={false}
 						/>

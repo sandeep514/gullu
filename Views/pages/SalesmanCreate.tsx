@@ -37,11 +37,11 @@ type SectionProps = PropsWithChildren<{
 function SalesmanCreate({navigation}): JSX.Element {
 	const [loader , setLoader ] = useState(false);
 	
-	const [name , setName ] = useState('sandeep22');
-	const [email , setEmail ] = useState('sandeep1101@gmal.com');
-	const [code , setCode ] = useState('123');
-	const [password , setPassword ] = useState('123456');
-	const [phone , setPhone ] = useState('1234567880');
+	const [name , setName ] = useState();
+	const [email , setEmail ] = useState();
+	const [code , setCode ] = useState();
+	const [password , setPassword ] = useState();
+	const [phone , setPhone ] = useState();
 	const [role , setRole ] = useState(3);
 
   	const isDarkMode = useColorScheme() === 'dark';

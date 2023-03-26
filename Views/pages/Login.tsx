@@ -13,6 +13,7 @@ import {
 	TouchableOpacity,
 	useColorScheme,
 	View,
+	ActivityIndicator
 } from 'react-native';
 
 import {
@@ -55,10 +56,11 @@ function Section({children, title}: SectionProps): JSX.Element {
 }
 
 function Login({navigation}): JSX.Element {
-	const [ email , setEmail ] = useState('admin@gmail.com');
-	const [ password , setPassword ] = useState('123456');
+	const [ email , setEmail ] = useState();
+	const [ password , setPassword ] = useState();
 
 	const [ validationError , setValidationError ] = useState('');
+	const [ activityIndicator , setActivityIndicator ] = useState(false);
 
   	const isDarkMode = useColorScheme() === 'dark';
   	useEffect(()=> {
@@ -73,6 +75,7 @@ function Login({navigation}): JSX.Element {
 		}
 	}
 	const tryLogin = () => {
+		setActivityIndicator(true)
 		setValidationError('');
 		if( ValidateEmail(email) ){
 			let params = {email : email , password: password};
@@ -86,13 +89,18 @@ function Login({navigation}): JSX.Element {
 				AsyncStorage.setItem('name' , res.data.name);
 				AsyncStorage.setItem('phone' , res.data.phone);
 				AsyncStorage.setItem('role' , res.data.role);
-
+				setActivityIndicator(false)
 				navigation.navigate('Home')
+
 			}).catch((error) => {
+				setActivityIndicator(false)
+
 				console.log(error);
 			})
 		}else{
 			setValidationError('Email is not valid.');
+			setActivityIndicator(false)
+
 		}
 	}
   const backgroundStyle = {
@@ -120,13 +128,19 @@ function Login({navigation}): JSX.Element {
 						<View style={[{textAlign: 'center'},paddingHorizontal20]}>
 							<Text style={{ color: 'red',fontSize: 16 }}>{ (validationError != '')? validationError : '' }</Text>
 						</View>
-						<View style={[{alignItems: 'flex-end'},paddingHorizontal20]}>
+						{/* <View style={[{alignItems: 'flex-end'},paddingHorizontal20]}>
 							<Text style={[{color: primaryColor},fontWeightBold,marginBottom10]}>Forgot Password</Text>
-						</View>
+						</View> */}
 						<View style={{alignItems: 'center'}}>
-							<TouchableOpacity onPress={() => { tryLogin() }} style={[{width: 150,backgroundColor: primaryColor,borderRadius: 10},padding15,justifyContentCenter]} >
-								<Text style={[{color: '#fff'} , h3,textAlignCenter]}>Login</Text>
-							</TouchableOpacity>
+							{(activityIndicator)?
+								<TouchableOpacity onPress={() => { tryLogin() }} style={[{width: 150,backgroundColor: primaryColor,borderRadius: 10},padding15,justifyContentCenter]} >
+									<ActivityIndicator color="white"></ActivityIndicator>
+								</TouchableOpacity>
+							:
+								<TouchableOpacity onPress={() => { tryLogin() }} style={[{width: 150,backgroundColor: primaryColor,borderRadius: 10},padding15,justifyContentCenter]} >
+									<Text style={[{color: '#fff'} , h3,textAlignCenter]}>Login</Text>
+								</TouchableOpacity>
+							}
 						</View>
 							
 					</View>

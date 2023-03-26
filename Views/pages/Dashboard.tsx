@@ -25,7 +25,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import { cardBackgroundColor, h1, h2, height100, height50, height6, height85, height9, padding20, primaryBackgroundColor, screenheight, textAlignCenter } from '../assets/styles';
+import { cardBackgroundColor, h1, h2, h3, height100, height50, height6, height85, height9, padding20, primaryBackgroundColor, screenheight, textAlignCenter } from '../assets/styles';
 import FooterComponent from '../components/FooterComponent';
 import HeaderComponent from '../components/HeaderComponent';
 
@@ -53,13 +53,13 @@ function Dashboard({navigation}): JSX.Element {
 				<View style={[{} , height85]} >
 					<View>
 						<Pressable onPress={() => { navigation.navigate('vendorcreate') }} style={[{} , padding20,cardBackgroundColor]}>
-							<Text style={[{}, h1,textAlignCenter]}>Add Vendor</Text>
+							<Text style={[{}, h3,textAlignCenter]}>Add Vendor</Text>
 						</Pressable>
 						<Pressable onPress={() => { navigation.navigate('SalesmanCreate') }} style={[{} , padding20,cardBackgroundColor]}>
-							<Text style={[{}, h1,textAlignCenter]}>Add Salesman</Text>
+							<Text style={[{}, h3,textAlignCenter]}>Add Salesman</Text>
 						</Pressable>
-						<Pressable onPress={() => { navigation.navigate('orderlist') }} style={[{} , padding20,cardBackgroundColor]}>
-							<Text style={[{}, h1,textAlignCenter]}>View Orders</Text>
+						<Pressable onPress={() => { navigation.navigate('ordercreate') }} style={[{} , padding20,cardBackgroundColor]}>
+							<Text style={[{}, h3,textAlignCenter]}>Add Orders</Text>
 						</Pressable>
 					</View>
 				</View>

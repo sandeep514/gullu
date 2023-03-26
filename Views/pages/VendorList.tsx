@@ -10,6 +10,7 @@ import {
   Text,
   useColorScheme,
   View,
+  ActivityIndicator
 } from 'react-native';
 
 import {
@@ -34,6 +35,7 @@ type SectionProps = PropsWithChildren<{
 function VendorList({navigation}): JSX.Element {
 	const isDarkMode = useColorScheme() === 'dark';
 	const [ DATA , SetData ] = useState();
+	const [ activityIndicator , setActivityIndicator ] = useState(false);
   	useEffect(()=> {
 		
 	} , [])
@@ -44,12 +46,19 @@ function VendorList({navigation}): JSX.Element {
 		getVendorList();
 	} , []);
 	const getVendorList = () => {
+		setActivityIndicator(true)
+
 		AsyncStorage.getItem('api_token').then((token) => {
 			let postedData = { role: 'vendor',api_token : token};
 			get('users/get' , postedData).then((res) => {
+				setActivityIndicator(false)
+
 				SetData(res.data.data.data);
+				
 			}).catch((err) => {
 				console.log(err)
+				setActivityIndicator(false)
+
 			});
 
 		}).catch((err) => {
@@ -75,12 +84,17 @@ function VendorList({navigation}): JSX.Element {
                     <HeaderComponent navigation={navigation} title="Vendor List" />
                 </View>
 				<View style={[{} , height85]} >
-					<FlatList
-						data={DATA}
-						renderItem={({item}) => <Item item={item} />}
-						keyExtractor={item => item.id}
-						showsVerticalScrollIndicator={false}
-					/>
+					{(activityIndicator)? 
+						<ActivityIndicator color="white" size={20}></ActivityIndicator>
+					:
+						<FlatList
+							data={DATA}
+							renderItem={({item}) => <Item item={item} />}
+							keyExtractor={item => item.id}
+							showsVerticalScrollIndicator={false}
+						/>
+					}
+					
 				</View>
 				<View style={[{},height9]}>
 					<FooterComponent navigation={navigation} />
