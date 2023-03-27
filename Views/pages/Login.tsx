@@ -56,8 +56,8 @@ function Section({children, title}: SectionProps): JSX.Element {
 }
 
 function Login({navigation}): JSX.Element {
-	const [ email , setEmail ] = useState();
-	const [ password , setPassword ] = useState();
+	const [ email , setEmail ] = useState('1234567890');
+	const [ password , setPassword ] = useState('123456');
 
 	const [ validationError , setValidationError ] = useState('');
 	const [ activityIndicator , setActivityIndicator ] = useState(false);
@@ -77,18 +77,17 @@ function Login({navigation}): JSX.Element {
 	const tryLogin = () => {
 		setActivityIndicator(true)
 		setValidationError('');
-		if( ValidateEmail(email) ){
+		// if( ValidateEmail(email) ){
 			let params = {email : email , password: password};
 
 			post('/login' ,params ).then((res:any) => {
-				console.log("jmk");
 				AsyncStorage.setItem('api_token' , res.data.api_token);
-				// AsyncStorage.setItem('code' , res.data.code);
 				AsyncStorage.setItem('email' , res.data.email);
 				AsyncStorage.setItem('id' , (res.data.id).toString());
 				AsyncStorage.setItem('name' , res.data.name);
 				AsyncStorage.setItem('phone' , res.data.phone);
 				AsyncStorage.setItem('role' , res.data.role);
+
 				setActivityIndicator(false)
 				navigation.navigate('Home')
 
@@ -97,11 +96,11 @@ function Login({navigation}): JSX.Element {
 
 				console.log(error);
 			})
-		}else{
-			setValidationError('Email is not valid.');
-			setActivityIndicator(false)
+		// }else{
+		// 	setValidationError('Email is not valid.');
+		// 	setActivityIndicator(false)
 
-		}
+		// }
 	}
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
