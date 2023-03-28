@@ -14,7 +14,6 @@ export const  generateRandString = () => {
 export const post = ( url:any ,params:any ) => {
 	return new Promise((resolve , reject) => {
 		apiClient.post(url , params).then((res:any) => {
-			console.log(res);
 			if(res.data.data.status == "true" || res.data.data.status == true){
 				resolve(res.data.data	)
 			}else{
@@ -31,12 +30,9 @@ export const post = ( url:any ,params:any ) => {
 export const get = (url , postedData={} ) => {
 	return new Promise((resolve , reject) => {
 		apiClient.get(url , postedData).then( (response:any) => {
-			console.log(response);
 			resolve(response)
 		} ,(err) => {
-			console.log(err);
 			reject(err)
 		} );
 	})	
 }
-

@@ -18,6 +18,7 @@ import {
 	ImageBackground,
 	View,
 	FlatList,
+	ActivityIndicator,
 	RefreshControl
 } from 'react-native';
 
@@ -37,11 +38,15 @@ import { imagePath } from '../services/Client';
 import { useIsFocused } from '@react-navigation/native'
 
 function Dashboard({ navigation }): JSX.Element {
+	const [ loader , setLoader] = useState(false);
+	const [ role , setRole] = useState();
 	const [ selectedOrderData , SetSelectedOrderData] = useState('');
 	const [pending , setPending] = useState({});
 	const [ready , setReady] = useState({});
 	const [delivered , setDelivered] = useState({});
 	const [ allOrdersList , setAllOrdersList] = useState([]);
+
+
 	const wait = (timeout) => { // Defined the timeout function for testing purpose
 		return new Promise(resolve => setTimeout(resolve, timeout));
 	}
@@ -57,6 +62,11 @@ function Dashboard({ navigation }): JSX.Element {
 
 	const isDarkMode = useColorScheme() === 'dark';
 	useEffect(() => {
+		AsyncStorage.getItem('role').then((roleId) => {
+			setRole(roleId);
+		}).catch((err) =>{
+			console.log(err);
+		})
 		getData();
 		
 	} , [])
@@ -67,19 +77,20 @@ function Dashboard({ navigation }): JSX.Element {
 	} , [isFocused])
 
 	const getData = () => {
+		setLoader(true)
 		AsyncStorage.getItem('api_token').then((token) => {
 			let postedData = { role: 'salesman',api_token : token};
 			get('/orders/list/pending' , postedData).then((res) => {
-				console.log(res.data.data.data);
 				let pending = res.data.data.data;
 			
 				setPending(pending);
+				setLoader(false)
 			}).catch((err) => {
-				console.log(err)
+				setLoader(false)
 			});
 
 		}).catch((err) => {
-
+			setLoader(false)
 		});
 	}
 	const backgroundStyle = {
@@ -134,19 +145,28 @@ function Dashboard({ navigation }): JSX.Element {
 
 					<View style={[{}, height85]} >
 						<View>
-							<FlatList
-								refreshing={isRefreshing} // Added pull to refesh state
-								onRefresh={onRefresh} // Added pull to refresh control
-								data={pending}
-								renderItem={({item}) => <Item item={item} />}
-								keyExtractor={item => item.id}
-								showsVerticalScrollIndicator={false}
-							/>
+							{(loader)? 
+								<ActivityIndicator  size={20} color="white" />
+							:
+								<FlatList
+									refreshing={isRefreshing} // Added pull to refesh state
+									onRefresh={onRefresh} // Added pull to refresh control
+									data={pending}
+									renderItem={({item}) => <Item item={item} />}
+									keyExtractor={item => item.id}
+									showsVerticalScrollIndicator={false}
+								/>
+							}
+							
 							
 						</View>
-						<Pressable onPress={() => { navigation.navigate('ordercreate') }} style={[{backgroundColor: secondaryBackgroundColor,height: 70 ,width: 70,padding: 0,margin:0 ,borderRadius: 100,right: 10,position: 'absolute',bottom: 0,borderColor: primaryColor ,borderWidth: 5}]}>
-							<Text style={[{fontSize: 50,padding: 0,margin: 0,top: -5}, textAlignCenter]}>+</Text>
-						</Pressable>
+						{(role != undefined && role == 1)?
+							<Pressable onPress={() => { navigation.navigate('ordercreate') }} style={[{backgroundColor: secondaryBackgroundColor,height: 70 ,width: 70,padding: 0,margin:0 ,borderRadius: 100,right: 10,position: 'absolute',bottom: 0,borderColor: primaryColor ,borderWidth: 5}]}>
+								<Text style={[{fontSize: 50,padding: 0,margin: 0,top: -5}, textAlignCenter]}>+</Text>
+							</Pressable>
+						:
+							null
+						}
 					</View>
 					<View style={[{}, height9]}>
 						<FooterComponent navigation={navigation} />
