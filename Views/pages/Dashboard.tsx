@@ -29,7 +29,7 @@ import {
 	LearnMoreLinks,
 	ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import { cardBackgroundColor, flexDirectionRow, h1, h2, h3, h5, height100, height50, height6, height85, height9, marginRight10, padding20, primaryBackgroundColor, primaryColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
+import { cardBackgroundColor, flexDirectionRow, h1, h2, h3, h4, h5, height100, height50, height6, height85, height9, marginRight10, marginTop30, padding20, primaryBackgroundColor, primaryColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
 import FooterComponent from '../components/FooterComponent';
 import HeaderComponent from '../components/HeaderComponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -148,6 +148,7 @@ function Dashboard({ navigation }): JSX.Element {
 							{(loader)? 
 								<ActivityIndicator  size={20} color="white" />
 							:
+							(pending.length > 0)?
 								<FlatList
 									refreshing={isRefreshing} // Added pull to refesh state
 									onRefresh={onRefresh} // Added pull to refresh control
@@ -156,6 +157,10 @@ function Dashboard({ navigation }): JSX.Element {
 									keyExtractor={item => item.id}
 									showsVerticalScrollIndicator={false}
 								/>
+								:
+								<View style={{justifyContent: 'center'}}>
+									<Text style={[{color: '#fff',textAlign: 'center'},h4,marginTop30]}>No pending orders available</Text>
+								</View>
 							}
 							
 							

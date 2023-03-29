@@ -33,9 +33,12 @@ import {decode as atob, encode as btoa} from 'base-64'
 import { readFile } from "react-native-fs";
 import  Video from 'react-native-video';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { showToast } from '../services/services';
-
-
+import { get, showToast } from '../services/services';
+import { Dropdown } from 'react-native-element-dropdown';
+// import AntDesign from '@expo/vector-icons/AntDesign';
+// import DatePicker from 'react-native-date-picker'
+// import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
+import DatePicker from '@react-native-community/datetimepicker'
 
 function OrderCreate({navigation}): JSX.Element {
 	const [ activityIndicator , setActivityIndicator ] = useState(false);
@@ -44,6 +47,7 @@ function OrderCreate({navigation}): JSX.Element {
 	const [salesman , setSalesman] = useState('1');
 	const [color , setColor] = useState('red');
 	const [item , setItem] = useState('test item');
+    const [value, setValue] = useState(null);
 
 
 	const [product_photo , setPrductPhoto] = useState('');
@@ -61,6 +65,13 @@ function OrderCreate({navigation}): JSX.Element {
 	const [productMeasurementResult, setProductMeasurementResult] = useState();
 	const [productVideoResult, setProductVideoResult] = useState();
 	const [apitoken, setApiToken] = useState();
+
+	const [vendorList , SetVendorList] = useState();
+	const [salesmanList , SetSalesmanList] = useState();
+	const [date, setDate] = useState(new Date())
+  	const [open, setOpen] = useState(false)
+  	const [showReadyDate, setshowReadyDate] = useState(false)
+
 	const videoPlayer = React.useRef();
 
 	async function getUriToBase64(uri) {
@@ -74,7 +85,8 @@ function OrderCreate({navigation}): JSX.Element {
 			
 		});
 		
-	})
+	} , []);
+
 	let saveOrder = async () => {
 		
 			setActivityIndicator(true)
@@ -121,6 +133,36 @@ function OrderCreate({navigation}): JSX.Element {
 
 	}
 	
+	
+	useEffect(() => {
+		getVendorList();
+		getSalesmanList();
+	} , []);
+	const getVendorList = () => {
+		AsyncStorage.getItem('api_token').then((token) => {
+			let postedData = { role: 'vendor',api_token : token};
+			get('users/get' , postedData).then((res) => {
+				SetVendorList(res.data.data.data);
+				console.log(res.data.data.data);
+			}).catch((err) => {
+				console.log(err)
+			});
+		}).catch((err) => {
+
+		});
+	}
+	const getSalesmanList = () => {
+		AsyncStorage.getItem('api_token').then((token) => {
+			let postedData = { role: 'vendor',api_token : token};
+			get('users/get' , postedData).then((res) => {
+				SetSalesmanList(res.data.data.data);
+			}).catch((err) => {
+				console.log(err)
+			});
+		}).catch((err) => {
+		
+		});
+	}
 	useEffect(() => {
 		// if( productPhotoData.length > 0){
 		// 	getUriToBase64(productPhotoData[0].fileCopyUri).then((ees) => {
@@ -163,7 +205,9 @@ function OrderCreate({navigation}): JSX.Element {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
-
+const openReadyDate = () => {
+	setshowReadyDate(true)
+}
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar
@@ -197,6 +241,80 @@ function OrderCreate({navigation}): JSX.Element {
 						<InputConponents placeholder="salesman id" inputValue={(value:any) => { setSalesman(value) }} style={inputStyleBlack} />
 						<InputConponents placeholder="color" inputValue={(value:any) => { setColor(value) }} style={inputStyleBlack} />
 						<InputConponents placeholder="item" inputValue={(value:any) => { setItem(value) }} style={inputStyleBlack} />
+						{/* <Dropdown
+							style={inputStyleBlack}
+							placeholderStyle={styles.placeholderStyle}
+							selectedTextStyle={styles.selectedTextStyle}
+							inputSearchStyle={styles.inputSearchStyle}
+							iconStyle={styles.iconStyle}
+							data={vendorList}
+							search
+							maxHeight={300}
+							labelField="name"
+							valueField="id"
+							placeholder="Select Vendor"
+							searchPlaceholder="Search..."
+							// value={value}
+							// onChange={item => {
+							// 	setValue(item.value);
+							// }}
+							// renderLeftIcon={() => (
+							// 	// <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
+							// )}
+						/> */}
+						{/* <Dropdown
+							style={inputStyleBlack}
+							placeholderStyle={styles.placeholderStyle}
+							selectedTextStyle={styles.selectedTextStyle}
+							inputSearchStyle={styles.inputSearchStyle}
+							iconStyle={styles.iconStyle}
+							data={salesmanList}
+							search
+							maxHeight={300}
+							labelField="name"
+							valueField="id"
+							placeholder="Select salesman"
+							searchPlaceholder="Search..."
+							// value={value}
+							// onChange={item => {
+							// 	setValue(item.value);
+							// }}
+							// renderLeftIcon={() => (
+							// 	// <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
+							// )}
+						/> */}
+						<Button title="Open" onPress={() => openReadyDate()} />
+						{( showReadyDate )?
+							<DatePicker
+								style={{width: 200}}
+								date={new Date()}
+								value={new Date()}
+								mode="date"
+								placeholder="select date"
+								format="YYYY-MM-DD"
+								minDate="2016-05-01"
+								maxDate="2016-06-01"
+								confirmBtnText="Confirm"
+								cancelBtnText="Cancel"
+								customStyles={{
+								dateIcon: {
+									position: 'absolute',
+									left: 0,
+									top: 4,
+									marginLeft: 0
+								},
+								dateInput: {
+									marginLeft: 36
+								}
+								// ... You can check the source to find the other keys.
+								}}
+								onDateChange={(date) => {this.setState({date: date})}}
+							/>
+						:
+							null
+						}
+						
+
 						<View style={{paddingHorizontal: 20}}>
 							<TouchableOpacity
 								onPress={async () => {
@@ -331,5 +449,29 @@ const styles = StyleSheet.create({
 	  height: '100%',
 	  width: '100%'
 	},
+	dropdown: {
+		margin: 16,
+		height: 50,
+		borderColor: secondaryBackgroundColor,
+		borderWidth: 1,
+	  },
+	  icon: {
+		marginRight: 5,
+	  },
+	  placeholderStyle: {
+		fontSize: 16,
+		color: secondaryBackgroundColor
+	  },
+	  selectedTextStyle: {
+		fontSize: 16,
+	  },
+	  iconStyle: {
+		width: 20,
+		height: 20,
+	  },
+	  inputSearchStyle: {
+		height: 40,
+		fontSize: 16,
+	  },
   });
 export default OrderCreate;

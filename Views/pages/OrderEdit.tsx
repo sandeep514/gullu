@@ -14,7 +14,8 @@ import {
 	useColorScheme,
 	View,
 	Pressable,
-	ImageBackground
+	ImageBackground,
+	ActivityIndicator
 } from 'react-native';
 import DocumentPicker, {
 	DirectoryPickerResponse,
@@ -40,9 +41,12 @@ import { get } from '../services/services';
 
 function OrderEdit({ navigation, route }): JSX.Element {
 	const [item, setItem] = useState();
+	const [role, setRole] = useState();
 	const [modalVisible, setModalVisible] = useState(false);
 	const [modalVisibleImage, setModalVisibleImage] = useState(false);
 	const [selectedImage, setSelectedImage] = useState();
+	const [loader, setLoader] = useState(false);
+	const [dataUpdated, setDataUpdated] = useState(false);
 
 	const videoPlayer = React.useRef();
 
@@ -51,28 +55,38 @@ function OrderEdit({ navigation, route }): JSX.Element {
 		return base64String
 	}
 	useEffect(() => {
-		setItem(route.params.orderData);
+		if( !dataUpdated ){
+			setItem(route.params.orderData);
+		}
+
 		AsyncStorage.getItem('api_token').then((token) => {
 			console.log(token);
 		}).catch((err) => {
 
 		});
+		AsyncStorage.getItem('role').then((role) => {
+			setRole(role);
+		}).catch((err) => {
+
+		});
 
 	}, [])
-	const updateOrder = () => {
+	const updateOrder = (status) => {
+		setLoader(true);
 		AsyncStorage.getItem('api_token').then((token) => {
-			let postedData = { 'status': 3,'api_token' : token ,'applicationId' : item?.id };
+			let postedData = { 'status': status,'api_token' : token ,'applicationId' : item?.id };
 			get('/update/order/status' , postedData).then((res) => {
-				console.log(res.data.data.data);
-				// let pending = res.data.data.data;
-			
+				console.log(res.data.data.data);			
 				setItem(res.data.data.data);
+				setLoader(false);
+				setDataUpdated(true);
 			}).catch((err) => {
+				setLoader(false);
 				console.log(err)
 			});
 
 		}).catch((err) => {
-
+			setLoader(false);
 		});
 		
 	}
@@ -218,43 +232,77 @@ function OrderEdit({ navigation, route }): JSX.Element {
 												<View style={{borderLeftColor: secondaryBackgroundColor, borderLeftWidth: 2,borderStyle: 'dashed', height: 100}} >
 												</View>
 											</View>
-											{(item?.status == 2 || item?.status == 3)?
+
+											{( item?.status == 2 || item?.status == 3 )?
 												<View style={{width: '100%'}}>
 													<Text style={{color: '#fff'}}>Order Ready on {item?.ready_date} </Text>
 												</View>
 											:
-												<View style={{width: '100%'}}>
-													<Text style={{color: secondaryBackgroundColor}}>Order not Ready yet.</Text>
-												</View>
+												null
+											}
+											
+
+
+											{( role == 2 && item?.status == 1)?
+													<View>
+														<View style={{width: '100%'}}>
+															<Text style={{color: secondaryBackgroundColor}}>Order not Ready yet.</Text>
+														</View>
+														<View style={{width: '70%'}}>
+															<Pressable
+																style={{backgroundColor: secondaryBackgroundColor,paddingVertical: 10,borderRadius: 10}}
+																onPress={() => updateOrder(2)}>
+																<Text style={styles.textStyle}>Update order status to READY</Text>
+																{(loader)?
+																	<ActivityIndicator size={20} color="white" />
+																: 
+																	null
+																}
+															</Pressable>
+														</View>
+													</View>
+												:
+												null
 											}
 											<View style={{padding: 10}}>
 												<View style={{borderLeftColor: secondaryBackgroundColor, borderLeftWidth: 2,borderStyle: 'dashed', height: 100}} >
 												</View>
 											</View>
-											{(item?.status == 1 || item?.status == 2 )?
-													<View style={{width: '100%'}}>
-														<Text style={{color: secondaryBackgroundColor}}>Order not yet delivered</Text>
-													</View>
-												:
-													null}
-											{(item?.status == 3)?
-													<View style={{width: '100%'}}>
-														<Text style={{color: '#fff'}}>Order Delivered </Text>
-													</View>
-												: 
-												(item?.status != 1)?
+										{( item?.status == 3)?
+											<View style={{width: '100%'}}>
+												<Text style={{color: '#fff'}}>Order Delivered </Text>
+											</View>
+										:
+											null
+										}
+										
+											{( item?.status != 3)?
+												<View style={{width: '100%'}}>
+													<Text style={{color: secondaryBackgroundColor}}>Order not delivered yet.</Text>
+												</View>
+											:
+											null
+											}
+												{( item?.status != 3 && role == 3 || item?.status != 3 && role == 1)?
 													<View>
-														<View style={{width: '60%'}}>
+														<View style={{width: '70%'}}>
 															<Pressable
 																style={{backgroundColor: secondaryBackgroundColor,paddingVertical: 10,borderRadius: 10}}
-																onPress={() => updateOrder()}>
-																<Text style={styles.textStyle}>Update order to DELIVERED</Text>
+																onPress={() => updateOrder(3)}>
+																<Text style={styles.textStyle}>Update order status to DELIVERED</Text>
+																{(loader)?
+																	<ActivityIndicator size={20} color="white" />
+																: 
+																	null
+																}
 															</Pressable>
 														</View>
 													</View>
 												:
-													null
+												null
 											}
+
+
 										</View>
 									</View>
 								</View>
