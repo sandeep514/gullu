@@ -13,8 +13,10 @@ import {
   useColorScheme,
   ActivityIndicator,
   View,
+  Modal,
   ImageBackground,
-  Dimensions
+  Dimensions,
+  Pressable
 } from 'react-native';
 import DocumentPicker, {
 	DirectoryPickerResponse,
@@ -25,7 +27,7 @@ import DocumentPicker, {
 import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
-import { h3, h4, height100, height6, height85, height9, inputStyleBlack, justifyContentCenter, padding15, primaryBackgroundColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
+import { flexDirectionRow, h3, h4, h5, height100, height6, height85, height9, inputStyleBlack, justifyContentCenter, marginRight10, padding15, primaryBackgroundColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
 import InputConponents from '../components/InputComponents';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
@@ -39,8 +41,10 @@ import { Dropdown } from 'react-native-element-dropdown';
 // import DatePicker from 'react-native-date-picker'
 // import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import DatePicker from '@react-native-community/datetimepicker'
+import SearchableDropdown from "react-native-searchable-dropdown";
 
 function OrderCreate({navigation}): JSX.Element {
+	let salesmanData = {};
 	const [ activityIndicator , setActivityIndicator ] = useState(false);
 	const [order_number , setOrderNumber] = useState();
 	const [vendor , setVendor] = useState('1');
@@ -48,6 +52,8 @@ function OrderCreate({navigation}): JSX.Element {
 	const [color , setColor] = useState('red');
 	const [item , setItem] = useState('test item');
     const [value, setValue] = useState(null);
+	const [modalVisibleVendor, setModalVisibleVendor] = useState(false);
+	const [modalVisibleSalesman, setModalVisibleSalesman] = useState(false);
 
 
 	const [product_photo , setPrductPhoto] = useState('');
@@ -71,6 +77,7 @@ function OrderCreate({navigation}): JSX.Element {
 	const [date, setDate] = useState(new Date())
   	const [open, setOpen] = useState(false)
   	const [showReadyDate, setshowReadyDate] = useState(false)
+  	const [showDeliveryDate, setShowDeliveryDate] = useState(false)
 
 	const videoPlayer = React.useRef();
 
@@ -79,11 +86,20 @@ function OrderCreate({navigation}): JSX.Element {
 		return base64String
 	}
 	useEffect(() => {
+		getVendorList();
+		getSalesmanList();
+		setshowReadyDate(false);
+		setShowDeliveryDate(false);
+
 		AsyncStorage.getItem('api_token').then((token) => {
 			setApiToken(token);
 		}).catch((err) => {
 			
 		});
+		return () => {
+			setshowReadyDate(false);
+			setShowDeliveryDate(false);
+		}
 		
 	} , []);
 
@@ -134,10 +150,6 @@ function OrderCreate({navigation}): JSX.Element {
 	}
 	
 	
-	useEffect(() => {
-		getVendorList();
-		getSalesmanList();
-	} , []);
 	const getVendorList = () => {
 		AsyncStorage.getItem('api_token').then((token) => {
 			let postedData = { role: 'vendor',api_token : token};
@@ -156,6 +168,7 @@ function OrderCreate({navigation}): JSX.Element {
 			let postedData = { role: 'vendor',api_token : token};
 			get('users/get' , postedData).then((res) => {
 				SetSalesmanList(res.data.data.data);
+				salesmanData = (res.data.data.data);
 			}).catch((err) => {
 				console.log(err)
 			});
@@ -178,7 +191,40 @@ function OrderCreate({navigation}): JSX.Element {
 		// 	});
 		// }
 	}, [productMeasurementData]);
-
+	var items = [
+		{
+		  id: 1,
+		  name: 'JavaScript',
+		},
+		{
+		  id: 2,
+		  name: 'Java',
+		},
+		{
+		  id: 3,
+		  name: 'Ruby',
+		},
+		{
+		  id: 4,
+		  name: 'React Native',
+		},
+		{
+		  id: 5,
+		  name: 'PHP',
+		},
+		{
+		  id: 6,
+		  name: 'Python',
+		},
+		{
+		  id: 7,
+		  name: 'Go',
+		},
+		{
+		  id: 8,
+		  name: 'Swift',
+		},
+	  ];
 	useEffect(() => {
 		// if( productVideoData.length > 0){
 		// 	getUriToBase64(productVideoData[0].fileCopyUri).then((ees) => {
@@ -201,13 +247,37 @@ function OrderCreate({navigation}): JSX.Element {
   	useEffect(()=> {
 		
 	} , [])
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+	const backgroundStyle = {
+		backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+	};
+	const Item = ({item}:any) => (
+		<Pressable onPress={() => { }} style={styles.item}>
+			<View style={[{} , flexDirectionRow]}>
+				<View style={[marginRight10,{width:'100%',overflow: 'hidden' }]}>
+					<View style={[{} , flexDirectionRow]}> 
+						<Text style={[{fontWeight: 'bold'},h5,marginRight10]}>{item.name}</Text>
+						<Text style={[{marginTop: 0},h5]}>{item.order_number}</Text>
+					</View>
+				</View>
+			</View>
+		</Pressable>
+  );
 
-const openReadyDate = () => {
-	setshowReadyDate(true)
-}
+	const getAddedDate = (numberOfDaysToAdd) => {
+		var someDate = new Date();
+		var result = someDate.setDate(someDate.getDate() + numberOfDaysToAdd);
+		console.log(new Date(result))
+		return new Date(result);
+	}
+	const openReadyDate = () => {
+		setshowReadyDate(true)
+		setShowDeliveryDate(false)
+
+	}
+	const openDeliveryDate = () => {
+		setshowReadyDate(false)
+		setShowDeliveryDate(true)
+	}
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar
@@ -233,190 +303,259 @@ const openReadyDate = () => {
 				<View style={[{},height6]}>
                     <HeaderComponent navigation={navigation} title="order create" />
                 </View>
-				<ScrollView>
-					<View style={[{} , height85]} >
-							
-						<InputConponents placeholder="order number" inputValue={(value:any) => { setOrderNumber(value) }} style={inputStyleBlack} />
-						<InputConponents placeholder="vendor id" inputValue={(value:any) => { setVendor(value) }} style={inputStyleBlack} />
-						<InputConponents placeholder="salesman id" inputValue={(value:any) => { setSalesman(value) }} style={inputStyleBlack} />
-						<InputConponents placeholder="color" inputValue={(value:any) => { setColor(value) }} style={inputStyleBlack} />
-						<InputConponents placeholder="item" inputValue={(value:any) => { setItem(value) }} style={inputStyleBlack} />
-						{/* <Dropdown
-							style={inputStyleBlack}
-							placeholderStyle={styles.placeholderStyle}
-							selectedTextStyle={styles.selectedTextStyle}
-							inputSearchStyle={styles.inputSearchStyle}
-							iconStyle={styles.iconStyle}
-							data={vendorList}
-							search
-							maxHeight={300}
-							labelField="name"
-							valueField="id"
-							placeholder="Select Vendor"
-							searchPlaceholder="Search..."
-							// value={value}
-							// onChange={item => {
-							// 	setValue(item.value);
-							// }}
-							// renderLeftIcon={() => (
-							// 	// <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
-							// )}
-						/> */}
-						{/* <Dropdown
-							style={inputStyleBlack}
-							placeholderStyle={styles.placeholderStyle}
-							selectedTextStyle={styles.selectedTextStyle}
-							inputSearchStyle={styles.inputSearchStyle}
-							iconStyle={styles.iconStyle}
-							data={salesmanList}
-							search
-							maxHeight={300}
-							labelField="name"
-							valueField="id"
-							placeholder="Select salesman"
-							searchPlaceholder="Search..."
-							// value={value}
-							// onChange={item => {
-							// 	setValue(item.value);
-							// }}
-							// renderLeftIcon={() => (
-							// 	// <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
-							// )}
-						/> */}
-						<Button title="Open" onPress={() => openReadyDate()} />
-						{( showReadyDate )?
-							<DatePicker
-								style={{width: 200}}
-								date={new Date()}
-								value={new Date()}
-								mode="date"
-								placeholder="select date"
-								format="YYYY-MM-DD"
-								minDate="2016-05-01"
-								maxDate="2016-06-01"
-								confirmBtnText="Confirm"
-								cancelBtnText="Cancel"
-								customStyles={{
-								dateIcon: {
-									position: 'absolute',
-									left: 0,
-									top: 4,
-									marginLeft: 0
-								},
-								dateInput: {
-									marginLeft: 36
-								}
-								// ... You can check the source to find the other keys.
-								}}
-								onDateChange={(date) => {this.setState({date: date})}}
-							/>
-						:
-							null
-						}
+				<ScrollView horizontal={false} style={{flex: 1}}>
+					<ScrollView>
 						
-
-						<View style={{paddingHorizontal: 20}}>
-							<TouchableOpacity
-								onPress={async () => {
-								try {
-									const pickerResult = await DocumentPicker.pick({
-										presentationStyle: 'fullScreen',
-										copyTo: 'cachesDirectory',
-										type: [types.images],
-									});
-									setPrductPhotoType(pickerResult[0].type);
-									setPrductPhotoData(pickerResult)
-								} catch (e) {
-									handleError(e)
-								}
-								}}
-								style={[{width: 'auto',backgroundColor: secondaryBackgroundColor,borderRadius: 10,marginBottom: 10},padding15,justifyContentCenter]}
-							>
-								<Text style={{color: '#fff',textAlign: 'center'}}>Upload Product Image</Text>
-							</TouchableOpacity>
-
-							{(productPhotoData != undefined && productPhotoData.length > 0)?
-								<View style={{ height: 200,width: 200 }}>
-									<ImageBackground source={{uri:productPhotoData[0].fileCopyUri}} style={{ height: '100%',width: '100%' }} resizeMode="center">
-
-									</ImageBackground>
-								</View>
-								// <Image source={{uri:productPhotoData[0].fileCopyUri}} style={{ height: 200,width: 200 }}/>
-							:
-								null
-							}
-							<TouchableOpacity
-								onPress={async () => {
-								try {
-									const pickerResult = await DocumentPicker.pick({
-										presentationStyle: 'fullScreen',
-										copyTo: 'cachesDirectory',
-										type: [types.images]
-									});
-									setPrductMeasureType(pickerResult[0].type);
-									setPrductMeasurementData(pickerResult)
-								} catch (e) {
-									handleError(e)
-								}
-								}}
-								style={[{width: 'auto',backgroundColor: secondaryBackgroundColor,borderRadius: 10,marginBottom: 10},padding15,justifyContentCenter]}
-							>
-								<Text style={{color: '#fff',textAlign: 'center'}}>Upload Product Measurement</Text>
-							</TouchableOpacity>
-
-							{(productMeasurementData != undefined && productMeasurementData.length > 0)?
-								<View style={{ height: 200,width: 200 }}>
-									<ImageBackground source={{uri:productMeasurementData[0].fileCopyUri}} style={{ height: '100%',width: '100%' }} resizeMode="center">
-
-									</ImageBackground>
-								</View>
-							:
-								null
-							}
-							
-							<TouchableOpacity
-								onPress={async () => {
-								try {
-									const pickerResult = await DocumentPicker.pick({
-										presentationStyle: 'fullScreen',
-										copyTo: 'cachesDirectory',
-										type: [types.video]
-									});
-									setPrductVideoType(pickerResult[0].type);
-									setProductVideoData(pickerResult);
-								} catch (e) {
-									handleError(e)
-								}
-								}}
-								style={[{width: 'auto',backgroundColor: secondaryBackgroundColor,borderRadius: 10,marginBottom: 10},padding15,justifyContentCenter]}
-							>
-								<Text style={{color: '#fff',textAlign: 'center'}}>Upload Product Video</Text>
-							</TouchableOpacity>
-							{(productVideoData != undefined && productVideoData.length > 0)?
-								<View style={{width: '100%' , height: 400}}>
-									<Video source={{uri: productVideoData[0].fileCopyUri }}
-										
-										style={styles.backgroundVideo}
-										controls={true}
-										ref={ref => (videoPlayer.current = ref)}
-										resizeMode="contain"
-										paused={true}
-									/>
-								</View>
+						<View style={[{} , height85]} >
 								
+							<InputConponents placeholder="order number" inputValue={(value:any) => { setOrderNumber(value) }} style={inputStyleBlack} />
+							<InputConponents placeholder="vendor id" inputValue={(value:any) => { setVendor(value) }} style={inputStyleBlack} />
+							<InputConponents placeholder="salesman id" inputValue={(value:any) => { setSalesman(value) }} style={inputStyleBlack} />
+							<InputConponents placeholder="color" inputValue={(value:any) => { setColor(value) }} style={inputStyleBlack} />
+							<InputConponents placeholder="item" inputValue={(value:any) => { setItem(value) }} style={inputStyleBlack} />
+							<Modal
+								animationType="slide"
+								transparent={true}
+								visible={modalVisibleVendor}
+								onRequestClose={() => {
+									// Alert.alert('Modal has been closed.');
+									setModalVisibleVendor(!modalVisibleVendor);
+								}}>
+									<View style={styles.centeredView}>
+										<View style={styles.modalView}>
+											<View style={{paddingBottom: 10}}>
+												<Text>Select Vendor</Text>
+											</View>
+											<FlatList
+												data={vendorList}
+												renderItem={({item}) => <Item item={item} />}
+												keyExtractor={item => item.id}
+												showsVerticalScrollIndicator={false}
+											/>
+											<Pressable
+												style={[styles.button, styles.buttonClose]}
+												onPress={() => setModalVisibleVendor(!modalVisibleVendor)}>
+												<Text style={styles.textStyle}>Close</Text>
+											</Pressable>
+										</View>
+									</View>
+							</Modal>
+							
+							<Modal
+								animationType="slide"
+								transparent={true}
+								visible={modalVisibleSalesman}
+								onRequestClose={() => {
+									// Alert.alert('Modal has been closed.');
+									setModalVisibleSalesman(!modalVisibleSalesman);
+								}}>
+									<View style={styles.centeredView}>
+										<View style={styles.modalView}>
+											<View style={{paddingBottom: 10}}>
+												<Text>Select Salesman</Text>
+											</View>
+											<FlatList
+												data={salesman}
+												renderItem={({item}) => <Item item={item} />}
+												keyExtractor={item => item.id}
+												showsVerticalScrollIndicator={false}
+											/>
+											<Pressable
+												style={[styles.button, styles.buttonClose]}
+												onPress={() => setModalVisibleSalesman(!modalVisibleSalesman)}>
+												<Text style={styles.textStyle}>Close</Text>
+											</Pressable>
+										</View>
+									</View>
+							</Modal>
+							<View style={{paddingHorizontal: 20,paddingVertical: 10}}>
+								<Pressable
+									style={{ backgroundColor: secondaryBackgroundColor,padding:20,borderRadius: 10,width: '50%',marginBottom: 10}}
+									onPress={() => setModalVisible(true)}>
+									<Text style={{color: 'white',textAlign: 'center'}}>Select Vendor</Text>
+								</Pressable>
+								<Pressable
+									style={{ backgroundColor: secondaryBackgroundColor,padding:20,borderRadius: 10,width: '50%'}}
+									onPress={() => setModalVisible(true)}>
+									<Text style={{color: 'white',textAlign: 'center'}}>Select Salesman</Text>
+								</Pressable>
+							</View>
+							
+							
+
+							
+							{( showReadyDate )?
+								<DatePicker
+									style={{width: 200}}
+									date={getAddedDate(3)}
+									value={getAddedDate(3)}
+									mode="date"
+									placeholder="select date"
+									format="YYYY-MM-DD"
+									minDate={new Date()}
+									maxDate="2050-06-01"
+									confirmBtnText="Confirm"
+									cancelBtnText="Cancel"
+									customStyles={{
+										dateIcon: {
+											position: 'absolute',
+											left: 0,
+											top: 4,
+											marginLeft: 0
+										},
+										dateInput: {
+											marginLeft: 36
+										}
+									}}
+									onChange={() => {setshowReadyDate(false)}}
+									onDateChange={(date) => {console.log(date)}}
+								/>
 							:
 								null
 							}
-						</View>
+							<View style={{paddingHorizontal: 20,paddingVertical: 10}}>
+								<Pressable onPress={() => openReadyDate()} style={{ backgroundColor: secondaryBackgroundColor,padding:20,borderRadius: 10,width: '50%',marginBottom: 10}}>
+									<Text style={{color: 'white',textAlign: 'center'}}>Select Ready Date</Text>
+								</Pressable>
+								<Pressable onPress={() => openDeliveryDate()} style={{ backgroundColor: secondaryBackgroundColor,padding:20,borderRadius: 10,width: '50%'}}>
+									<Text style={{color: 'white',textAlign: 'center'}}>Select Delivery Date</Text>
+								</Pressable>
+							</View>
+							{( showDeliveryDate )?
+								<DatePicker
+									style={{width: 200}}
+									date={getAddedDate(6)}
+									value={getAddedDate(6)}
+									mode="date"
+									placeholder="select date"
+									format="YYYY-MM-DD"
+									minDate={new Date()}
+									maxDate="2050-06-01"
+									confirmBtnText="Confirm"
+									cancelBtnText="Cancel"
+									customStyles={{
+										dateIcon: {
+											position: 'absolute',
+											left: 0,
+											top: 4,
+											marginLeft: 0
+										},
+										dateInput: {
+											marginLeft: 36
+										}
+									}}
+									onChange={() => {setShowDeliveryDate(false)}}
 
-						
-						<View style={{alignItems: 'center'}}>
-							<TouchableOpacity onPress={() => {saveOrder()}} style={[{width: 'auto',backgroundColor: secondaryBackgroundColor,borderRadius: 10},padding15,justifyContentCenter]} >
-								<Text style={[{color: '#fff'} , h3,textAlignCenter]}>Generate New Order</Text>
-							</TouchableOpacity>
+									onDateChange={(date) => { console.log(date) }}
+								/>
+							:
+								null
+							}
 							
+
+							<View style={{paddingHorizontal: 20}}>
+								<TouchableOpacity
+									onPress={async () => {
+									try {
+										const pickerResult = await DocumentPicker.pick({
+											presentationStyle: 'fullScreen',
+											copyTo: 'cachesDirectory',
+											type: [types.images],
+										});
+										setPrductPhotoType(pickerResult[0].type);
+										setPrductPhotoData(pickerResult)
+									} catch (e) {
+										handleError(e)
+									}
+									}}
+									style={[{width: 'auto',backgroundColor: secondaryBackgroundColor,borderRadius: 10,marginBottom: 10},padding15,justifyContentCenter]}
+								>
+									<Text style={{color: '#fff',textAlign: 'center'}}>Upload Product Image</Text>
+								</TouchableOpacity>
+
+								{(productPhotoData != undefined && productPhotoData.length > 0)?
+									<View style={{ height: 200,width: 200 }}>
+										<ImageBackground source={{uri:productPhotoData[0].fileCopyUri}} style={{ height: '100%',width: '100%' }} resizeMode="center">
+
+										</ImageBackground>
+									</View>
+									// <Image source={{uri:productPhotoData[0].fileCopyUri}} style={{ height: 200,width: 200 }}/>
+								:
+									null
+								}
+								<TouchableOpacity
+									onPress={async () => {
+									try {
+										const pickerResult = await DocumentPicker.pick({
+											presentationStyle: 'fullScreen',
+											copyTo: 'cachesDirectory',
+											type: [types.images]
+										});
+										setPrductMeasureType(pickerResult[0].type);
+										setPrductMeasurementData(pickerResult)
+									} catch (e) {
+										handleError(e)
+									}
+									}}
+									style={[{width: 'auto',backgroundColor: secondaryBackgroundColor,borderRadius: 10,marginBottom: 10},padding15,justifyContentCenter]}
+								>
+									<Text style={{color: '#fff',textAlign: 'center'}}>Upload Product Measurement</Text>
+								</TouchableOpacity>
+
+								{(productMeasurementData != undefined && productMeasurementData.length > 0)?
+									<View style={{ height: 200,width: 200 }}>
+										<ImageBackground source={{uri:productMeasurementData[0].fileCopyUri}} style={{ height: '100%',width: '100%' }} resizeMode="center">
+
+										</ImageBackground>
+									</View>
+								:
+									null
+								}
+								
+								<TouchableOpacity
+									onPress={async () => {
+									try {
+										const pickerResult = await DocumentPicker.pick({
+											presentationStyle: 'fullScreen',
+											copyTo: 'cachesDirectory',
+											type: [types.video]
+										});
+										setPrductVideoType(pickerResult[0].type);
+										setProductVideoData(pickerResult);
+									} catch (e) {
+										handleError(e)
+									}
+									}}
+									style={[{width: 'auto',backgroundColor: secondaryBackgroundColor,borderRadius: 10,marginBottom: 10},padding15,justifyContentCenter]}
+								>
+									<Text style={{color: '#fff',textAlign: 'center'}}>Upload Product Video</Text>
+								</TouchableOpacity>
+								{(productVideoData != undefined && productVideoData.length > 0)?
+									<View style={{width: '100%' , height: 400}}>
+										<Video source={{uri: productVideoData[0].fileCopyUri }}
+											
+											style={styles.backgroundVideo}
+											controls={true}
+											ref={ref => (videoPlayer.current = ref)}
+											resizeMode="contain"
+											paused={true}
+										/>
+									</View>
+									
+								:
+									null
+								}
+							</View>
+
+							
+							<View style={{alignItems: 'center'}}>
+								<TouchableOpacity onPress={() => {saveOrder()}} style={[{width: 'auto',backgroundColor: secondaryBackgroundColor,borderRadius: 10},padding15,justifyContentCenter]} >
+									<Text style={[{color: '#fff'} , h3,textAlignCenter]}>Generate New Order</Text>
+								</TouchableOpacity>
+								
+							</View>
 						</View>
-					</View>
+					</ScrollView>
 				</ScrollView>
 				<View style={[{},height9]}>
 					<FooterComponent navigation={navigation} />
@@ -472,6 +611,51 @@ const styles = StyleSheet.create({
 	  inputSearchStyle: {
 		height: 40,
 		fontSize: 16,
+	  },
+	  centeredView: {
+		flex: 100,
+		justifyContent: 'center',
+		alignItems: 'center',
+		marginTop: 22,
+	  },
+	  modalView: {
+		borderColor: '#ededed',
+		borderWidth: 2,
+		margin: 20,
+		width: '80%',
+		height: 400,
+		backgroundColor: 'white',
+		borderRadius: 20,
+		padding: 10,
+		alignItems: 'center',
+		shadowColor: '#000',
+		shadowOffset: {
+		  width: 0,
+		  height: 2,
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 4,
+		elevation: 5,
+	  },
+	  button: {
+		borderRadius: 20,
+		padding: 10,
+		elevation: 2,
+	  },
+	  buttonOpen: {
+		backgroundColor: '#F194FF',
+	  },
+	  buttonClose: {
+		backgroundColor: '#2196F3',
+	  },
+	  textStyle: {
+		color: 'white',
+		fontWeight: 'bold',
+		textAlign: 'center',
+	  },
+	  modalText: {
+		marginBottom: 15,
+		textAlign: 'center',
 	  },
   });
 export default OrderCreate;
