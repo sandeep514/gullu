@@ -27,7 +27,7 @@ import DocumentPicker, {
 import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
-import { flexDirectionRow, h3, h4, h5, height100, height6, height85, height9, inputStyleBlack, justifyContentCenter, marginRight10, padding15, primaryBackgroundColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
+import { flexDirectionRow, h3, h4, h5, height100, height6, height85, height9, inputStyleBlack, justifyContentCenter, marginLeft10, marginRight10, padding15, primaryBackgroundColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
 import InputConponents from '../components/InputComponents';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
@@ -78,6 +78,17 @@ function OrderCreate({navigation}): JSX.Element {
   	const [open, setOpen] = useState(false)
   	const [showReadyDate, setshowReadyDate] = useState(false)
   	const [showDeliveryDate, setShowDeliveryDate] = useState(false)
+
+
+
+	const [selectedVendorId , SetSelectedVendorId] = useState();
+	const [selectedSalesmanId , SetSelectedSalesmanId] = useState();
+	const [selectedVendorName , SetSelectedVendorName] = useState();
+	const [selectedSalesmanName , SetSelectedSalesmanName] = useState();
+
+	const [readyDate , SetReadyDate] = useState();
+	const [deliveryDate , SetDeliveryDate] = useState();
+
 
 	const videoPlayer = React.useRef();
 
@@ -168,7 +179,6 @@ function OrderCreate({navigation}): JSX.Element {
 			let postedData = { role: 'vendor',api_token : token};
 			get('users/get' , postedData).then((res) => {
 				SetSalesmanList(res.data.data.data);
-				salesmanData = (res.data.data.data);
 			}).catch((err) => {
 				console.log(err)
 			});
@@ -176,62 +186,7 @@ function OrderCreate({navigation}): JSX.Element {
 		
 		});
 	}
-	useEffect(() => {
-		// if( productPhotoData.length > 0){
-		// 	getUriToBase64(productPhotoData[0].fileCopyUri).then((ees) => {
-		// 		setPrductPhotoResult(ees);
-		// 	});
-		// }
-	}, [productPhotoData]);
-
-	useEffect(() => {
-		// if( productMeasurementData.length > 0){
-		// 	getUriToBase64(productMeasurementData[0].fileCopyUri).then((ees) => {
-		// 		setProductMeasurementResult(ees);
-		// 	});
-		// }
-	}, [productMeasurementData]);
-	var items = [
-		{
-		  id: 1,
-		  name: 'JavaScript',
-		},
-		{
-		  id: 2,
-		  name: 'Java',
-		},
-		{
-		  id: 3,
-		  name: 'Ruby',
-		},
-		{
-		  id: 4,
-		  name: 'React Native',
-		},
-		{
-		  id: 5,
-		  name: 'PHP',
-		},
-		{
-		  id: 6,
-		  name: 'Python',
-		},
-		{
-		  id: 7,
-		  name: 'Go',
-		},
-		{
-		  id: 8,
-		  name: 'Swift',
-		},
-	  ];
-	useEffect(() => {
-		// if( productVideoData.length > 0){
-		// 	getUriToBase64(productVideoData[0].fileCopyUri).then((ees) => {
-		// 		setProductVideoResult(ees);
-		// 	});
-		// }
-	}, [productVideoData]);
+	
 
 	const handleError = (err: unknown) => {
 		if (DocumentPicker.isCancel(err)) {
@@ -251,7 +206,7 @@ function OrderCreate({navigation}): JSX.Element {
 		backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
 	};
 	const Item = ({item}:any) => (
-		<Pressable onPress={() => { }} style={styles.item}>
+		<Pressable onPress={() => { SetSelectedVendorId(item.id) ,SetSelectedVendorName(item.name) ,setModalVisibleVendor(false) }} style={styles.item}>
 			<View style={[{} , flexDirectionRow]}>
 				<View style={[marginRight10,{width:'100%',overflow: 'hidden' }]}>
 					<View style={[{} , flexDirectionRow]}> 
@@ -261,7 +216,19 @@ function OrderCreate({navigation}): JSX.Element {
 				</View>
 			</View>
 		</Pressable>
-  );
+  	);
+	const SalesmanListItem = ({item}:any) => (
+		<Pressable onPress={() => {console.log(item), SetSelectedSalesmanId(item.id), SetSelectedSalesmanName(item.name) , setModalVisibleSalesman(false) }} style={styles.item}>
+			<View style={[{} , flexDirectionRow]}>
+				<View style={[marginRight10,{width:'100%',overflow: 'hidden' }]}>
+					<View style={[{} , flexDirectionRow]}> 
+						<Text style={[{fontWeight: 'bold'},h5,marginRight10]}>{item.name}</Text>
+						<Text style={[{marginTop: 0},h5]}>{item.order_number}</Text>
+					</View>
+				</View>
+			</View>
+		</Pressable>
+	);
 
 	const getAddedDate = (numberOfDaysToAdd) => {
 		var someDate = new Date();
@@ -355,8 +322,8 @@ function OrderCreate({navigation}): JSX.Element {
 												<Text>Select Salesman</Text>
 											</View>
 											<FlatList
-												data={salesman}
-												renderItem={({item}) => <Item item={item} />}
+												data={salesmanList}
+												renderItem={({item}) => <SalesmanListItem item={item} />}
 												keyExtractor={item => item.id}
 												showsVerticalScrollIndicator={false}
 											/>
@@ -369,16 +336,24 @@ function OrderCreate({navigation}): JSX.Element {
 									</View>
 							</Modal>
 							<View style={{paddingHorizontal: 20,paddingVertical: 10}}>
-								<Pressable
-									style={{ backgroundColor: secondaryBackgroundColor,padding:20,borderRadius: 10,width: '50%',marginBottom: 10}}
-									onPress={() => setModalVisible(true)}>
-									<Text style={{color: 'white',textAlign: 'center'}}>Select Vendor</Text>
-								</Pressable>
-								<Pressable
-									style={{ backgroundColor: secondaryBackgroundColor,padding:20,borderRadius: 10,width: '50%'}}
-									onPress={() => setModalVisible(true)}>
-									<Text style={{color: 'white',textAlign: 'center'}}>Select Salesman</Text>
-								</Pressable>
+								<View style={{ flexDirection: 'row' }}>
+									<Pressable 
+										style={{ backgroundColor: secondaryBackgroundColor,padding:20,borderRadius: 10,width: '50%',marginBottom: 10}}
+										onPress={() => setModalVisibleVendor(true)}>
+										<Text style={{color: 'white',textAlign: 'center'}}>Select Vendor</Text>
+									</Pressable>
+
+									<Text style={[{ paddingVertical: 16 ,textTransform: 'capitalize'} , h4,marginLeft10]}>{selectedVendorName}</Text>
+								</View>
+								
+								<View style={{ flexDirection: 'row' }}>
+									<Pressable
+										style={{ backgroundColor: secondaryBackgroundColor,padding:20,borderRadius: 10,width: '50%'}}
+										onPress={() => setModalVisibleSalesman(true)}>
+										<Text style={{color: 'white',textAlign: 'center'}}>Select Salesman</Text>
+									</Pressable>
+									<Text style={[{ paddingVertical: 16 ,textTransform: 'capitalize'} , h4,marginLeft10]}>{selectedSalesmanName}</Text>
+								</View>
 							</View>
 							
 							
@@ -407,7 +382,7 @@ function OrderCreate({navigation}): JSX.Element {
 											marginLeft: 36
 										}
 									}}
-									onChange={() => {setshowReadyDate(false)}}
+									onChange={(date) => {setshowReadyDate(false), SetReadyDate(new Date(date.nativeEvent.timestamp))}}
 									onDateChange={(date) => {console.log(date)}}
 								/>
 							:
@@ -444,8 +419,7 @@ function OrderCreate({navigation}): JSX.Element {
 											marginLeft: 36
 										}
 									}}
-									onChange={() => {setShowDeliveryDate(false)}}
-
+									onChange={(date) => {setShowDeliveryDate(false), SetDeliveryDate(new Date(timestamp))}}
 									onDateChange={(date) => { console.log(date) }}
 								/>
 							:
