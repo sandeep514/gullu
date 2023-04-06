@@ -27,7 +27,7 @@ import DocumentPicker, {
 import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
-import { flexDirectionRow, h3, h4, h5, height100, height6, height85, height9, inputStyleBlack, justifyContentCenter, marginLeft10, marginRight10, padding15, primaryBackgroundColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
+import { flexDirectionRow, h3, h4, h5, height100, height6, height85, height9, inputStyle, inputStyleBlack, justifyContentCenter, marginLeft10, marginRight10, padding15, primaryBackgroundColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
 import InputConponents from '../components/InputComponents';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
@@ -46,7 +46,7 @@ import SearchableDropdown from "react-native-searchable-dropdown";
 function OrderCreate({navigation}): JSX.Element {
 	let salesmanData = {};
 	const [ activityIndicator , setActivityIndicator ] = useState(false);
-	const [order_number , setOrderNumber] = useState();
+	const [order_number , setOrderNumber] = useState("order12");
 	const [vendor , setVendor] = useState('1');
 	const [salesman , setSalesman] = useState('1');
 	const [color , setColor] = useState('red');
@@ -78,6 +78,7 @@ function OrderCreate({navigation}): JSX.Element {
   	const [open, setOpen] = useState(false)
   	const [showReadyDate, setshowReadyDate] = useState(false)
   	const [showDeliveryDate, setShowDeliveryDate] = useState(false)
+  	const [generatingMessage, setGeneratingMessage] = useState('Generating new order')
 
 
 
@@ -117,25 +118,28 @@ function OrderCreate({navigation}): JSX.Element {
 	let saveOrder = async () => {
 		
 			setActivityIndicator(true)
-			console.log(order_number)
-			if( order_number != '' && order_number != undefined && vendor != '' && vendor != undefined && salesman != '' && salesman != undefined && color != '' && color != undefined && item != '' && item != undefined ){
+			// console.log(order_number)
+			if( order_number != '' || order_number != undefined || vendor != '' || vendor != undefined || salesman != '' || salesman != undefined || color != '' || color != undefined || item != '' || item != undefined ){
 				var formData = new FormData();
-				formData.append('order_number', '999999');
-				formData.append('vendor', 1);
-				formData.append('salesman', 1);
+				formData.append('order_number', order_number);
+				formData.append('vendor', selectedVendorId);
+				formData.append('salesman', selectedSalesmanId);
 				formData.append('api_token', apitoken);
-				formData.append('color', 'red');
-				formData.append('item', 'previewImg');
+				formData.append('color', color);
+				formData.append('item', item);
 				// Attach file
 				formData.append('product_photo', productPhotoData[0]); 
 				formData.append('product_measurement', productMeasurementData[0]); 
 				formData.append('product_video', productVideoData[0]); 
-				console.log(formData)
+				// console.log(formData)
 				// var xhr = new XMLHttpRequest();
 				// xhr.open('POST', 'https://gullu.suryacontractors.com/public/api/orders/create');
 				// xhr.send(formData);
 				// console.log('xhr');
 				// console.log(xhr);
+				setTimeout(() => {
+					setGeneratingMessage('Uploading Attachments');
+				} , 5000)
 				let ress = await fetch('https://gullu.suryacontractors.com/public/api/orders/create', {
 					method: 'POST',
 					body: formData,
@@ -146,6 +150,7 @@ function OrderCreate({navigation}): JSX.Element {
 				let response = await ress.json();
 				if(response.data.status == true || response.data.status == 'true'){
 					showToast('Order generated');
+					navigation.push('orderlist');
 					setActivityIndicator(false)
 				}else{
 					showToast('error');
@@ -166,9 +171,9 @@ function OrderCreate({navigation}): JSX.Element {
 			let postedData = { role: 'vendor',api_token : token};
 			get('users/get' , postedData).then((res) => {
 				SetVendorList(res.data.data.data);
-				console.log(res.data.data.data);
+				// console.log(res.data.data.data);
 			}).catch((err) => {
-				console.log(err)
+				// console.log(err)
 			});
 		}).catch((err) => {
 
@@ -180,7 +185,7 @@ function OrderCreate({navigation}): JSX.Element {
 			get('users/get' , postedData).then((res) => {
 				SetSalesmanList(res.data.data.data);
 			}).catch((err) => {
-				console.log(err)
+				// console.log(err)
 			});
 		}).catch((err) => {
 		
@@ -233,7 +238,7 @@ function OrderCreate({navigation}): JSX.Element {
 	const getAddedDate = (numberOfDaysToAdd) => {
 		var someDate = new Date();
 		var result = someDate.setDate(someDate.getDate() + numberOfDaysToAdd);
-		console.log(new Date(result))
+		// console.log(new Date(result))
 		return new Date(result);
 	}
 	const openReadyDate = () => {
@@ -254,16 +259,16 @@ function OrderCreate({navigation}): JSX.Element {
         <View style={[{},height100 ,primaryBackgroundColor,{}]}>
 			<View style={[{} , height100]}>
 
-			{/* {(activityIndicator)? 
+			{(activityIndicator)? 
 				<View style={{zIndex: 99999}}>
 					<View style={[{position: 'absolute',top: 0,backgroundColor: secondaryBackgroundColor,left: 0,width: '100%',zIndex: 9999999,opacity: 0.8},screenheight,justifyContentCenter ]}>
 						<ActivityIndicator color="white" size={40}></ActivityIndicator>
-						<Text style={[{textAlign: 'center',color: '#fff'},h4]}>Generatig new order...</Text>
+						<Text style={[{textAlign: 'center',color: '#fff'},h4]}>{generatingMessage}...</Text>
 					</View>
 				</View>
 			:
 				null
-			}	 */}
+			}	
 				
 
 				
@@ -275,11 +280,11 @@ function OrderCreate({navigation}): JSX.Element {
 						
 						<View style={[{} , height85]} >
 								
-							<InputConponents placeholder="order number" inputValue={(value:any) => { setOrderNumber(value) }} style={inputStyleBlack} />
-							<InputConponents placeholder="vendor id" inputValue={(value:any) => { setVendor(value) }} style={inputStyleBlack} />
-							<InputConponents placeholder="salesman id" inputValue={(value:any) => { setSalesman(value) }} style={inputStyleBlack} />
-							<InputConponents placeholder="color" inputValue={(value:any) => { setColor(value) }} style={inputStyleBlack} />
-							<InputConponents placeholder="item" inputValue={(value:any) => { setItem(value) }} style={inputStyleBlack} />
+							<InputConponents placeholder="Order Number" inputValue={(value:any) => { setOrderNumber(value) }} style={inputStyle} />
+							{/* <InputConponents placeholder="Select Vendor" inputValue={(value:any) => { setVendor(value) }} style={inputStyle} />
+							<InputConponents placeholder="Select Salesman" inputValue={(value:any) => { setSalesman(value) }} style={inputStyle} /> */}
+							<InputConponents placeholder="Color" inputValue={(value:any) => { setColor(value) }} style={inputStyle} />
+							<InputConponents placeholder="Item" inputValue={(value:any) => { setItem(value) }} style={inputStyle} />
 							<Modal
 								animationType="slide"
 								transparent={true}
@@ -360,41 +365,67 @@ function OrderCreate({navigation}): JSX.Element {
 
 							
 							{( showReadyDate )?
-								<DatePicker
-									style={{width: 200}}
-									date={getAddedDate(3)}
-									value={getAddedDate(3)}
-									mode="date"
-									placeholder="select date"
-									format="YYYY-MM-DD"
-									minDate={new Date()}
-									maxDate="2050-06-01"
-									confirmBtnText="Confirm"
-									cancelBtnText="Cancel"
-									customStyles={{
-										dateIcon: {
-											position: 'absolute',
-											left: 0,
-											top: 4,
-											marginLeft: 0
-										},
-										dateInput: {
-											marginLeft: 36
-										}
-									}}
-									onChange={(date) => {setshowReadyDate(false), SetReadyDate(new Date(date.nativeEvent.timestamp))}}
-									onDateChange={(date) => {console.log(date)}}
-								/>
+								<View>
+									<DatePicker
+										style={{width: 200}}
+										date={getAddedDate(3)}
+										value={getAddedDate(3)}
+										mode="date"
+										placeholder="select date"
+										format="YYYY-MM-DD"
+										minDate={new Date()}
+										maxDate="2050-06-01"
+										confirmBtnText="Confirm"
+										cancelBtnText="Cancel"
+										customStyles={{
+											dateIcon: {
+												position: 'absolute',
+												left: 0,
+												top: 4,
+												marginLeft: 0
+											},
+											dateInput: {
+												marginLeft: 36
+											}
+										}}
+										onChange={(date) => {setshowReadyDate(false), SetReadyDate(new Date(date.nativeEvent.timestamp))}}
+										onDateChange={(date) => {console.log(date)}}
+									/>
+									
+								</View>
 							:
 								null
 							}
 							<View style={{paddingHorizontal: 20,paddingVertical: 10}}>
-								<Pressable onPress={() => openReadyDate()} style={{ backgroundColor: secondaryBackgroundColor,padding:20,borderRadius: 10,width: '50%',marginBottom: 10}}>
-									<Text style={{color: 'white',textAlign: 'center'}}>Select Ready Date</Text>
-								</Pressable>
-								<Pressable onPress={() => openDeliveryDate()} style={{ backgroundColor: secondaryBackgroundColor,padding:20,borderRadius: 10,width: '50%'}}>
-									<Text style={{color: 'white',textAlign: 'center'}}>Select Delivery Date</Text>
-								</Pressable>
+								<View style={{ flexDirection: 'row' }}>
+									<Pressable onPress={() => openReadyDate()} style={{ backgroundColor: secondaryBackgroundColor,padding:20,borderRadius: 10,width: '50%',marginBottom: 10}}>
+										<Text style={{color: 'white',textAlign: 'center'}}>Select Ready Date </Text>
+									</Pressable>
+									{(readyDate != undefined)?
+									
+										<View>
+											<Text style={[{ paddingVertical: 16 ,textTransform: 'capitalize'} , h4,marginLeft10]}>{readyDate.toString().substring(4, 15)}</Text>
+										</View>
+										:
+										null
+									}
+								</View>
+							
+								
+								<View style={{ flexDirection: 'row' }}>
+									<Pressable onPress={() => openDeliveryDate()} style={{ backgroundColor: secondaryBackgroundColor,padding:20,borderRadius: 10,width: '50%'}}>
+										<Text style={{color: 'white',textAlign: 'center'}}>Select Delivery Date</Text>
+									</Pressable>
+									{(deliveryDate != undefined)?
+									
+										<View>
+											<Text style={[{ paddingVertical: 16 ,textTransform: 'capitalize'} , h4,marginLeft10]}>{deliveryDate.toString().substring(4, 15)}</Text>
+										</View>
+										:
+										null
+									}
+								</View>
+								
 							</View>
 							{( showDeliveryDate )?
 								<DatePicker
@@ -419,7 +450,7 @@ function OrderCreate({navigation}): JSX.Element {
 											marginLeft: 36
 										}
 									}}
-									onChange={(date) => {setShowDeliveryDate(false), SetDeliveryDate(new Date(timestamp))}}
+									onChange={(date) => {setShowDeliveryDate(false), SetDeliveryDate(new Date(date.nativeEvent.timestamp))}}
 									onDateChange={(date) => { console.log(date) }}
 								/>
 							:
@@ -491,6 +522,7 @@ function OrderCreate({navigation}): JSX.Element {
 									try {
 										const pickerResult = await DocumentPicker.pick({
 											presentationStyle: 'fullScreen',
+											
 											copyTo: 'cachesDirectory',
 											type: [types.video]
 										});

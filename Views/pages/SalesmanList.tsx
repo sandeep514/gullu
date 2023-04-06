@@ -9,6 +9,7 @@ import {
   Text,
   ActivityIndicator,
   useColorScheme,
+  Pressable,
   View,
 } from 'react-native';
 
@@ -19,9 +20,8 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import { cardBackgroundColor, h1, h2, h3, height10, height100, height20, height50, height6, height80, height85, height9, height90, height95, padding20, primaryBackgroundColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
+import { h3, height100, height6, height85, height9, primaryBackgroundColor, primaryColor, secondaryBackgroundColor, textAlignCenter} from '../assets/styles';
 import HeaderComponent from '../components/HeaderComponent';
-import InputConponents from '../components/InputComponents';
 import FooterComponent from '../components/FooterComponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { get } from '../services/services';
@@ -44,6 +44,7 @@ function SalesmanList({navigation}): JSX.Element {
 	};
 	useEffect(() => {
 		getSalesmanList();
+		console.log("ujk");
 	} , []);
 	const getSalesmanList = () => {
 		setActivityIndicator(true)
@@ -57,7 +58,7 @@ function SalesmanList({navigation}): JSX.Element {
 			}).catch((err) => {
 				setActivityIndicator(false)
 
-				console.log(err)
+				// console.log(err)
 			});
 
 		}).catch((err) => {
@@ -66,10 +67,10 @@ function SalesmanList({navigation}): JSX.Element {
 	}
 	
 	const Item = ({item}:any) => (
-		<View style={styles.item}>
+		<Pressable onPress={() => {navigation.push('salesmanEdit' , {salesmanId : item.id})}}  style={styles.item}>
 			<Text style={[{},h3]}>{item.name}</Text>
 			<Text style={[{},h3]}>{item.phone}</Text>
-		</View>
+		</Pressable>
 	);
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -93,7 +94,11 @@ function SalesmanList({navigation}): JSX.Element {
 						showsVerticalScrollIndicator={false}
 					/>
 				}
+				<Pressable onPress={() => { navigation.push('SalesmanCreate') }} style={[{backgroundColor: secondaryBackgroundColor,height: 70 ,width: 70,padding: 0,margin:0 ,borderRadius: 100,right: 10,position: 'absolute',bottom: 0,borderColor: primaryColor ,borderWidth: 5}]}>
+					<Text style={[{fontSize: 50,padding: 0,margin: 0,top: -5}, textAlignCenter]}>+</Text>
+				</Pressable>
 				</View>
+				
 				<View style={[{},height9]}>
 					<FooterComponent navigation={navigation} />
 				</View>

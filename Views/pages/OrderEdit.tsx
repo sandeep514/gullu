@@ -60,7 +60,7 @@ function OrderEdit({ navigation, route }): JSX.Element {
 		}
 
 		AsyncStorage.getItem('api_token').then((token) => {
-			console.log(token);
+			// console.log(token);
 		}).catch((err) => {
 
 		});
@@ -76,13 +76,13 @@ function OrderEdit({ navigation, route }): JSX.Element {
 		AsyncStorage.getItem('api_token').then((token) => {
 			let postedData = { 'status': status,'api_token' : token ,'applicationId' : item?.id };
 			get('/update/order/status' , postedData).then((res) => {
-				console.log(res.data.data.data);			
+				// console.log(res.data.data.data);			
 				setItem(res.data.data.data);
 				setLoader(false);
 				setDataUpdated(true);
 			}).catch((err) => {
 				setLoader(false);
-				console.log(err)
+				// console.log(err)
 			});
 
 		}).catch((err) => {
@@ -235,7 +235,7 @@ function OrderEdit({ navigation, route }): JSX.Element {
 
 											{( item?.status == 2 || item?.status == 3 )?
 												<View style={{width: '100%'}}>
-													<Text style={{color: '#fff'}}>Order Ready on {item?.ready_date} </Text>
+													<Text style={{color: '#fff'}}>Order Ready </Text>
 												</View>
 											:
 												null
@@ -243,6 +243,13 @@ function OrderEdit({ navigation, route }): JSX.Element {
 											
 
 
+											{( role == 1 && item?.status == 1)?
+												<View style={{width: '100%'}}>
+													<Text style={{color: secondaryBackgroundColor}}>Order not Ready yet.</Text>
+												</View>
+											:
+												null
+											}
 											{( role == 2 && item?.status == 1)?
 													<View>
 														<View style={{width: '100%'}}>

@@ -56,8 +56,8 @@ function Section({children, title}: SectionProps): JSX.Element {
 }
 
 function Login({navigation}): JSX.Element {
-	const [ email , setEmail ] = useState('1234567890');
-	const [ password , setPassword ] = useState('123456');
+	const [ email , setEmail ] = useState();
+	const [ password , setPassword ] = useState();
 
 	const [ validationError , setValidationError ] = useState('');
 	const [ activityIndicator , setActivityIndicator ] = useState(false);
@@ -78,24 +78,35 @@ function Login({navigation}): JSX.Element {
 		setActivityIndicator(true)
 		setValidationError('');
 		// if( ValidateEmail(email) ){
-			let params = {email : email , password: password};
 
-			post('/login' ,params ).then((res:any) => {
-				AsyncStorage.setItem('api_token' , res.data.api_token);
-				AsyncStorage.setItem('email' , res.data.email);
-				AsyncStorage.setItem('id' , (res.data.id).toString());
-				AsyncStorage.setItem('name' , res.data.name);
-				AsyncStorage.setItem('phone' , res.data.phone);
-				AsyncStorage.setItem('role' , res.data.role);
+			if( email != '' && email != undefined && password != '' && password != undefined ){
+				console.log("jhb");
+				let params = {email : email , password: password};
 
+				post('/login' ,params ).then((res:any) => {
+					AsyncStorage.setItem('api_token' , res.data.api_token);
+					AsyncStorage.setItem('email' , res.data.email);
+					AsyncStorage.setItem('id' , (res.data.id).toString());
+					AsyncStorage.setItem('name' , res.data.name);
+					AsyncStorage.setItem('phone' , res.data.phone);
+					AsyncStorage.setItem('role' , res.data.role);
+	
+					setActivityIndicator(false)
+					navigation.push('Home')
+	
+				}).catch((error) => {
+					setActivityIndicator(false)
+					setActivityIndicator(false)
+					
+					// console.log(error);
+				})
+			}else{
+				console.log("kuhn");
+				setValidationError('Required fields are missing.');
 				setActivityIndicator(false)
-				navigation.navigate('Home')
 
-			}).catch((error) => {
-				setActivityIndicator(false)
-
-				console.log(error);
-			})
+			}
+			
 		// }else{
 		// 	setValidationError('Email is not valid.');
 		// 	setActivityIndicator(false)

@@ -17,7 +17,7 @@ function HeaderComponent( {title , navigation} ): JSX.Element {
                     <Image source={require('../assets/images/NicePng_hamburger-menu-icon-png_2660273.png')} style={{ height: 20,width: 20 }} />
                 </Pressable>
                 <Text style={{ color: 'white' , fontSize: 17 , textTransform: 'capitalize' }}>{title}</Text>
-                <Pressable style={{paddingHorizontal: 10}} onPress={() => {}}>
+                <Pressable style={{paddingHorizontal: 10}} onPress={() => {navigation.push('Home')}}>
                     <Image source={require('../assets/images/NicePng_logo-instagram-blanco-png_3953291.png')} style={{ height: 20,width: 20 }} />
                 </Pressable>
             </View>

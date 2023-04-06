@@ -16,6 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import SalesmanCreate from './Views/pages/SalesmanCreate';
 import VendorEdit from './Views/pages/VendorEdit';
 import OrderEdit from './Views/pages/OrderEdit';
+import SalesmanEdit from './Views/pages/SalesmanEdit';
 
 const Stack = createNativeStackNavigator();
 
@@ -45,6 +46,7 @@ function App(): JSX.Element {
 				<Stack.Screen name="ordercreate" component={OrderCreate} options={{ headerShown: false }} />
 				<Stack.Screen name="orderlist" component={OrderList} options={{ headerShown: false }} />
 				<Stack.Screen name="salesmanlist" component={SalesmanList} options={{ headerShown: false }} />
+				<Stack.Screen name="salesmanEdit" component={SalesmanEdit} options={{ headerShown: false }} />
 				<Stack.Screen name="vendorcreate" component={VendorCreate} options={{ headerShown: false }} />
 				<Stack.Screen name="vendorlist" component={VendorList} options={{ headerShown: false }} />
 				<Stack.Screen name="SalesmanCreate" component={SalesmanCreate} options={{ headerShown: false }} />

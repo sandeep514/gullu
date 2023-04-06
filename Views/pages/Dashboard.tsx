@@ -65,7 +65,7 @@ function Dashboard({ navigation }): JSX.Element {
 		AsyncStorage.getItem('role').then((roleId) => {
 			setRole(roleId);
 		}).catch((err) =>{
-			console.log(err);
+			// console.log(err);
 		})
 		getData();
 		
@@ -97,7 +97,7 @@ function Dashboard({ navigation }): JSX.Element {
 		backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
 	};
 	const Item = ({item}:any) => (
-		<Pressable onPress={() => { navigation.navigate('orderEdit' , { 'orderData' : item}) }} style={styles.item}>
+		<Pressable onPress={() => { navigation.push('orderEdit' , { 'orderData' : item}) }} style={styles.item}>
 			<View style={[{} , flexDirectionRow]}>
 				<View style={[marginRight10,{width:'60%',overflow: 'hidden' }]}>
 					<View style={[{} , flexDirectionRow]}> 
@@ -140,7 +140,7 @@ function Dashboard({ navigation }): JSX.Element {
 			<View style={[height100, primaryBackgroundColor, {}]}>
 				<View style={[{}, height100]}>
 					<View style={[{}, height6]}>
-						<HeaderComponent navigation={navigation} title="title" />
+						<HeaderComponent navigation={navigation} title="Pending Orders" />
 					</View>
 
 					<View style={[{}, height85]} >
@@ -166,7 +166,7 @@ function Dashboard({ navigation }): JSX.Element {
 							
 						</View>
 						{(role != undefined && role == 1)?
-							<Pressable onPress={() => { navigation.navigate('ordercreate') }} style={[{backgroundColor: secondaryBackgroundColor,height: 70 ,width: 70,padding: 0,margin:0 ,borderRadius: 100,right: 10,position: 'absolute',bottom: 0,borderColor: primaryColor ,borderWidth: 5}]}>
+							<Pressable onPress={() => { navigation.push('ordercreate') }} style={[{backgroundColor: secondaryBackgroundColor,height: 70 ,width: 70,padding: 0,margin:0 ,borderRadius: 100,right: 10,position: 'absolute',bottom: 0,borderColor: primaryColor ,borderWidth: 5}]}>
 								<Text style={[{fontSize: 50,padding: 0,margin: 0,top: -5}, textAlignCenter]}>+</Text>
 							</Pressable>
 						:

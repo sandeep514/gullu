@@ -24,7 +24,7 @@ import {  h3, height100, height6, height85, height9, inputStyle, justifyContentC
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { get, post, showToast } from '../services/services';
 
-function VendorEdit({navigation , route}): JSX.Element {
+function SalesmanEdit({navigation , route}): JSX.Element {
 	const [loader , setLoader ] = useState(false);
 	const [getLoader , setGetLoader ] = useState(false);
 	const [data , SetData ] = useState({});
@@ -38,18 +38,18 @@ function VendorEdit({navigation , route}): JSX.Element {
 
   	const isDarkMode = useColorScheme() === 'dark';
   	useEffect(()=> {
-        var vendorId = route.params.vendorId;
-        getVendorDetails(vendorId);
+        var salesmanId = route.params.salesmanId;
+        getSalesmanDetails(salesmanId);
         // console.log("jik");
 	} , []);
-    const getVendorDetails = (vendorId) => {
+    const getSalesmanDetails = (salesmanId) => {
 		setGetLoader(true)
 		AsyncStorage.getItem('api_token').then((token) => {
-			let postedData = {role:'vendor', id: vendorId, api_token : token};
+			let postedData = {role:'salesman', id: salesmanId, api_token : token};
 			get('users/get' , postedData).then((res) => {
 				setGetLoader(false)
 				SetData(res.data.data.data);
-
+				
 				setName(data.name);
 				setEmail(data.email);
 				setCode(data.code);
@@ -67,19 +67,15 @@ function VendorEdit({navigation , route}): JSX.Element {
 	const backgroundStyle = {
 		backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
 	};
-	const submitVendor = () => {                                                                                                                 
+	const submitSalesman = () => {                                                                                                                 
 		setLoader(true)
-		console.log(name
-			,email
-			,code
-			,phone)
 		AsyncStorage.getItem('api_token').then((token) => {
-			if( phone.length == 10){
+			if(phone.length == 10){
 				if( name != '' && email != '' && code != '' && phone != ''){
 					let postedData = { name : name , email: email, code : code , password: password , phone: phone , role: role ,api_token : token , id: data.id};
 					post('/users/edit' , postedData).then((res) => {
 						showToast(res.message);
-						getVendorDetails(data.id);
+						getSalesmanDetails(data.id);
 						setLoader(false);
 					}).catch((err) => {
 						// console.log(err);
@@ -109,7 +105,7 @@ function VendorEdit({navigation , route}): JSX.Element {
         <View style={[{},height100 ,primaryBackgroundColor,{}]}>
 			<View style={[{} , height100]}>
 				<View style={[{},height6]}>
-                    <HeaderComponent navigation={navigation} title="Vendor edit" />
+                    <HeaderComponent navigation={navigation} title="Salesman edit" />
                 </View>
 				<View style={[{} , height85]} >
 					{(getLoader)?
@@ -124,8 +120,8 @@ function VendorEdit({navigation , route}): JSX.Element {
 
 							{(!loader)?
 							<View style={{alignItems: 'center'}}>
-								<TouchableOpacity onPress={() => { submitVendor() }} style={[{width: 'auto',backgroundColor: secondaryBackgroundColor,borderRadius: 10},padding15,justifyContentCenter]} >
-									<Text style={[{color: '#fff'} , h3,textAlignCenter]}>Update Vendor</Text>
+								<TouchableOpacity onPress={() => { submitSalesman() }} style={[{width: 'auto',backgroundColor: secondaryBackgroundColor,borderRadius: 10},padding15,justifyContentCenter]} >
+									<Text style={[{color: '#fff'} , h3,textAlignCenter]}>Update Salesman</Text>
 								</TouchableOpacity>
 							</View>
 							:
@@ -163,4 +159,4 @@ const styles = StyleSheet.create({
 	},
   });
 
-export default VendorEdit;
+export default SalesmanEdit;

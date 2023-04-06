@@ -54,23 +54,30 @@ function SalesmanCreate({navigation}): JSX.Element {
 	const submitSalesman = () => {
 		setLoader(true);
 		AsyncStorage.getItem('api_token').then((token) => {
-			if( name != '' && code != '' && password != '' && phone != ''){
-				let postedData = { name: name , code: code , password: password , phone: phone , role: role ,api_token: token};
-				post('/users/create' , postedData).then((res) => {
-					if(res.status == true){
-						showToast(res.message);
-					}else{
-						showToast(res.message)
-					}
-					setLoader(false);
-				}).catch((err) => {
-					showToast(err.message);
-					setLoader(false);
-				});	
-			}else{
-				showToast("Required field is missing.");
-				setLoader(false);
 
+			if( phone.length == 10){
+				if( name != '' && code != '' && password != '' && phone != ''){
+					let postedData = { name: name , code: code , password: password , phone: phone , role: role ,api_token: token};
+					post('/users/create' , postedData).then((res) => {
+						if(res.status == true){
+							showToast(res.message);
+						}else{
+							showToast(res.message)
+						}
+						setLoader(false);
+						navigation.push('salesmanlist');
+					}).catch((err) => {
+						showToast(err.message);
+						setLoader(false);
+					});	
+				}else{
+					showToast("Required field is missing.");
+					setLoader(false);
+
+				}
+			}else{
+				showToast("Mobile number should be 10 digit.");
+				setLoader(false);
 			}
 			
 		}).catch(() => {

@@ -27,6 +27,7 @@ import FooterComponent from '../components/FooterComponent';
 import { get } from '../services/services';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { imagePath } from '../services/Client';
+import { ActivityIndicator } from 'react-native';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -37,6 +38,7 @@ function OrderList({navigation}): JSX.Element {
   	const isDarkMode = useColorScheme() === 'dark';
 
 
+	const [loader , setLoader] = useState(false);
 	const [pending , setPending] = useState({});
 	const [ready , setReady] = useState({});
 	const [delivered , setDelivered] = useState({});
@@ -55,6 +57,7 @@ function OrderList({navigation}): JSX.Element {
 	useEffect(() => {
 		SetSelectedOrderStatus('pending');
 		AsyncStorage.getItem('api_token').then((token) => {
+			setLoader(true)
 			let postedData = { role: 'salesman',api_token : token};
 			get('/orders/list' , postedData).then((res) => {
 				let pending = res.data.data.data['pending'];
@@ -71,13 +74,14 @@ function OrderList({navigation}): JSX.Element {
 				// console.log(mergedArray2);
 				SetSelectedOrderData(res.data.data.data['pending']);
 				// SetData(res.data.data.data);
-
+				setLoader(false)
 			}).catch((err) => {
-				console.log(err)
+				setLoader(false)
+				// console.log(err)
 			});
 
 		}).catch((err) => {
-
+			setLoader(false)
 		});
 	} , [])
 
@@ -86,7 +90,7 @@ function OrderList({navigation}): JSX.Element {
 		let newSearchableArray = [];
 		if( allOrdersList.length > 0 ){
 			allOrdersList.filter((list) => {
-				let searchableLowercase = (list.entry_number).toLowerCase();
+				let searchableLowercase = (list.order_number).toLowerCase();
 				if(searchableLowercase.includes((searchableText).toLowerCase())){ 
 					newSearchableArray.push(list)
 
@@ -100,7 +104,7 @@ function OrderList({navigation}): JSX.Element {
 	}
   
   const Item = ({item}:any) => (
-		<Pressable onPress={() => { navigation.navigate('orderEdit' , { 'orderData' : item}) }} style={styles.item}>
+		<Pressable onPress={() => { navigation.push('orderEdit' , { 'orderData' : item}) }} style={styles.item}>
 			<View style={[{} , flexDirectionRow]}>
 				<View style={[marginRight10,{width:'60%',overflow: 'hidden' }]}>
 					<View style={[{} , flexDirectionRow]}> 
@@ -154,33 +158,41 @@ function OrderList({navigation}): JSX.Element {
         <View style={[{},height100 ,primaryBackgroundColor,{}]}>
 			<View style={[{} , height100]}>
 				<View style={[{},height6]}>
-                    <HeaderComponent navigation={navigation} title="title"  />
+                    <HeaderComponent navigation={navigation} title="List Orders"  />
                 </View>
 				<View style={[{},height85]} >
 
-					<View style={[{},height15]}>
-						<InputConponents placeholder="search order" style={[{} , inputStyle]} inputValue={(value:any) => { searchOrder(value) }}/>
-					</View>
-					<View style={[{} , height85]}>
-						<View style={{justifyContent: 'space-around',flexDirection: 'row'}}>
-							<Pressable onPress={() => { checkOrderStatus('pending') }} style={[{width: '30%',borderRadius: 10},padding10,justifyContentCenter, (selectedOrderStatus == "pending")? {backgroundColor: secondaryBackgroundColor} : {borderColor: secondaryBackgroundColor , borderWidth: 2}]}>
-								<Text style={[{textAlign: 'center' , fontSize: 18} , (selectedOrderStatus == "pending")? { } : {color : secondaryBackgroundColor}]}>Pending</Text>
-							</Pressable>
-							<Pressable onPress={() => { checkOrderStatus('ready') }} style={[{width: '30%',borderRadius: 10},padding10,justifyContentCenter, (selectedOrderStatus == "ready")? {backgroundColor: secondaryBackgroundColor} : {borderColor: secondaryBackgroundColor , borderWidth: 2}]}>
-								<Text style={[{textAlign: 'center' , fontSize: 18} , (selectedOrderStatus == "ready")? {} : {color: secondaryBackgroundColor}]}>Ready</Text>
-							</Pressable>
-							<Pressable onPress={() => { checkOrderStatus('delivered') }} style={[{width: '30%',borderRadius: 10},padding10,justifyContentCenter, (selectedOrderStatus == "delivered")? {backgroundColor: secondaryBackgroundColor} : {borderColor: secondaryBackgroundColor , borderWidth: 2}]}>
-								<Text style={[{textAlign: 'center' , fontSize: 18} , (selectedOrderStatus == "delivered")? {} : {color: secondaryBackgroundColor}]}>Delivered</Text>
-							</Pressable>
+					{(loader)?
+						<ActivityIndicator size={30} color='white'/>
+
+					:
+						<View>
+							<View style={[{},height15]}>
+								<InputConponents placeholder="search order" style={[{} , inputStyle]} inputValue={(value:any) => { searchOrder(value) }}/>
+							</View>
+							<View style={[{} , height85]}>
+								<View style={{justifyContent: 'space-around',flexDirection: 'row'}}>
+									<Pressable onPress={() => { checkOrderStatus('pending') }} style={[{width: '30%',borderRadius: 10},padding10,justifyContentCenter, (selectedOrderStatus == "pending")? {backgroundColor: secondaryBackgroundColor} : {borderColor: secondaryBackgroundColor , borderWidth: 2}]}>
+										<Text style={[{textAlign: 'center' , fontSize: 18} , (selectedOrderStatus == "pending")? { } : {color : secondaryBackgroundColor}]}>Pending</Text>
+									</Pressable>
+									<Pressable onPress={() => { checkOrderStatus('ready') }} style={[{width: '30%',borderRadius: 10},padding10,justifyContentCenter, (selectedOrderStatus == "ready")? {backgroundColor: secondaryBackgroundColor} : {borderColor: secondaryBackgroundColor , borderWidth: 2}]}>
+										<Text style={[{textAlign: 'center' , fontSize: 18} , (selectedOrderStatus == "ready")? {} : {color: secondaryBackgroundColor}]}>Ready</Text>
+									</Pressable>
+									<Pressable onPress={() => { checkOrderStatus('delivered') }} style={[{width: '30%',borderRadius: 10},padding10,justifyContentCenter, (selectedOrderStatus == "delivered")? {backgroundColor: secondaryBackgroundColor} : {borderColor: secondaryBackgroundColor , borderWidth: 2}]}>
+										<Text style={[{textAlign: 'center' , fontSize: 18} , (selectedOrderStatus == "delivered")? {} : {color: secondaryBackgroundColor}]}>Delivered</Text>
+									</Pressable>
+								</View>
+								<FlatList
+									data={selectedOrderData}
+									renderItem={({item}) => <Item item={item} />}
+									keyExtractor={item => item.id}
+									showsVerticalScrollIndicator={false}
+								/>
+							</View>
+						
 						</View>
-						<FlatList
-							data={selectedOrderData}
-							renderItem={({item}) => <Item item={item} />}
-							keyExtractor={item => item.id}
-							showsVerticalScrollIndicator={false}
-						/>
+					}
 					</View>
-				</View>
 				<View style={[{},height9]}>
 					<FooterComponent navigation={navigation} />
 				</View>

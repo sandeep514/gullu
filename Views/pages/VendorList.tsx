@@ -20,7 +20,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import { cardBackgroundColor, h1, h2, h3, height10, height100, height20, height50, height6, height80, height85, height9, height90, padding20, primaryBackgroundColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
+import { cardBackgroundColor, h1, h2, h3, height10, height100, height20, height50, height6, height80, height85, height9, height90, padding20, primaryBackgroundColor, primaryColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
 import InputConponents from '../components/InputComponents';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
@@ -67,7 +67,7 @@ function VendorList({navigation}): JSX.Element {
 	}
 	
 	const Item = ({item}:any) => (
-		<Pressable onPress={() => {navigation.navigate('vendorEdit' , {vendorId : item.id})}} style={styles.item}>
+		<Pressable onPress={() => {navigation.push('vendorEdit' , {vendorId : item.id})}} style={styles.item}>
 			<Text style={[{},h3]}>{item.name}</Text>
 			<Text style={[{},h3]}>{item.phone}</Text>
 		</Pressable>
@@ -94,7 +94,9 @@ function VendorList({navigation}): JSX.Element {
 							showsVerticalScrollIndicator={false}
 						/>
 					}
-					
+					<Pressable onPress={() => { navigation.push('vendorcreate') }} style={[{backgroundColor: secondaryBackgroundColor,height: 70 ,width: 70,padding: 0,margin:0 ,borderRadius: 100,right: 10,position: 'absolute',bottom: 0,borderColor: primaryColor ,borderWidth: 5}]}>
+						<Text style={[{fontSize: 50,padding: 0,margin: 0,top: -5}, textAlignCenter]}>+</Text>
+					</Pressable>
 				</View>
 				<View style={[{},height9]}>
 					<FooterComponent navigation={navigation} />

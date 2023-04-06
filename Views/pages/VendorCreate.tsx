@@ -43,24 +43,36 @@ function VendorCreate({navigation}): JSX.Element {
 	};
 	const submitVendor = () => {
 		setLoader(true)
-		AsyncStorage.getItem('api_token').then((token) => {
-			if( name != '' && code != '' && password != '' && phone != ''){
-				let postedData = { name : name , email: email, code : code , password: password , phone: phone , role: role ,api_token : token};
-				post('/users/create' , postedData).then((res) => {
-					showToast(res.message);
+		console.log("uhnjik");
+		if(name != undefined && name != '' &&code != undefined && code != '' && password != undefined && password != '' && phone != undefined && phone != ''){
+			AsyncStorage.getItem('api_token').then((token) => {
+				if( phone.length == 10){
+					console.log('phone')
+					
+						console.log('in')
+						let postedData = { name : name , email: email, code : code , password: password , phone: phone , role: role ,api_token : token};
+						post('/users/create' , postedData).then((res) => {
+							showToast(res.message);
+							setLoader(false);
+							navigation.push('vendorlist');
+						}).catch((err) => {
+							// console.log(err);
+							setLoader(false);
+							showToast(err.message);
+						});
+					
+				}else{
+					showToast("Mobile number should be 10 digit.");
 					setLoader(false);
-				}).catch((err) => {
-					console.log(err);
-					setLoader(false);
-					showToast(err.message);
-				});
-			}else{
-				showToast("Required field is missing.");
+				}
+			}).catch((err) => {
+				console.log(err);
 				setLoader(false);
-			}
-		}).catch(() => {
+			});
+		}else{
+			showToast("Required field is missing.");
 			setLoader(false);
-		});
+		}
 	}
 
 
@@ -78,7 +90,7 @@ function VendorCreate({navigation}): JSX.Element {
 				<View style={[{} , height85]} >
 
 					<InputConponents placeholder="Name" inputValue={(value:any) => { setName(value) }} style={inputStyle} />
-					{/* <InputConponents placeholder="Email" inputValue={(value:any) => { setEmail(value) }} style={inputStyle} /> */}
+					<InputConponents placeholder="Email" inputValue={(value:any) => { setEmail(value) }} style={inputStyle} />
 					<InputConponents placeholder="Code" inputValue={(value:any) => { setCode(value) }} style={inputStyle} />
 					<InputConponents placeholder="Password" inputValue={(value:any) => { setPassword(value) }} style={inputStyle} />
 					<InputConponents placeholder="Phone" inputValue={(value:any) => { setPhone(value) }} style={inputStyle} />

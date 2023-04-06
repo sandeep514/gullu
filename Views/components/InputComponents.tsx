@@ -9,7 +9,7 @@ import { inputStyle, inputStyleBlack, secondaryBackgroundColor } from '../assets
 function InputConponents( {placeholder, value=null , inputValue ,style} :any): JSX.Element {
 	const [ changedValue ,setChangeValue ] = useState();
   useEffect(() => {
-    console.log(style);
+    // console.log(style);
   } , [])
 
 	const onChnageText = (value:any) => {
