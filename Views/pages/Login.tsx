@@ -56,8 +56,8 @@ function Section({children, title}: SectionProps): JSX.Element {
 }
 
 function Login({navigation}): JSX.Element {
-	const [ email , setEmail ] = useState();
-	const [ password , setPassword ] = useState();
+	const [ email , setEmail ] = useState('admin@gmail.com');
+	const [ password , setPassword ] = useState('123456');
 
 	const [ validationError , setValidationError ] = useState('');
 	const [ activityIndicator , setActivityIndicator ] = useState(false);

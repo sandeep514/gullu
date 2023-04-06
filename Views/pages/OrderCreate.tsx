@@ -90,6 +90,7 @@ function OrderCreate({navigation}): JSX.Element {
 	const [readyDate , SetReadyDate] = useState();
 	const [deliveryDate , SetDeliveryDate] = useState();
 
+	const [percentage, setPercentage] = useState(0);
 
 	const videoPlayer = React.useRef();
 
@@ -120,17 +121,56 @@ function OrderCreate({navigation}): JSX.Element {
 			setActivityIndicator(true)
 			// console.log(order_number)
 			if( order_number != '' || order_number != undefined || vendor != '' || vendor != undefined || salesman != '' || salesman != undefined || color != '' || color != undefined || item != '' || item != undefined ){
-				var formData = new FormData();
-				formData.append('order_number', order_number);
-				formData.append('vendor', selectedVendorId);
-				formData.append('salesman', selectedSalesmanId);
-				formData.append('api_token', apitoken);
-				formData.append('color', color);
-				formData.append('item', item);
+				// var formData = new FormData();
+				// formData.append('order_number', order_number);
+				// formData.append('vendor', selectedVendorId);
+				// formData.append('salesman', selectedSalesmanId);
+				// formData.append('api_token', apitoken);
+				// formData.append('color', color);
+				// formData.append('item', item);
+				// // Attach file
+				// formData.append('product_photo', productPhotoData[0]); 
+				// formData.append('product_measurement', productMeasurementData[0]); 
+				// formData.append('product_video', productVideoData[0]); 
+
+				let data = new FormData();
+				data.append('order_number', order_number);
+				data.append('vendor', selectedVendorId);
+				data.append('salesman', selectedSalesmanId);
+				data.append('api_token', apitoken);
+				data.append('color', color);
+				data.append('item', item);
 				// Attach file
-				formData.append('product_photo', productPhotoData[0]); 
-				formData.append('product_measurement', productMeasurementData[0]); 
-				formData.append('product_video', productVideoData[0]); 
+				data.append('product_photo', productPhotoData[0]); 
+				data.append('product_measurement', productMeasurementData[0]); 
+				data.append('product_video', productVideoData[0]); 
+
+
+				let xhr = new XMLHttpRequest();
+				xhr.upload.addEventListener('progress', (event) => {
+					if (event.lengthComputable) {
+						let percent = Math.round((event.loaded / event.total) * 100);
+						setInterval(() => {
+							let newPercentage = ((percentage)+3);
+							console.log(newPercentage);
+							if(((percentage)+3) <= 100 ){
+								setPercentage(((percentage)+3));
+								console.log(`Upload progress: ${((percentage)+3)}%`);
+							}
+
+						} , 3000)
+
+						if( percent == 100 ){
+							setActivityIndicator(false)
+						}
+						// Update progress bar here
+					}
+				});
+
+				xhr.open('POST', 'https://gullu.suryacontractors.com/public/api/orders/create');
+				xhr.send(data);
+
+
 				// console.log(formData)
 				// var xhr = new XMLHttpRequest();
 				// xhr.open('POST', 'https://gullu.suryacontractors.com/public/api/orders/create');
@@ -140,22 +180,22 @@ function OrderCreate({navigation}): JSX.Element {
 				setTimeout(() => {
 					setGeneratingMessage('Uploading Attachments');
 				} , 5000)
-				let ress = await fetch('https://gullu.suryacontractors.com/public/api/orders/create', {
-					method: 'POST',
-					body: formData,
-					headers: {
-						'Content-Type': 'multipart/form-data; ',
-					  },
-				});
-				let response = await ress.json();
-				if(response.data.status == true || response.data.status == 'true'){
-					showToast('Order generated');
-					navigation.push('orderlist');
-					setActivityIndicator(false)
-				}else{
-					showToast('error');
-					setActivityIndicator(false)
-				}
+				// let ress = await fetch('https://gullu.suryacontractors.com/public/api/orders/create', {
+				// 	method: 'POST',
+				// 	body: formData,
+				// 	headers: {
+				// 		'Content-Type': 'multipart/form-data; ',
+				// 	  },
+				// });
+				// let response = await ress.json();
+				// if(response.data.status == true || response.data.status == 'true'){
+				// 	showToast('Order generated');
+				// 	navigation.push('orderlist');
+				// 	setActivityIndicator(false)
+				// }else{
+				// 	showToast('error');
+				// 	setActivityIndicator(false)
+				// }
 			}else{
 				showToast('Required fields are missing');
 			}
