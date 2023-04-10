@@ -26,7 +26,7 @@ import DocumentPicker, {
 import {
 	Colors,
 } from 'react-native/Libraries/NewAppScreen';
-import { flexDirectionRow, h3, h4, h5, height100, height6, height85, height9, inputStyleBlack, justifyContentCenter, marginRight10, marginTop10, padding10, padding15, primaryBackgroundColor, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
+import { flexDirectionRow, h3, h4, h5, height100, height6, height85, height9, inputStyleBlack, justifyContentCenter, marginRight10, marginTop10, padding10, padding15, primaryBackgroundColor, secondaryBackgroundColor, textAlignCenter,gulluColor,primaryGulluLightBackgroundColor } from '../assets/styles';
 import InputConponents from '../components/InputComponents';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
@@ -101,12 +101,11 @@ function OrderEdit({ navigation, route }): JSX.Element {
 
 
 	return (
-		<SafeAreaView style={backgroundStyle}>
+		<SafeAreaView style={{backgroundColor: '#ededed'}}>
 			<StatusBar
-				barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-				backgroundColor={backgroundStyle.backgroundColor}
+				backgroundColor={gulluColor}
 			/>
-			<View style={[{}, height100, primaryBackgroundColor, {}]}>
+			<View style={[height100, primaryGulluLightBackgroundColor]}>
 				<View style={[{}, height100]}>
 					<View style={[{}, height6]}>
 						<HeaderComponent navigation={navigation} title="order edit" />
@@ -119,24 +118,24 @@ function OrderEdit({ navigation, route }): JSX.Element {
 										<View style={{flexDirection: 'row'}}>
 											<View style={{width: '100%'}}>
 												<View style={[{}, flexDirectionRow]}>
-													<Text style={[{ fontWeight: 'bold' }, h4, marginRight10]}>Order Number</Text>
-													<Text style={[{ marginTop: 0 }, h4]}>{item?.order_number}</Text>
+													<Text style={[{ fontWeight: 'bold' }, h4, marginRight10 ,{color: gulluColor}]}>Order Number</Text>
+													<Text style={[{ marginTop: 0 }, h4 , {color: gulluColor}]}>{item?.order_number}</Text>
 												</View>
 												<View style={[{}, flexDirectionRow]}>
-													<Text style={[{ fontWeight: 'bold' }, h4, marginRight10]}>Item </Text>
-													<Text style={[{ marginTop: 0 }, h4]}>{item?.item} </Text>
+													<Text style={[{ fontWeight: 'bold' }, h4, marginRight10 ,{color: gulluColor}]}>Item </Text>
+													<Text style={[{ marginTop: 0 }, h4 , {color: gulluColor}]}>{item?.item} </Text>
 												</View>
 												<View style={[{}, flexDirectionRow]}>
-													<Text style={[{ fontWeight: 'bold' }, h4, marginRight10]}>Color</Text>
-													<Text style={[{ marginTop: 0 }, h4]}>{item?.color}</Text>
+													<Text style={[{ fontWeight: 'bold' }, h4, marginRight10 ,{color: gulluColor}]}>Color</Text>
+													<Text style={[{ marginTop: 0 }, h4 , {color: gulluColor}]}>{item?.color}</Text>
 												</View>
 												<View style={[{}, flexDirectionRow]}>
-													<Text style={[{ fontWeight: 'bold' }, h4, marginRight10]}>Salesman</Text>
-													<Text style={[{ marginTop: 0 }, h4]}>{item?.salesman.name}</Text>
+													<Text style={[{ fontWeight: 'bold' }, h4, marginRight10 ,{color: gulluColor}]}>Salesman</Text>
+													<Text style={[{ marginTop: 0 }, h4 , {color: gulluColor}]}>{item?.salesman.name}</Text>
 												</View>
 												<View style={[{}, flexDirectionRow]}>
-													<Text style={[{ fontWeight: 'bold' }, h4, marginRight10]}>Vendor</Text>
-													<Text style={[{ marginTop: 0 }, h4]}>{item?.vendor.name}</Text>
+													<Text style={[{ fontWeight: 'bold' }, h4, marginRight10 ,{color: gulluColor}]}>Vendor</Text>
+													<Text style={[{ marginTop: 0 }, h4 , {color: gulluColor}]}>{item?.vendor.name}</Text>
 												</View>
 											</View>
 											
@@ -225,7 +224,7 @@ function OrderEdit({ navigation, route }): JSX.Element {
 											<Text style={{fontWeight: 'bold' , fontSize: 30 , color: secondaryBackgroundColor}}>Order Status: {(item?.status == 1)? 'Pending' : (item?.status == 2)? 'Ready' : 'Delivered'}</Text>
 
 											<View style={{width: '100%'}}>
-												<Text style={{color: '#fff'}}>Order Placed on {item?.date} </Text>
+												<Text style={{color: gulluColor , fontWeight: 'bold'}}>Order Placed on {item?.date} </Text>
 											</View>
 
 											<View style={{padding: 10}}>
@@ -235,7 +234,7 @@ function OrderEdit({ navigation, route }): JSX.Element {
 
 											{( item?.status == 2 || item?.status == 3 )?
 												<View style={{width: '100%'}}>
-													<Text style={{color: '#fff'}}>Order Ready </Text>
+													<Text style={{color: gulluColor , fontWeight: 'bold'}}>Order Ready </Text>
 												</View>
 											:
 												null
@@ -261,7 +260,7 @@ function OrderEdit({ navigation, route }): JSX.Element {
 																onPress={() => updateOrder(2)}>
 																<Text style={styles.textStyle}>Update order status to READY</Text>
 																{(loader)?
-																	<ActivityIndicator size={20} color="white" />
+																	<ActivityIndicator size={20} color={gulluColor} />
 																: 
 																	null
 																}
@@ -277,7 +276,7 @@ function OrderEdit({ navigation, route }): JSX.Element {
 											</View>
 										{( item?.status == 3)?
 											<View style={{width: '100%'}}>
-												<Text style={{color: '#fff'}}>Order Delivered </Text>
+												<Text style={{color: gulluColor, fontWeight: 'bold'}}>Order Delivered </Text>
 											</View>
 										:
 											null
@@ -298,7 +297,7 @@ function OrderEdit({ navigation, route }): JSX.Element {
 																onPress={() => updateOrder(3)}>
 																<Text style={styles.textStyle}>Update order status to DELIVERED</Text>
 																{(loader)?
-																	<ActivityIndicator size={20} color="white" />
+																	<ActivityIndicator size={20} color={gulluColor} />
 																: 
 																	null
 																}

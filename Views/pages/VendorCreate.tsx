@@ -20,7 +20,7 @@ import InputConponents from '../components/InputComponents';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
 
-import {  h3, height100, height6, height85, height9, inputStyle, justifyContentCenter, padding15, primaryBackgroundColor, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
+import {  h3, height100, height6, height85, height9, inputStyle, justifyContentCenter, padding15, primaryBackgroundColor, secondaryBackgroundColor, textAlignCenter,gulluColor,primaryGulluLightBackgroundColor } from '../assets/styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { post, showToast } from '../services/services';
 
@@ -77,12 +77,11 @@ function VendorCreate({navigation}): JSX.Element {
 
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-        <View style={[{},height100 ,primaryBackgroundColor,{}]}>
+    <SafeAreaView style={{backgroundColor: '#ededed'}}>
+			<StatusBar
+				backgroundColor={gulluColor}
+			/>
+			<View style={[height100, primaryGulluLightBackgroundColor]}>
 			<View style={[{} , height100]}>
 				<View style={[{},height6]}>
                     <HeaderComponent navigation={navigation} title="Create Vendor" />
@@ -97,14 +96,14 @@ function VendorCreate({navigation}): JSX.Element {
 
 					{(!loader)?
 					<View style={{alignItems: 'center'}}>
-						<TouchableOpacity onPress={() => { submitVendor() }} style={[{width: 'auto',backgroundColor: secondaryBackgroundColor,borderRadius: 10},padding15,justifyContentCenter]} >
+						<TouchableOpacity onPress={() => { submitVendor() }} style={[{width: 'auto',backgroundColor: gulluColor,borderRadius: 10},padding15,justifyContentCenter]} >
 							<Text style={[{color: '#fff'} , h3,textAlignCenter]}>Create New Vendor</Text>
 						</TouchableOpacity>
 					</View>
 					:
 						<View style={{alignItems: 'center'}}>
-							<View style={[{width: 'auto',backgroundColor: secondaryBackgroundColor,borderRadius: 10},padding15,justifyContentCenter]} >
-								<ActivityIndicator color={'white'} ></ActivityIndicator>
+							<View style={[{width: 'auto',backgroundColor: gulluColor,borderRadius: 10},padding15,justifyContentCenter]} >
+								<ActivityIndicator color='white' ></ActivityIndicator>
 							</View>
 						</View>
 					}

@@ -19,7 +19,7 @@ import {
 import {
 	Colors,
 } from 'react-native/Libraries/NewAppScreen';
-import {fontWeightBold, h3, height100, height40, height60, inputStyleBlack, justifyContentCenter, marginBottom10, padding15, paddingHorizontal20, paddingVertical30,primaryColor, textAlignCenter } from '../assets/styles';
+import {fontWeightBold, goldenColor, gulluColor, h2, h3, height100, height40, height60, inputLoginStyle, inputStyle, inputStyleBlack, justifyContentCenter, marginBottom10, padding15, paddingHorizontal20, paddingVertical30,primaryColor, textAlignCenter } from '../assets/styles';
 import InputConponents from '../components/InputComponents';
 import { get, post, showToast } from '../services/services';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -56,8 +56,8 @@ function Section({children, title}: SectionProps): JSX.Element {
 }
 
 function Login({navigation}): JSX.Element {
-	const [ email , setEmail ] = useState('admin@gmail.com');
-	const [ password , setPassword ] = useState('123456');
+	const [ email , setEmail ] = useState();
+	const [ password , setPassword ] = useState();
 
 	const [ validationError , setValidationError ] = useState('');
 	const [ activityIndicator , setActivityIndicator ] = useState(false);
@@ -120,20 +120,19 @@ function Login({navigation}): JSX.Element {
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
+        backgroundColor={gulluColor}
       />
-        <View style={[height100 ,{backgroundColor:'#fff'}]}>
+        <View style={[height100 ,{backgroundColor:gulluColor}]}>
 			<View style={[{} , height100]}>
 				<View style={[{}]} >
 					<View style={[{ width: '100%'},paddingVertical30,height40,justifyContentCenter]}>
-						<ImageBackground source={require('../assets/images/login.jpg')} resizeMode="center" style={{flex: 1,justifyContent: 'center',width: '100%'}}>
+						<ImageBackground source={require('../assets/images/309862855_480614804112971_3833940785598410888_n.jpeg')} resizeMode="contain"  style={{flex: 1,justifyContent: 'center',width: '100%',borderColor:gulluColor , borderWidth: 2}}>
 						</ImageBackground>
 					</View>
 					<View style={[{},height60]}>
 						<View>
-							<InputConponents placeholder="Email or Mobile" inputValue={(value:any) => { setEmail(value) }} style={inputStyleBlack}/>
-							<InputConponents placeholder="Password" inputValue={(value:any) => { setPassword(value) }} style={inputStyleBlack}/>
+							<InputConponents placeholder="Email or Mobile" inputValue={(value:any) => { setEmail(value) }} style={inputLoginStyle}/>
+							<InputConponents placeholder="Password" inputValue={(value:any) => { setPassword(value) }} style={inputLoginStyle}/>
 						</View>
 						<View style={[{textAlign: 'center'},paddingHorizontal20]}>
 							<Text style={{ color: 'red',fontSize: 16 }}>{ (validationError != '')? validationError : '' }</Text>
@@ -147,8 +146,8 @@ function Login({navigation}): JSX.Element {
 									<ActivityIndicator color="white"></ActivityIndicator>
 								</TouchableOpacity>
 							:
-								<TouchableOpacity onPress={() => { tryLogin() }} style={[{width: 150,backgroundColor: primaryColor,borderRadius: 10},padding15,justifyContentCenter]} >
-									<Text style={[{color: '#fff'} , h3,textAlignCenter]}>Login</Text>
+								<TouchableOpacity onPress={() => { tryLogin() }} style={[{width: 150,backgroundColor: goldenColor,borderRadius: 10},padding15,justifyContentCenter]} >
+									<Text style={[h3,{color: gulluColor} , textAlignCenter]}>Login</Text>
 								</TouchableOpacity>
 							}
 						</View>

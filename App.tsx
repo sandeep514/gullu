@@ -28,6 +28,7 @@ function App(): JSX.Element {
 		if (Text.defaultProps == null) Text.defaultProps = {};
 		Text.defaultProps.allowFontScaling = false;
 		AsyncStorage.getItem('id').then((res: any) => {
+			console.log();
 			if (res != null) {
 				setDefaultRoute('Home');
 			} else {
@@ -40,19 +41,42 @@ function App(): JSX.Element {
 	}, []);
 	return (
 		<NavigationContainer>
-			<Stack.Navigator  >
-				<Stack.Screen name="login" component={Login} options={{ headerShown: false }} />
-				<Stack.Screen name="Home" component={Dashboard} options={{ headerShown: false }} />
-				<Stack.Screen name="ordercreate" component={OrderCreate} options={{ headerShown: false }} />
-				<Stack.Screen name="orderlist" component={OrderList} options={{ headerShown: false }} />
-				<Stack.Screen name="salesmanlist" component={SalesmanList} options={{ headerShown: false }} />
-				<Stack.Screen name="salesmanEdit" component={SalesmanEdit} options={{ headerShown: false }} />
-				<Stack.Screen name="vendorcreate" component={VendorCreate} options={{ headerShown: false }} />
-				<Stack.Screen name="vendorlist" component={VendorList} options={{ headerShown: false }} />
-				<Stack.Screen name="SalesmanCreate" component={SalesmanCreate} options={{ headerShown: false }} />
-				<Stack.Screen name="vendorEdit" component={VendorEdit} options={{ headerShown: false }} />
-				<Stack.Screen name="orderEdit" component={OrderEdit} options={{ headerShown: false }} />
-			</Stack.Navigator>
+
+			{( defaultRoute == "Home" )? 
+				<Stack.Navigator  >
+					<Stack.Screen name="Home" component={Dashboard} options={{ headerShown: false }} />
+					<Stack.Screen name="login" component={Login} options={{ headerShown: false }} />
+					<Stack.Screen name="ordercreate" component={OrderCreate} options={{ headerShown: false }} />
+					<Stack.Screen name="orderlist" component={OrderList} options={{ headerShown: false }} />
+					<Stack.Screen name="salesmanlist" component={SalesmanList} options={{ headerShown: false }} />
+					<Stack.Screen name="salesmanEdit" component={SalesmanEdit} options={{ headerShown: false }} />
+					<Stack.Screen name="vendorcreate" component={VendorCreate} options={{ headerShown: false }} />
+					<Stack.Screen name="vendorlist" component={VendorList} options={{ headerShown: false }} />
+					<Stack.Screen name="SalesmanCreate" component={SalesmanCreate} options={{ headerShown: false }} />
+					<Stack.Screen name="vendorEdit" component={VendorEdit} options={{ headerShown: false }} />
+					<Stack.Screen name="orderEdit" component={OrderEdit} options={{ headerShown: false }} />
+				</Stack.Navigator>
+			:
+			null
+			}
+			{( defaultRoute != "Home" )? 
+				<Stack.Navigator  >
+					<Stack.Screen name="login" component={Login} options={{ headerShown: false }} />
+					<Stack.Screen name="Home" component={Dashboard} options={{ headerShown: false }} />
+					<Stack.Screen name="ordercreate" component={OrderCreate} options={{ headerShown: false }} />
+					<Stack.Screen name="orderlist" component={OrderList} options={{ headerShown: false }} />
+					<Stack.Screen name="salesmanlist" component={SalesmanList} options={{ headerShown: false }} />
+					<Stack.Screen name="salesmanEdit" component={SalesmanEdit} options={{ headerShown: false }} />
+					<Stack.Screen name="vendorcreate" component={VendorCreate} options={{ headerShown: false }} />
+					<Stack.Screen name="vendorlist" component={VendorList} options={{ headerShown: false }} />
+					<Stack.Screen name="SalesmanCreate" component={SalesmanCreate} options={{ headerShown: false }} />
+					<Stack.Screen name="vendorEdit" component={VendorEdit} options={{ headerShown: false }} />
+					<Stack.Screen name="orderEdit" component={OrderEdit} options={{ headerShown: false }} />
+				</Stack.Navigator>
+			:
+			null
+				
+			}
 		</NavigationContainer>
 	);
 }

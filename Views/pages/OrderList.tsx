@@ -20,7 +20,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import { cardBackgroundColor, h1, h2, h3, height10, height100, padding10, height6, height80, height85, height9, height90, justifyContentCenter, padding15, padding20, primaryBackgroundColor, primaryColor, screenheight, secondaryBackgroundColor, textAlignCenter, inputStyle, height15, flexDirectionRow, marginRight10, h5, h4 } from '../assets/styles';
+import { cardBackgroundColor, h1, h2, h3, height10, height100, padding10, height6, height80, height85, height9, height90, justifyContentCenter, padding15, padding20, primaryBackgroundColor, primaryColor, screenheight, secondaryBackgroundColor, textAlignCenter, inputStyle, height15, flexDirectionRow, marginRight10, h5, h4 ,gulluColor,primaryGulluLightBackgroundColor} from '../assets/styles';
 import InputConponents from '../components/InputComponents';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
@@ -150,12 +150,11 @@ function OrderList({navigation}): JSX.Element {
 		}
 	}
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-        <View style={[{},height100 ,primaryBackgroundColor,{}]}>
+    <SafeAreaView style={{backgroundColor: '#ededed'}}>
+			<StatusBar
+				backgroundColor={gulluColor}
+			/>
+			<View style={[height100, primaryGulluLightBackgroundColor]}>
 			<View style={[{} , height100]}>
 				<View style={[{},height6]}>
                     <HeaderComponent navigation={navigation} title="List Orders"  />
@@ -163,7 +162,7 @@ function OrderList({navigation}): JSX.Element {
 				<View style={[{},height85]} >
 
 					{(loader)?
-						<ActivityIndicator size={30} color='white'/>
+						<ActivityIndicator size={30} color={gulluColor}/>
 
 					:
 						<View>

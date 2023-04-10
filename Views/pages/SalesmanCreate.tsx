@@ -25,7 +25,7 @@ import InputConponents from '../components/InputComponents';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
 
-import { cardBackgroundColor, h1, h2, h3, height10, height100, height14, height15, height20, height4, height5, height50, height6, height80, height82, height84, height85, height87, height9, height90, height92, inputStyleBlack, justifyContentCenter, padding15, padding20, primaryBackgroundColor, primaryColor, screenheight, secondaryBackgroundColor, textAlignCenter,inputStyle } from '../assets/styles';
+import { cardBackgroundColor, h1, h2, h3, height10, height100, height14, height15, height20, height4, height5, height50, height6, height80, height82, height84, height85, height87, height9, height90, height92, inputStyleBlack, justifyContentCenter, padding15, padding20, primaryBackgroundColor, primaryColor, screenheight, secondaryBackgroundColor, textAlignCenter,inputStyle,gulluColor,primaryGulluLightBackgroundColor } from '../assets/styles';
 import { post, showToast } from '../services/services';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -88,12 +88,11 @@ function SalesmanCreate({navigation}): JSX.Element {
 
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-        <View style={[{},height100 ,primaryBackgroundColor,{}]}>
+    <SafeAreaView style={{backgroundColor: '#ededed'}}>
+			<StatusBar
+				backgroundColor={gulluColor}
+			/>
+			<View style={[height100, primaryGulluLightBackgroundColor]}>
 			<View style={[{} , height100]}>
 				<View style={[{},height6]}>
                     <HeaderComponent navigation={navigation} title="Create Salesman" />
@@ -107,14 +106,14 @@ function SalesmanCreate({navigation}): JSX.Element {
 					<InputConponents placeholder="Phone" inputValue={(value:any) => { setPhone(value) }} style={inputStyle} />
 					{(!loader)?
 						<View style={{alignItems: 'center'}}>
-							<TouchableOpacity onPress={() => { submitSalesman() }} style={[{width: 'auto',backgroundColor: secondaryBackgroundColor,borderRadius: 10},padding15,justifyContentCenter]} >
+							<TouchableOpacity onPress={() => { submitSalesman() }} style={[{width: 'auto',backgroundColor: gulluColor,borderRadius: 10},padding15,justifyContentCenter]} >
 								<Text style={[{color: '#fff'} , h3,textAlignCenter]}>Create New Salesman</Text>
 							</TouchableOpacity>
 						</View>
 					:
 						<View style={{alignItems: 'center'}}>
-							<View style={[{width: 'auto',backgroundColor: secondaryBackgroundColor,borderRadius: 10},padding15,justifyContentCenter]} >
-								<ActivityIndicator color={'white'} ></ActivityIndicator>
+							<View style={[{width: 'auto',backgroundColor: gulluColor,borderRadius: 10},padding15,justifyContentCenter]} >
+								<ActivityIndicator color='white' ></ActivityIndicator>
 							</View>
 						</View>
 					}

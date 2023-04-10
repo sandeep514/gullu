@@ -7,7 +7,7 @@ import {
   Text,
   TextInput, View,
 } from 'react-native';
-import { h4, h5, height10, height4, justifyContentCenter, margin10, padding10, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
+import { gulluColor, h4, h5, height10, height4, justifyContentCenter, margin10, padding10, primaryGulluBackgroundColor, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
 
 
 function FooterComponent( {navigation}): JSX.Element {
@@ -20,7 +20,7 @@ function FooterComponent( {navigation}): JSX.Element {
 		})
     } , []);
     return (
-        <View style={[{ backgroundColor: secondaryBackgroundColor,borderRadius: 10},padding10,margin10]}>
+        <View style={[{ backgroundColor: gulluColor,borderRadius: 10},padding10,margin10]}>
             <View style={[{flexDirection: 'row',justifyContent: 'space-between'}]}>
                 <Pressable style={[{alignItems:'center'}]} onPress={() => {navigation.push('Home')}}>
                     <Image source={require('../assets/images/NicePng_logo-instagram-blanco-png_3953291.png')} style={{ height: 20,width: 20 }} />

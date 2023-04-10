@@ -29,7 +29,7 @@ import {
 	LearnMoreLinks,
 	ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import { cardBackgroundColor, flexDirectionRow, h1, h2, h3, h4, h5, height100, height50, height6, height85, height9, marginRight10, marginTop30, padding20, primaryBackgroundColor, primaryColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
+import { cardBackgroundColor, flexDirectionRow, goldenColor, gulluColor, gulluFont, h1, h2, h3, h4, h5, height100, height50, height6, height85, height9, marginRight10, marginTop30, padding20, primaryBackgroundColor, primaryColor, primaryGulluBackgroundColor, primaryGulluLightBackgroundColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
 import FooterComponent from '../components/FooterComponent';
 import HeaderComponent from '../components/HeaderComponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -93,38 +93,36 @@ function Dashboard({ navigation }): JSX.Element {
 			setLoader(false)
 		});
 	}
-	const backgroundStyle = {
-		backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-	};
+	
 	const Item = ({item}:any) => (
 		<Pressable onPress={() => { navigation.push('orderEdit' , { 'orderData' : item}) }} style={styles.item}>
 			<View style={[{} , flexDirectionRow]}>
 				<View style={[marginRight10,{width:'60%',overflow: 'hidden' }]}>
 					<View style={[{} , flexDirectionRow]}> 
-						<Text style={[{fontWeight: 'bold'},h5,marginRight10]}>Order Number</Text>
-						<Text style={[{marginTop: 0},h5]}>{item.order_number}</Text>
+						<Text style={[{fontWeight: 'bold'},h5,gulluFont,marginRight10]}>Order Number</Text>
+						<Text style={[{marginTop: 0},h5,gulluFont]}>{item.order_number}</Text>
 					</View>
 					<View style={[{} , flexDirectionRow]}> 
-						<Text style={[{fontWeight: 'bold'},h5,marginRight10]}>Item </Text>
-						<Text style={[{marginTop: 0},h5]}>{item.item} </Text>
+						<Text style={[{fontWeight: 'bold'},h5,gulluFont,marginRight10]}>Item </Text>
+						<Text style={[{marginTop: 0},h5,gulluFont]}>{item.item} </Text>
 					</View>
 					<View style={[{} , flexDirectionRow]}> 
-						<Text style={[{fontWeight: 'bold'},h5,marginRight10]}>Color</Text>
-						<Text style={[{marginTop: 0},h5]}>{item.color}</Text>
+						<Text style={[{fontWeight: 'bold'},h5,gulluFont,marginRight10]}>Color</Text>
+						<Text style={[{marginTop: 0},h5,gulluFont]}>{item.color}</Text>
 					</View>
 					<View style={[{} , flexDirectionRow]}> 
-						<Text style={[{fontWeight: 'bold'},h5,marginRight10]}>Salesman</Text>
-						<Text style={[{marginTop: 0},h5]}>{item.salesman.name}</Text>
+						<Text style={[{fontWeight: 'bold'},h5,gulluFont,marginRight10]}>Salesman</Text>
+						<Text style={[{marginTop: 0},h5,gulluFont]}>{item.salesman.name}</Text>
 					</View>
 					<View style={[{} , flexDirectionRow]}> 
-						<Text style={[{fontWeight: 'bold'},h5,marginRight10]}>Vendor</Text>
-						<Text style={[{marginTop: 0},h5]}>{item.vendor.name}</Text>
+						<Text style={[{fontWeight: 'bold'},h5,gulluFont,marginRight10]}>Vendor</Text>
+						<Text style={[{marginTop: 0},h5,gulluFont]}>{item.vendor.name}</Text>
 					</View>
 					
 
 				</View>
 				<View style={{width: '40%'}}>
-					{( item.attachments.length > 0)? <ImageBackground source={{uri: imagePath+''+item.attachments[0].attachment }} resizeMode="contain" style={{height: 100 , width: '100%'}} /> : ''}
+					{( item.attachments?.length > 0)? <ImageBackground source={{uri: imagePath+''+item.attachments[0].attachment }} resizeMode="contain" style={{height: 100 , width: '100%'}} /> : ''}
 				</View>
 			</View>
 			
@@ -132,12 +130,11 @@ function Dashboard({ navigation }): JSX.Element {
 		</Pressable>
   );
 	return (
-		<SafeAreaView style={backgroundStyle}>
+		<SafeAreaView style={{backgroundColor: '#ededed'}}>
 			<StatusBar
-				barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-				backgroundColor={backgroundStyle.backgroundColor}
+				backgroundColor={gulluColor}
 			/>
-			<View style={[height100, primaryBackgroundColor, {}]}>
+			<View style={[height100, primaryGulluLightBackgroundColor]}>
 				<View style={[{}, height100]}>
 					<View style={[{}, height6]}>
 						<HeaderComponent navigation={navigation} title="Pending Orders" />
@@ -146,9 +143,9 @@ function Dashboard({ navigation }): JSX.Element {
 					<View style={[{}, height85]} >
 						<View>
 							{(loader)? 
-								<ActivityIndicator  size={20} color="white" />
+								<ActivityIndicator  size={20} color={gulluColor} />
 							:
-							(pending.length > 0)?
+							(pending?.length > 0)?
 								<FlatList
 									refreshing={isRefreshing} // Added pull to refesh state
 									onRefresh={onRefresh} // Added pull to refresh control
@@ -159,15 +156,15 @@ function Dashboard({ navigation }): JSX.Element {
 								/>
 								:
 								<View style={{justifyContent: 'center'}}>
-									<Text style={[{color: '#fff',textAlign: 'center'},h4,marginTop30]}>No pending orders available</Text>
+									<Text style={[{color: gulluColor,textAlign: 'center'},h4,marginTop30]}>No pending orders available</Text>
 								</View>
 							}
 							
 							
 						</View>
 						{(role != undefined && role == 1)?
-							<Pressable onPress={() => { navigation.push('ordercreate') }} style={[{backgroundColor: secondaryBackgroundColor,height: 70 ,width: 70,padding: 0,margin:0 ,borderRadius: 100,right: 10,position: 'absolute',bottom: 0,borderColor: primaryColor ,borderWidth: 5}]}>
-								<Text style={[{fontSize: 50,padding: 0,margin: 0,top: -5}, textAlignCenter]}>+</Text>
+							<Pressable onPress={() => { navigation.push('ordercreate') }} style={[{backgroundColor: gulluColor,height: 70 ,width: 70,padding: 0,margin:0 ,borderRadius: 100,right: 10,position: 'absolute',bottom: 0}]}>
+								<Text style={[{fontSize: 50,padding: 0,margin: 0,top: -5,color: goldenColor}, textAlignCenter]}>+</Text>
 							</Pressable>
 						:
 							null
@@ -200,7 +197,8 @@ const styles = StyleSheet.create({
 		fontWeight: '700',
 	},
 	item: {
-		backgroundColor: secondaryBackgroundColor,
+		backgroundColor: '#fff',
+		elevation:2,
 		padding: 15,
 		marginVertical: 8,
 		marginHorizontal: 16,

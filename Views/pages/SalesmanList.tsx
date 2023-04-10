@@ -20,7 +20,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import { h3, height100, height6, height85, height9, primaryBackgroundColor, primaryColor, secondaryBackgroundColor, textAlignCenter} from '../assets/styles';
+import { h3, height100, height6, height85, height9, primaryBackgroundColor, primaryColor, secondaryBackgroundColor, textAlignCenter,gulluColor,primaryGulluLightBackgroundColor} from '../assets/styles';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -73,19 +73,18 @@ function SalesmanList({navigation}): JSX.Element {
 		</Pressable>
 	);
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-        <View style={[{},height100 ,primaryBackgroundColor,{}]}>
+    <SafeAreaView style={{backgroundColor: '#ededed'}}>
+			<StatusBar
+				backgroundColor={gulluColor}
+			/>
+			<View style={[height100, primaryGulluLightBackgroundColor]}>
 			<View style={[{} , height100]}>
 				<View style={[{},height6]}>
                     <HeaderComponent navigation={navigation} title="Salesman List" />
                 </View>
 				<View style={[{} , height85]} >
 				{(activityIndicator)? 
-					<ActivityIndicator color="white" size={20}></ActivityIndicator>
+					<ActivityIndicator color={gulluColor} size={20}></ActivityIndicator>
 				:
 					<FlatList
 						data={DATA}

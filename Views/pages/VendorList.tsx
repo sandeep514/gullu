@@ -20,7 +20,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import { cardBackgroundColor, h1, h2, h3, height10, height100, height20, height50, height6, height80, height85, height9, height90, padding20, primaryBackgroundColor, primaryColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
+import { cardBackgroundColor, gulluColor, h1, h2, h3, height10, height100, height20, height50, height6, height80, height85, height9, height90, padding20, primaryBackgroundColor, primaryColor, primaryGulluLightBackgroundColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
 import InputConponents from '../components/InputComponents';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
@@ -73,19 +73,18 @@ function VendorList({navigation}): JSX.Element {
 		</Pressable>
 	);
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-        <View style={[{},height100 ,primaryBackgroundColor,{}]}>
+    <SafeAreaView style={{backgroundColor: '#ededed'}}>
+			<StatusBar
+				backgroundColor={gulluColor}
+			/>
+			<View style={[height100, primaryGulluLightBackgroundColor]}>
 			<View style={[{} , height100]}>
 				<View style={[{},height6]}>
                     <HeaderComponent navigation={navigation} title="Vendor List" />
                 </View>
 				<View style={[{} , height85]} >
 					{(activityIndicator)? 
-						<ActivityIndicator color="white" size={20}></ActivityIndicator>
+						<ActivityIndicator color={gulluColor} size={20}></ActivityIndicator>
 					:
 						<FlatList
 							data={DATA}

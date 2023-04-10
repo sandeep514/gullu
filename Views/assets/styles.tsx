@@ -8,6 +8,17 @@ export const h3 = {fontSize: 18, color: 'white'};
 export const h2 = {fontSize: 20, color: 'white'};
 export const h1 = {fontSize: 22, color: 'white'};
 
+export const goldenColor = '#e0c987';
+export const goldenFont = {color: '#e0c987'};
+
+export const gulluColor = '#40092a';
+export const gulluFont = {color: '#40092a'};
+
+
+export const primaryGulluBackgroundColor = {backgroundColor: '#fff'};
+export const primaryGulluLightBackgroundColor = {backgroundColor: '#f6f6f6'};
+
+
 
 export const primaryBackgroundColor = {backgroundColor: '#2b323c'};
 export const primaryColor = '#2b323c';
@@ -1538,5 +1549,6 @@ export const height98 ={height: '98%'}
 export const height99 ={height: '99%'}
 export const height100 ={height: '100%'}
 
+export const inputLoginStyle = [padding10 ,h3,paddingLeft20,margin15,{borderColor : goldenColor , borderWidth: 2,color: '#fff',borderRadius: 10,height: 50}] ;
 export const inputStyle = [padding10 ,h3,paddingLeft20,margin15,{borderColor : secondaryBackgroundColor , borderWidth: 2,color: '#fff',borderRadius: 10,height: 50}] ;
 export const inputStyleBlack = [padding10 ,h3,paddingLeft20,margin15,{borderColor : secondaryBackgroundColor , borderWidth: 2,color: '#000',borderRadius: 10,height: 50}] ;

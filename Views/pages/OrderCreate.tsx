@@ -27,7 +27,7 @@ import DocumentPicker, {
 import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
-import { flexDirectionRow, h3, h4, h5, height100, height6, height85, height9, inputStyle, inputStyleBlack, justifyContentCenter, marginLeft10, marginRight10, padding15, primaryBackgroundColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
+import { flexDirectionRow, h3, h4, h5, height100, height6, height85, height9, inputStyle, inputStyleBlack, justifyContentCenter, marginLeft10, marginRight10, padding15, primaryBackgroundColor, screenheight, secondaryBackgroundColor, textAlignCenter,gulluColor,primaryGulluLightBackgroundColor,goldenColor } from '../assets/styles';
 import InputConponents from '../components/InputComponents';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
@@ -109,13 +109,15 @@ function OrderCreate({navigation}): JSX.Element {
 		}).catch((err) => {
 			
 		});
+		
 		return () => {
 			setshowReadyDate(false);
 			setShowDeliveryDate(false);
 		}
 		
 	} , []);
-
+	var current = 0;
+	var interval:any;
 	let saveOrder = async () => {
 		
 			setActivityIndicator(true)
@@ -146,29 +148,20 @@ function OrderCreate({navigation}): JSX.Element {
 				data.append('product_video', productVideoData[0]); 
 
 
-				let xhr = new XMLHttpRequest();
-				xhr.upload.addEventListener('progress', (event) => {
-					if (event.lengthComputable) {
-						let percent = Math.round((event.loaded / event.total) * 100);
-						setInterval(() => {
-							let newPercentage = ((percentage)+3);
-							console.log(newPercentage);
-							if(((percentage)+3) <= 100 ){
-								setPercentage(((percentage)+3));
-								console.log(`Upload progress: ${((percentage)+3)}%`);
-							}
+				// let xhr = new XMLHttpRequest();
+				// xhr.upload.addEventListener('progress', (event) => {
+				// 	if (event.lengthComputable) {
+						
 
-						} , 3000)
+				// 		if( percent == 100 ){
+				// 			setActivityIndicator(false)
+				// 		}
+				// 		// Update progress bar here
+				// 	}
+				// });
 
-						if( percent == 100 ){
-							setActivityIndicator(false)
-						}
-						// Update progress bar here
-					}
-				});
-
-				xhr.open('POST', 'https://gullu.suryacontractors.com/public/api/orders/create');
-				xhr.send(data);
+				// xhr.open('POST', 'https://gullu.suryacontractors.com/public/api/orders/create');
+				// xhr.send(data);
 
 
 				// console.log(formData)
@@ -177,25 +170,67 @@ function OrderCreate({navigation}): JSX.Element {
 				// xhr.send(formData);
 				// console.log('xhr');
 				// console.log(xhr);
-				setTimeout(() => {
-					setGeneratingMessage('Uploading Attachments');
-				} , 5000)
-				// let ress = await fetch('https://gullu.suryacontractors.com/public/api/orders/create', {
-				// 	method: 'POST',
-				// 	body: formData,
-				// 	headers: {
-				// 		'Content-Type': 'multipart/form-data; ',
-				// 	  },
-				// });
-				// let response = await ress.json();
-				// if(response.data.status == true || response.data.status == 'true'){
-				// 	showToast('Order generated');
-				// 	navigation.push('orderlist');
-				// 	setActivityIndicator(false)
-				// }else{
-				// 	showToast('error');
-				// 	setActivityIndicator(false)
-				// }
+				// setTimeout(() => {
+				// 	setGeneratingMessage('Uploading Attachments');
+				// } , 5000)
+
+
+				interval = setInterval(function(){
+					if( current < 98 ){
+						let ndInt = Math.floor(Math.random() * 3) + 1;
+						current+=ndInt;
+						setGeneratingMessage('Generating Order');
+						if( current > 5){
+							setGeneratingMessage('Uploading Attachments...'+current+'%' );
+						}
+						if( current > 97 ){
+							setGeneratingMessage('Almost done...');
+						}
+					}else{
+						clearInterval(interval);
+						setGeneratingMessage('Almost done...');
+					}
+
+				}, 1000);
+				let ress = await fetch('https://gullu.suryacontractors.com/public/api/orders/create', {
+					method: 'POST',
+					body: data,
+					headers: {
+						'Content-Type': 'multipart/form-data; ',
+					  },
+				});
+				let response = await ress.json();
+				if(response.data.status == true || response.data.status == 'true'){		
+
+					interval = setInterval(function(){
+						if( current < 98 ){
+							let ndInt = Math.floor(Math.random() * 10) + 1;
+							current+=ndInt;
+							if( current > 20){
+								setGeneratingMessage('Uploading Attachments...'+current+'%' );
+							}
+							if( current > 97 ){
+								setGeneratingMessage('Almost done...');
+								clearInterval(interval);
+								showToast('Order generated');
+								navigation.push('orderlist');
+								setActivityIndicator(false)
+							}
+						}else{
+							clearInterval(interval);
+							setGeneratingMessage('Almost done...');
+						}
+	
+					}, 1000);
+			
+					
+					
+				}else{
+					clearInterval(interval);
+
+					showToast('error');
+					setActivityIndicator(false)
+				}
 			}else{
 				showToast('Required fields are missing');
 			}
@@ -291,19 +326,18 @@ function OrderCreate({navigation}): JSX.Element {
 		setShowDeliveryDate(true)
 	}
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-        <View style={[{},height100 ,primaryBackgroundColor,{}]}>
+    <SafeAreaView style={{backgroundColor: '#ededed'}}>
+			<StatusBar
+				backgroundColor={gulluColor}
+			/>
+			<View style={[height100, primaryGulluLightBackgroundColor]}>
 			<View style={[{} , height100]}>
 
 			{(activityIndicator)? 
 				<View style={{zIndex: 99999}}>
-					<View style={[{position: 'absolute',top: 0,backgroundColor: secondaryBackgroundColor,left: 0,width: '100%',zIndex: 9999999,opacity: 0.8},screenheight,justifyContentCenter ]}>
-						<ActivityIndicator color="white" size={40}></ActivityIndicator>
-						<Text style={[{textAlign: 'center',color: '#fff'},h4]}>{generatingMessage}...</Text>
+					<View style={[{position: 'absolute',top: 0,backgroundColor: gulluColor,left: 0,width: '100%',zIndex: 9999999,opacity: 0.8},screenheight,justifyContentCenter ]}>
+						<ActivityIndicator color={gulluColor} size={40}></ActivityIndicator>
+						<Text style={[h4,{textAlign: 'center',color: gulluColor}]}>{generatingMessage}...</Text>
 					</View>
 				</View>
 			:
@@ -320,11 +354,11 @@ function OrderCreate({navigation}): JSX.Element {
 						
 						<View style={[{} , height85]} >
 								
-							<InputConponents placeholder="Order Number" inputValue={(value:any) => { setOrderNumber(value) }} style={inputStyle} />
-							{/* <InputConponents placeholder="Select Vendor" inputValue={(value:any) => { setVendor(value) }} style={inputStyle} />
-							<InputConponents placeholder="Select Salesman" inputValue={(value:any) => { setSalesman(value) }} style={inputStyle} /> */}
-							<InputConponents placeholder="Color" inputValue={(value:any) => { setColor(value) }} style={inputStyle} />
-							<InputConponents placeholder="Item" inputValue={(value:any) => { setItem(value) }} style={inputStyle} />
+							<InputConponents placeholder="Order Number" inputValue={(value:any) => { setOrderNumber(value) }} style={inputStyleBlack} />
+							{/* <InputConponents placeholder="Select Vendor" inputValue={(value:any) => { setVendor(value) }} style={inputStyleBlack} />
+							<InputConponents placeholder="Select Salesman" inputValue={(value:any) => { setSalesman(value) }} style={inputStyleBlack} /> */}
+							<InputConponents placeholder="Color" inputValue={(value:any) => { setColor(value) }} style={inputStyleBlack} />
+							<InputConponents placeholder="Item" inputValue={(value:any) => { setItem(value) }} style={inputStyleBlack} />
 							<Modal
 								animationType="slide"
 								transparent={true}
@@ -383,21 +417,21 @@ function OrderCreate({navigation}): JSX.Element {
 							<View style={{paddingHorizontal: 20,paddingVertical: 10}}>
 								<View style={{ flexDirection: 'row' }}>
 									<Pressable 
-										style={{ backgroundColor: secondaryBackgroundColor,padding:20,borderRadius: 10,width: '50%',marginBottom: 10}}
+										style={{ backgroundColor: gulluColor,padding:20,borderRadius: 10,width: '50%',marginBottom: 10}}
 										onPress={() => setModalVisibleVendor(true)}>
-										<Text style={{color: 'white',textAlign: 'center'}}>Select Vendor</Text>
+										<Text style={{color: goldenColor,textAlign: 'center'}}>Select Vendor</Text>
 									</Pressable>
 
-									<Text style={[{ paddingVertical: 16 ,textTransform: 'capitalize'} , h4,marginLeft10]}>{selectedVendorName}</Text>
+									<Text style={[{ paddingVertical: 16 ,textTransform: 'capitalize'} , h4,marginLeft10,{color: gulluColor}]}>{selectedVendorName}</Text>
 								</View>
 								
 								<View style={{ flexDirection: 'row' }}>
 									<Pressable
-										style={{ backgroundColor: secondaryBackgroundColor,padding:20,borderRadius: 10,width: '50%'}}
+										style={{ backgroundColor: gulluColor,padding:20,borderRadius: 10,width: '50%'}}
 										onPress={() => setModalVisibleSalesman(true)}>
-										<Text style={{color: 'white',textAlign: 'center'}}>Select Salesman</Text>
+										<Text style={{color: goldenColor,textAlign: 'center'}}>Select Salesman</Text>
 									</Pressable>
-									<Text style={[{ paddingVertical: 16 ,textTransform: 'capitalize'} , h4,marginLeft10]}>{selectedSalesmanName}</Text>
+									<Text style={[{ paddingVertical: 16 ,textTransform: 'capitalize'} , h4,marginLeft10,{color: gulluColor}]}>{selectedSalesmanName}</Text>
 								</View>
 							</View>
 							
@@ -438,13 +472,13 @@ function OrderCreate({navigation}): JSX.Element {
 							}
 							<View style={{paddingHorizontal: 20,paddingVertical: 10}}>
 								<View style={{ flexDirection: 'row' }}>
-									<Pressable onPress={() => openReadyDate()} style={{ backgroundColor: secondaryBackgroundColor,padding:20,borderRadius: 10,width: '50%',marginBottom: 10}}>
-										<Text style={{color: 'white',textAlign: 'center'}}>Select Ready Date </Text>
+									<Pressable onPress={() => openReadyDate()} style={{ backgroundColor: gulluColor,padding:20,borderRadius: 10,width: '50%',marginBottom: 10}}>
+										<Text style={{color: goldenColor,textAlign: 'center'}}>Select Ready Date </Text>
 									</Pressable>
 									{(readyDate != undefined)?
 									
 										<View>
-											<Text style={[{ paddingVertical: 16 ,textTransform: 'capitalize'} , h4,marginLeft10]}>{readyDate.toString().substring(4, 15)}</Text>
+											<Text style={[{ paddingVertical: 16 ,textTransform: 'capitalize'} , h4,marginLeft10,{color: gulluColor}]}>{readyDate.toString().substring(4, 15)}</Text>
 										</View>
 										:
 										null
@@ -453,13 +487,13 @@ function OrderCreate({navigation}): JSX.Element {
 							
 								
 								<View style={{ flexDirection: 'row' }}>
-									<Pressable onPress={() => openDeliveryDate()} style={{ backgroundColor: secondaryBackgroundColor,padding:20,borderRadius: 10,width: '50%'}}>
-										<Text style={{color: 'white',textAlign: 'center'}}>Select Delivery Date</Text>
+									<Pressable onPress={() => openDeliveryDate()} style={{ backgroundColor: gulluColor,padding:20,borderRadius: 10,width: '50%'}}>
+										<Text style={{color: goldenColor,textAlign: 'center'}}>Select Delivery Date</Text>
 									</Pressable>
 									{(deliveryDate != undefined)?
 									
 										<View>
-											<Text style={[{ paddingVertical: 16 ,textTransform: 'capitalize'} , h4,marginLeft10]}>{deliveryDate.toString().substring(4, 15)}</Text>
+											<Text style={[{ paddingVertical: 16 ,textTransform: 'capitalize'} , h4,marginLeft10,{color: gulluColor}]}>{deliveryDate.toString().substring(4, 15)}</Text>
 										</View>
 										:
 										null
@@ -513,9 +547,9 @@ function OrderCreate({navigation}): JSX.Element {
 										handleError(e)
 									}
 									}}
-									style={[{width: 'auto',backgroundColor: secondaryBackgroundColor,borderRadius: 10,marginBottom: 10},padding15,justifyContentCenter]}
+									style={[{width: 'auto',backgroundColor: gulluColor,borderRadius: 10,marginBottom: 10},padding15,justifyContentCenter]}
 								>
-									<Text style={{color: '#fff',textAlign: 'center'}}>Upload Product Image</Text>
+									<Text style={{color: goldenColor,textAlign: 'center'}}>Upload Product Image</Text>
 								</TouchableOpacity>
 
 								{(productPhotoData != undefined && productPhotoData.length > 0)?
@@ -542,9 +576,9 @@ function OrderCreate({navigation}): JSX.Element {
 										handleError(e)
 									}
 									}}
-									style={[{width: 'auto',backgroundColor: secondaryBackgroundColor,borderRadius: 10,marginBottom: 10},padding15,justifyContentCenter]}
+									style={[{width: 'auto',backgroundColor: gulluColor,borderRadius: 10,marginBottom: 10},padding15,justifyContentCenter]}
 								>
-									<Text style={{color: '#fff',textAlign: 'center'}}>Upload Product Measurement</Text>
+									<Text style={{color: goldenColor,textAlign: 'center'}}>Upload Product Measurement</Text>
 								</TouchableOpacity>
 
 								{(productMeasurementData != undefined && productMeasurementData.length > 0)?
@@ -572,9 +606,9 @@ function OrderCreate({navigation}): JSX.Element {
 										handleError(e)
 									}
 									}}
-									style={[{width: 'auto',backgroundColor: secondaryBackgroundColor,borderRadius: 10,marginBottom: 10},padding15,justifyContentCenter]}
+									style={[{width: 'auto',backgroundColor: gulluColor,borderRadius: 10,marginBottom: 10},padding15,justifyContentCenter]}
 								>
-									<Text style={{color: '#fff',textAlign: 'center'}}>Upload Product Video</Text>
+									<Text style={{color: goldenColor,textAlign: 'center'}}>Upload Product Video</Text>
 								</TouchableOpacity>
 								{(productVideoData != undefined && productVideoData.length > 0)?
 									<View style={{width: '100%' , height: 400}}>
@@ -595,8 +629,8 @@ function OrderCreate({navigation}): JSX.Element {
 
 							
 							<View style={{alignItems: 'center'}}>
-								<TouchableOpacity onPress={() => {saveOrder()}} style={[{width: 'auto',backgroundColor: secondaryBackgroundColor,borderRadius: 10},padding15,justifyContentCenter]} >
-									<Text style={[{color: '#fff'} , h3,textAlignCenter]}>Generate New Order</Text>
+								<TouchableOpacity onPress={() => {saveOrder()}} style={[{width: 'auto',backgroundColor: gulluColor,borderRadius: 10},padding15,justifyContentCenter]} >
+									<Text style={[h3,{color: goldenColor},textAlignCenter]}>Generate New Order</Text>
 								</TouchableOpacity>
 								
 							</View>

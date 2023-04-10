@@ -20,7 +20,7 @@ import InputConponents from '../components/InputComponents';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
 
-import {  h3, height100, height6, height85, height9, inputStyle, justifyContentCenter, padding15, primaryBackgroundColor, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
+import {  h3, height100, height6, height85, height9, inputStyle, justifyContentCenter, padding15, primaryBackgroundColor, secondaryBackgroundColor, textAlignCenter,gulluColor,primaryGulluLightBackgroundColor, inputStyleBlack } from '../assets/styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { get, post, showToast } from '../services/services';
 
@@ -97,37 +97,36 @@ function SalesmanEdit({navigation , route}): JSX.Element {
 
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-        <View style={[{},height100 ,primaryBackgroundColor,{}]}>
+    <SafeAreaView style={{backgroundColor: '#ededed'}}>
+			<StatusBar
+				backgroundColor={gulluColor}
+			/>
+			<View style={[height100, primaryGulluLightBackgroundColor]}>
 			<View style={[{} , height100]}>
 				<View style={[{},height6]}>
                     <HeaderComponent navigation={navigation} title="Salesman edit" />
                 </View>
 				<View style={[{} , height85]} >
 					{(getLoader)?
-						<ActivityIndicator size={20} color="white" />
+						<ActivityIndicator size={20} color={gulluColor} />
 					:
 						<View>
-							<InputConponents value={data.name} placeholder="Name" inputValue={(value:any) => { setName(value) }} style={inputStyle} />
-							<InputConponents value={data.email} placeholder="Email" inputValue={(value:any) => { setEmail(value) }} style={inputStyle} />
-							<InputConponents value={data.code} placeholder="Code" inputValue={(value:any) => { setCode(value) }} style={inputStyle} />
-							<InputConponents value={data.password} placeholder="Password" inputValue={(value:any) => { setPassword(value) }} style={inputStyle} />
-							<InputConponents value={data.phone} placeholder="Phone" inputValue={(value:any) => { setPhone(value) }} style={inputStyle} />
+							<InputConponents value={data.name} placeholder="Name" inputValue={(value:any) => { setName(value) }} style={inputStyleBlack} />
+							<InputConponents value={data.email} placeholder="Email" inputValue={(value:any) => { setEmail(value) }} style={inputStyleBlack} />
+							<InputConponents value={data.code} placeholder="Code" inputValue={(value:any) => { setCode(value) }} style={inputStyleBlack} />
+							<InputConponents value={data.password} placeholder="Password" inputValue={(value:any) => { setPassword(value) }} style={inputStyleBlack} />
+							<InputConponents value={data.phone} placeholder="Phone" inputValue={(value:any) => { setPhone(value) }} style={inputStyleBlack} />
 
 							{(!loader)?
 							<View style={{alignItems: 'center'}}>
-								<TouchableOpacity onPress={() => { submitSalesman() }} style={[{width: 'auto',backgroundColor: secondaryBackgroundColor,borderRadius: 10},padding15,justifyContentCenter]} >
+								<TouchableOpacity onPress={() => { submitSalesman() }} style={[{width: 'auto',backgroundColor: gulluColor,borderRadius: 10},padding15,justifyContentCenter]} >
 									<Text style={[{color: '#fff'} , h3,textAlignCenter]}>Update Salesman</Text>
 								</TouchableOpacity>
 							</View>
 							:
 								<View style={{alignItems: 'center'}}>
-									<View style={[{width: 'auto',backgroundColor: secondaryBackgroundColor,borderRadius: 10},padding15,justifyContentCenter]} >
-										<ActivityIndicator color={'white'} ></ActivityIndicator>
+									<View style={[{width: 'auto',backgroundColor: gulluColor,borderRadius: 10},padding15,justifyContentCenter]} >
+										<ActivityIndicator color='white' ></ActivityIndicator>
 									</View>
 								</View>
 							}
