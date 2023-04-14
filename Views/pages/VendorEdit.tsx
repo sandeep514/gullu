@@ -20,7 +20,7 @@ import InputConponents from '../components/InputComponents';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
 
-import {  h3, height100, height6, height85, height9, inputStyle, justifyContentCenter, padding15, primaryBackgroundColor, secondaryBackgroundColor, textAlignCenter,gulluColor,primaryGulluLightBackgroundColor, inputStyleBlack } from '../assets/styles';
+import {  h3, height100, height6, height85, height9, inputStyle, justifyContentCenter, padding15, primaryBackgroundColor, secondaryBackgroundColor, textAlignCenter,gulluColor,primaryGulluLightBackgroundColor, inputStyleBlack, height8, height83 } from '../assets/styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { get, post, showToast } from '../services/services';
 
@@ -29,11 +29,11 @@ function VendorEdit({navigation , route}): JSX.Element {
 	const [getLoader , setGetLoader ] = useState(false);
 	const [data , SetData ] = useState({});
 
-	const [name , setName ] = useState('');
-	const [email , setEmail ] = useState('');
-	const [code , setCode ] = useState('');
-	const [password , setPassword ] = useState('');
-	const [phone , setPhone ] = useState('');
+	const [name , setName ] = useState();
+	const [email , setEmail ] = useState();
+	const [code , setCode ] = useState();
+	const [password , setPassword ] = useState();
+	const [phone , setPhone ] = useState();
 	const [role , setRole ] = useState(2);
 
   	const isDarkMode = useColorScheme() === 'dark';
@@ -42,19 +42,21 @@ function VendorEdit({navigation , route}): JSX.Element {
         getVendorDetails(vendorId);
         // console.log("jik");
 	} , []);
+
     const getVendorDetails = (vendorId) => {
 		setGetLoader(true)
 		AsyncStorage.getItem('api_token').then((token) => {
 			let postedData = {role:'vendor', id: vendorId, api_token : token};
 			get('users/get' , postedData).then((res) => {
+				console.log(res.data.data.data);
 				setGetLoader(false)
 				SetData(res.data.data.data);
 
-				setName(data.name);
-				setEmail(data.email);
-				setCode(data.code);
-				setPassword(data.password);
-				setPhone(data.phone);
+				setName(res.data.data.data.name);
+				setEmail(res.data.data.data.email);
+				setCode(res.data.data.data.code);
+				setPassword(res.data.data.data.password);
+				setPhone(res.data.data.data.phone);
 			}).catch((err) => {
 				setGetLoader(false)
 				// console.log(err)
@@ -64,9 +66,11 @@ function VendorEdit({navigation , route}): JSX.Element {
 			setGetLoader(false)
 		});
 	}
+
 	const backgroundStyle = {
 		backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
 	};
+	
 	const submitVendor = () => {                                                                                                                 
 		setLoader(true)
 		console.log(name
@@ -107,10 +111,10 @@ function VendorEdit({navigation , route}): JSX.Element {
 			/>
 			<View style={[height100, primaryGulluLightBackgroundColor]}>
 			<View style={[{} , height100]}>
-				<View style={[{},height6]}>
+				<View style={[{},height8]}>
                     <HeaderComponent navigation={navigation} title="Vendor edit" />
                 </View>
-				<View style={[{} , height85]} >
+				<View style={[{} , height83]} >
 					{(getLoader)?
 						<ActivityIndicator size={20} color={gulluColor} />
 					:

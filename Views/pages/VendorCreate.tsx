@@ -20,7 +20,7 @@ import InputConponents from '../components/InputComponents';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
 
-import {  h3, height100, height6, height85, height9, inputStyle, justifyContentCenter, padding15, primaryBackgroundColor, secondaryBackgroundColor, textAlignCenter,gulluColor,primaryGulluLightBackgroundColor } from '../assets/styles';
+import {  h3, height100, height6, height85, height9, inputStyle, justifyContentCenter, padding15, primaryBackgroundColor, secondaryBackgroundColor, textAlignCenter,gulluColor,primaryGulluLightBackgroundColor, height8, height83, inputStyleBlack } from '../assets/styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { post, showToast } from '../services/services';
 
@@ -52,6 +52,7 @@ function VendorCreate({navigation}): JSX.Element {
 						console.log('in')
 						let postedData = { name : name , email: email, code : code , password: password , phone: phone , role: role ,api_token : token};
 						post('/users/create' , postedData).then((res) => {
+							console.log(res);
 							showToast(res.message);
 							setLoader(false);
 							navigation.push('vendorlist');
@@ -83,16 +84,16 @@ function VendorCreate({navigation}): JSX.Element {
 			/>
 			<View style={[height100, primaryGulluLightBackgroundColor]}>
 			<View style={[{} , height100]}>
-				<View style={[{},height6]}>
+				<View style={[{},height8]}>
                     <HeaderComponent navigation={navigation} title="Create Vendor" />
                 </View>
-				<View style={[{} , height85]} >
+				<View style={[{} , height83]} >
 
-					<InputConponents placeholder="Name" inputValue={(value:any) => { setName(value) }} style={inputStyle} />
-					<InputConponents placeholder="Email" inputValue={(value:any) => { setEmail(value) }} style={inputStyle} />
-					<InputConponents placeholder="Code" inputValue={(value:any) => { setCode(value) }} style={inputStyle} />
-					<InputConponents placeholder="Password" inputValue={(value:any) => { setPassword(value) }} style={inputStyle} />
-					<InputConponents placeholder="Phone" inputValue={(value:any) => { setPhone(value) }} style={inputStyle} />
+					<InputConponents placeholder="Name" inputValue={(value:any) => { setName(value) }} style={inputStyleBlack} />
+					<InputConponents placeholder="Email" inputValue={(value:any) => { setEmail(value) }} style={inputStyleBlack} />
+					<InputConponents placeholder="Code" inputValue={(value:any) => { setCode(value) }} style={inputStyleBlack} />
+					<InputConponents placeholder="Password" inputValue={(value:any) => { setPassword(value) }} style={inputStyleBlack} />
+					<InputConponents placeholder="Phone" inputValue={(value:any) => { setPhone(value) }} style={inputStyleBlack} />
 
 					{(!loader)?
 					<View style={{alignItems: 'center'}}>

@@ -29,13 +29,14 @@ import {
 	LearnMoreLinks,
 	ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import { cardBackgroundColor, flexDirectionRow, goldenColor, gulluColor, gulluFont, h1, h2, h3, h4, h5, height100, height50, height6, height85, height9, marginRight10, marginTop30, padding20, primaryBackgroundColor, primaryColor, primaryGulluBackgroundColor, primaryGulluLightBackgroundColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
+import { cardBackgroundColor, flexDirectionRow, goldenColor, gulluColor, gulluFont, h1, h2, h3, h4, h5, height100, height50, height6, height8, height83, height85, height88, height9, marginRight10, marginTop30, padding20, primaryBackgroundColor, primaryColor, primaryGulluBackgroundColor, primaryGulluLightBackgroundColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
 import FooterComponent from '../components/FooterComponent';
 import HeaderComponent from '../components/HeaderComponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { get } from '../services/services';
 import { imagePath } from '../services/Client';
 import { useIsFocused } from '@react-navigation/native'
+import NetInfo from "@react-native-community/netinfo";
 
 function Dashboard({ navigation }): JSX.Element {
 	const [ loader , setLoader] = useState(false);
@@ -46,7 +47,18 @@ function Dashboard({ navigation }): JSX.Element {
 	const [delivered , setDelivered] = useState({});
 	const [ allOrdersList , setAllOrdersList] = useState([]);
 
-
+	useEffect(() => {
+		NetInfo.fetch().then(state => {
+			console.log(state);
+			if( state.type == "cellular" ){
+				console.log("You are using mobile data to upload 30MB data. ");
+			}else{
+				if( 500 > 400 ){
+					console.log("sixe of attachment is 2MB, this will take  ");
+				}
+			}
+		  });
+	} , [])
 	const wait = (timeout) => { // Defined the timeout function for testing purpose
 		return new Promise(resolve => setTimeout(resolve, timeout));
 	}
@@ -79,8 +91,9 @@ function Dashboard({ navigation }): JSX.Element {
 	const getData = () => {
 		setLoader(true)
 		AsyncStorage.getItem('api_token').then((token) => {
-			let postedData = { role: 'salesman',api_token : token};
+			let postedData = { api_token : token};
 			get('/orders/list/pending' , postedData).then((res) => {
+				console.log(res);
 				let pending = res.data.data.data;
 			
 				setPending(pending);
@@ -100,29 +113,29 @@ function Dashboard({ navigation }): JSX.Element {
 				<View style={[marginRight10,{width:'60%',overflow: 'hidden' }]}>
 					<View style={[{} , flexDirectionRow]}> 
 						<Text style={[{fontWeight: 'bold'},h5,gulluFont,marginRight10]}>Order Number</Text>
-						<Text style={[{marginTop: 0},h5,gulluFont]}>{item.order_number}</Text>
+						<Text style={[{marginTop: 0},h5,gulluFont]}>{item?.order_number}</Text>
 					</View>
 					<View style={[{} , flexDirectionRow]}> 
 						<Text style={[{fontWeight: 'bold'},h5,gulluFont,marginRight10]}>Item </Text>
-						<Text style={[{marginTop: 0},h5,gulluFont]}>{item.item} </Text>
+						<Text style={[{marginTop: 0},h5,gulluFont]}>{item?.item} </Text>
 					</View>
 					<View style={[{} , flexDirectionRow]}> 
 						<Text style={[{fontWeight: 'bold'},h5,gulluFont,marginRight10]}>Color</Text>
-						<Text style={[{marginTop: 0},h5,gulluFont]}>{item.color}</Text>
+						<Text style={[{marginTop: 0},h5,gulluFont]}>{item?.color}</Text>
 					</View>
 					<View style={[{} , flexDirectionRow]}> 
 						<Text style={[{fontWeight: 'bold'},h5,gulluFont,marginRight10]}>Salesman</Text>
-						<Text style={[{marginTop: 0},h5,gulluFont]}>{item.salesman.name}</Text>
+						<Text style={[{marginTop: 0},h5,gulluFont]}>{item?.salesman?.name}</Text>
 					</View>
 					<View style={[{} , flexDirectionRow]}> 
 						<Text style={[{fontWeight: 'bold'},h5,gulluFont,marginRight10]}>Vendor</Text>
-						<Text style={[{marginTop: 0},h5,gulluFont]}>{item.vendor.name}</Text>
+						<Text style={[{marginTop: 0},h5,gulluFont]}>{item?.vendor?.name}</Text>
 					</View>
 					
 
 				</View>
 				<View style={{width: '40%'}}>
-					{( item.attachments?.length > 0)? <ImageBackground source={{uri: imagePath+''+item.attachments[0].attachment }} resizeMode="contain" style={{height: 100 , width: '100%'}} /> : ''}
+					{( item?.attachments?.length > 0)? <ImageBackground source={{uri: imagePath+''+item?.attachments[0].attachment }} resizeMode="contain" style={{height: 100 , width: '100%'}} /> : ''}
 				</View>
 			</View>
 			
@@ -136,11 +149,11 @@ function Dashboard({ navigation }): JSX.Element {
 			/>
 			<View style={[height100, primaryGulluLightBackgroundColor]}>
 				<View style={[{}, height100]}>
-					<View style={[{}, height6]}>
+					<View style={[{}, height8]}>
 						<HeaderComponent navigation={navigation} title="Pending Orders" />
 					</View>
 
-					<View style={[{}, height85]} >
+					<View style={[{}, height83]} >
 						<View>
 							{(loader)? 
 								<ActivityIndicator  size={20} color={gulluColor} />
@@ -151,12 +164,12 @@ function Dashboard({ navigation }): JSX.Element {
 									onRefresh={onRefresh} // Added pull to refresh control
 									data={pending}
 									renderItem={({item}) => <Item item={item} />}
-									keyExtractor={item => item.id}
+									keyExtractor={item => item?.id}
 									showsVerticalScrollIndicator={false}
 								/>
 								:
 								<View style={{justifyContent: 'center'}}>
-									<Text style={[{color: gulluColor,textAlign: 'center'},h4,marginTop30]}>No pending orders available</Text>
+									<Text style={[h4,{color: gulluColor,textAlign: 'center'},marginTop30]}>No pending orders available</Text>
 								</View>
 							}
 							

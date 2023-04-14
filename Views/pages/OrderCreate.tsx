@@ -27,7 +27,7 @@ import DocumentPicker, {
 import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
-import { flexDirectionRow, h3, h4, h5, height100, height6, height85, height9, inputStyle, inputStyleBlack, justifyContentCenter, marginLeft10, marginRight10, padding15, primaryBackgroundColor, screenheight, secondaryBackgroundColor, textAlignCenter,gulluColor,primaryGulluLightBackgroundColor,goldenColor } from '../assets/styles';
+import { flexDirectionRow, h3, h4, h5, height100, height6, height85, height9, inputStyle, inputStyleBlack, justifyContentCenter, marginLeft10, marginRight10, padding15, primaryBackgroundColor, screenheight, secondaryBackgroundColor, textAlignCenter,gulluColor,primaryGulluLightBackgroundColor,goldenColor, inputLoginStyle, height8, height83 } from '../assets/styles';
 import InputConponents from '../components/InputComponents';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
@@ -42,15 +42,18 @@ import { Dropdown } from 'react-native-element-dropdown';
 // import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import DatePicker from '@react-native-community/datetimepicker'
 import SearchableDropdown from "react-native-searchable-dropdown";
+import Camera from '../components/Camera';
+import NetInfo from "@react-native-community/netinfo";
+import networkSpeed from 'react-native-network-speed';
 
 function OrderCreate({navigation}): JSX.Element {
 	let salesmanData = {};
 	const [ activityIndicator , setActivityIndicator ] = useState(false);
-	const [order_number , setOrderNumber] = useState("order12");
-	const [vendor , setVendor] = useState('1');
-	const [salesman , setSalesman] = useState('1');
-	const [color , setColor] = useState('red');
-	const [item , setItem] = useState('test item');
+	const [order_number , setOrderNumber] = useState("");
+	const [vendor , setVendor] = useState('');
+	const [salesman , setSalesman] = useState('');
+	const [color , setColor] = useState('');
+	const [item , setItem] = useState('');
     const [value, setValue] = useState(null);
 	const [modalVisibleVendor, setModalVisibleVendor] = useState(false);
 	const [modalVisibleSalesman, setModalVisibleSalesman] = useState(false);
@@ -73,7 +76,9 @@ function OrderCreate({navigation}): JSX.Element {
 	const [apitoken, setApiToken] = useState();
 
 	const [vendorList , SetVendorList] = useState();
+	const [vendorListAll , SetVendorListAll] = useState();
 	const [salesmanList , SetSalesmanList] = useState();
+	const [salesmanListAll , SetSalesmanListAll] = useState();
 	const [date, setDate] = useState(new Date())
   	const [open, setOpen] = useState(false)
   	const [showReadyDate, setshowReadyDate] = useState(false)
@@ -91,6 +96,9 @@ function OrderCreate({navigation}): JSX.Element {
 	const [deliveryDate , SetDeliveryDate] = useState();
 
 	const [percentage, setPercentage] = useState(0);
+	const [networkType, setNetworkType] = useState();
+	const [totalAttachmentSize, setTotalAttachmentSize] = useState();
+	const [currentUploadingSpeed, setCurrentUploadingSpeed] = useState(0);
 
 	const videoPlayer = React.useRef();
 
@@ -116,25 +124,60 @@ function OrderCreate({navigation}): JSX.Element {
 		}
 		
 	} , []);
+
+	useEffect(() => {
+		NetInfo.fetch().then(state => {
+			console.log(state);
+			setNetworkType(state.type);
+		  });
+		
+	} , [])
+
 	var current = 0;
 	var interval:any;
 	let saveOrder = async () => {
-		
-			setActivityIndicator(true)
-			// console.log(order_number)
-			if( order_number != '' || order_number != undefined || vendor != '' || vendor != undefined || salesman != '' || salesman != undefined || color != '' || color != undefined || item != '' || item != undefined ){
-				// var formData = new FormData();
-				// formData.append('order_number', order_number);
-				// formData.append('vendor', selectedVendorId);
-				// formData.append('salesman', selectedSalesmanId);
-				// formData.append('api_token', apitoken);
-				// formData.append('color', color);
-				// formData.append('item', item);
-				// // Attach file
-				// formData.append('product_photo', productPhotoData[0]); 
-				// formData.append('product_measurement', productMeasurementData[0]); 
-				// formData.append('product_video', productVideoData[0]); 
+		let size1 = 0;
+		let size2 = 0;
+		let size3 = 0;
+		if(productPhotoData.length > 0){
+			size1 = productPhotoData[0].size;
+		}
+		if(productMeasurementData.length > 0){
+			size2 = productMeasurementData[0].size;
+		}
+		if(productVideoData.length > 0){
+			size3 = productVideoData[0].size;
+		}
+		let totalAttachmentSize = ((size1+size2+size3)/1000000);
+		setTotalAttachmentSize(totalAttachmentSize);
+		let mobileDataSize = 1;
+		let wifiDataSize = 6;
+		let defaultTimeInterval = 1000;
 
+		if( networkType == 'cellular' ){
+			if(mobileDataSize <= 0){
+				mobileDataSize = 1;
+			}
+			defaultTimeInterval = (Math.round(((totalAttachmentSize)/mobileDataSize)) * 1000);
+		}else{
+			if(wifiDataSize <= 0){
+				wifiDataSize = 1;
+			}
+			defaultTimeInterval = (Math.round(((totalAttachmentSize)/wifiDataSize)) * 1000);
+		}
+
+
+
+		if( order_number != '' && order_number != undefined && selectedVendorId != '' && selectedVendorId != undefined && selectedSalesmanId != '' && selectedSalesmanId != undefined && color != '' && color != undefined && item != '' && item != undefined && readyDate != '' && readyDate != undefined && deliveryDate != '' && deliveryDate != undefined ){
+			if(productPhotoData.length > 0 && productMeasurementData.length > 0 && productVideoData.length > 0){
+				// networkSpeed.startListenNetworkSpeed(({downLoadSpeed,downLoadSpeedCurrent,upLoadSpeed,upLoadSpeedCurrent}) => {
+				// 	// console.log(downLoadSpeed + 'kb/s') 
+				// 	// console.log(downLoadSpeedCurrent + 'kb/s') 
+				// 	// console.log(upLoadSpeed + 'kb/s') 
+				// 	setCurrentUploadingSpeed(upLoadSpeedCurrent + 'kb/s') 
+				// })
+				// networkSpeed.stopListenNetworkSpeed();
+				setActivityIndicator(true)
 				let data = new FormData();
 				data.append('order_number', order_number);
 				data.append('vendor', selectedVendorId);
@@ -142,45 +185,19 @@ function OrderCreate({navigation}): JSX.Element {
 				data.append('api_token', apitoken);
 				data.append('color', color);
 				data.append('item', item);
+				data.append('item', item);
+				data.append('item', item);
 				// Attach file
 				data.append('product_photo', productPhotoData[0]); 
 				data.append('product_measurement', productMeasurementData[0]); 
-				data.append('product_video', productVideoData[0]); 
-
-
-				// let xhr = new XMLHttpRequest();
-				// xhr.upload.addEventListener('progress', (event) => {
-				// 	if (event.lengthComputable) {
-						
-
-				// 		if( percent == 100 ){
-				// 			setActivityIndicator(false)
-				// 		}
-				// 		// Update progress bar here
-				// 	}
-				// });
-
-				// xhr.open('POST', 'https://gullu.suryacontractors.com/public/api/orders/create');
-				// xhr.send(data);
-
-
-				// console.log(formData)
-				// var xhr = new XMLHttpRequest();
-				// xhr.open('POST', 'https://gullu.suryacontractors.com/public/api/orders/create');
-				// xhr.send(formData);
-				// console.log('xhr');
-				// console.log(xhr);
-				// setTimeout(() => {
-				// 	setGeneratingMessage('Uploading Attachments');
-				// } , 5000)
-
+				data.append('product_video', productVideoData[0]);
 
 				interval = setInterval(function(){
 					if( current < 98 ){
-						let ndInt = Math.floor(Math.random() * 3) + 1;
+						let ndInt = Math.floor(Math.random() * 1) + 1;
 						current+=ndInt;
 						setGeneratingMessage('Generating Order');
-						if( current > 5){
+						if( current > 2){
 							setGeneratingMessage('Uploading Attachments...'+current+'%' );
 						}
 						if( current > 97 ){
@@ -191,7 +208,8 @@ function OrderCreate({navigation}): JSX.Element {
 						setGeneratingMessage('Almost done...');
 					}
 
-				}, 1000);
+				}, defaultTimeInterval);
+
 				let ress = await fetch('https://gullu.suryacontractors.com/public/api/orders/create', {
 					method: 'POST',
 					body: data,
@@ -199,7 +217,10 @@ function OrderCreate({navigation}): JSX.Element {
 						'Content-Type': 'multipart/form-data; ',
 					  },
 				});
+
 				let response = await ress.json();
+				console.log('response here');
+				console.log(response);
 				if(response.data.status == true || response.data.status == 'true'){		
 
 					interval = setInterval(function(){
@@ -209,19 +230,21 @@ function OrderCreate({navigation}): JSX.Element {
 							if( current > 20){
 								setGeneratingMessage('Uploading Attachments...'+current+'%' );
 							}
-							if( current > 97 ){
-								setGeneratingMessage('Almost done...');
-								clearInterval(interval);
-								showToast('Order generated');
-								navigation.push('orderlist');
-								setActivityIndicator(false)
-							}
-						}else{
-							clearInterval(interval);
-							setGeneratingMessage('Almost done...');
+							
 						}
+						if( current > 97 ){
+							setGeneratingMessage('Almost done...');
+							clearInterval(interval);
+							showToast('Order generated');
+							navigation.push('orderlist');
+							setActivityIndicator(false)
+						}
+						// else{
+						// 	clearInterval(interval);
+						// 	setGeneratingMessage('Almost complete...');
+						// }
 	
-					}, 1000);
+					}, defaultTimeInterval);
 			
 					
 					
@@ -235,7 +258,11 @@ function OrderCreate({navigation}): JSX.Element {
 				showToast('Required fields are missing');
 			}
 			
-			return false;
+		}else{
+			showToast('Required fields are missing');
+		}
+			
+		return false;
 
 
 	}
@@ -246,6 +273,7 @@ function OrderCreate({navigation}): JSX.Element {
 			let postedData = { role: 'vendor',api_token : token};
 			get('users/get' , postedData).then((res) => {
 				SetVendorList(res.data.data.data);
+				SetVendorListAll(res.data.data.data);
 				// console.log(res.data.data.data);
 			}).catch((err) => {
 				// console.log(err)
@@ -256,9 +284,10 @@ function OrderCreate({navigation}): JSX.Element {
 	}
 	const getSalesmanList = () => {
 		AsyncStorage.getItem('api_token').then((token) => {
-			let postedData = { role: 'vendor',api_token : token};
+			let postedData = { role: 'salesman',api_token : token};
 			get('users/get' , postedData).then((res) => {
 				SetSalesmanList(res.data.data.data);
+				SetSalesmanListAll(res.data.data.data);
 			}).catch((err) => {
 				// console.log(err)
 			});
@@ -325,6 +354,48 @@ function OrderCreate({navigation}): JSX.Element {
 		setshowReadyDate(false)
 		setShowDeliveryDate(true)
 	}
+	const searchVendor = (searchedValue) => {
+		console.log();
+		if(searchedValue.length > 0 ){
+			let newSearchableArray = [];
+			if( vendorList.length > 0 ){
+				vendorList.filter((list) => {
+					let searchableLowercase = (list.name).toLowerCase();
+					if(searchableLowercase.includes((searchedValue).toLowerCase())){ 
+						newSearchableArray.push(list)
+					}
+				});
+				SetVendorList(newSearchableArray);
+			}
+		}else{
+			SetVendorList(vendorListAll);
+		}
+		
+		// vendorList.filter
+		// console.log(searchedValue);
+	}
+	const searchSalesman = (searchedValue) => {
+		console.log();
+		if(searchedValue.length > 0 ){
+			let newSearchableArray = [];
+			if( salesmanList.length > 0 ){
+				salesmanList.filter((list) => {
+					let searchableLowercase = (list.name).toLowerCase();
+					if(searchableLowercase.includes((searchedValue).toLowerCase())){ 
+						newSearchableArray.push(list)
+					}
+				});
+				SetSalesmanList(newSearchableArray);
+			}
+		}else{
+			SetSalesmanList(salesmanListAll);
+		}
+		
+		// vendorList.filter
+		// console.log(searchedValue);
+	}
+	
+
   return (
     <SafeAreaView style={{backgroundColor: '#ededed'}}>
 			<StatusBar
@@ -336,8 +407,12 @@ function OrderCreate({navigation}): JSX.Element {
 			{(activityIndicator)? 
 				<View style={{zIndex: 99999}}>
 					<View style={[{position: 'absolute',top: 0,backgroundColor: gulluColor,left: 0,width: '100%',zIndex: 9999999,opacity: 0.8},screenheight,justifyContentCenter ]}>
-						<ActivityIndicator color={gulluColor} size={40}></ActivityIndicator>
-						<Text style={[h4,{textAlign: 'center',color: gulluColor}]}>{generatingMessage}...</Text>
+						<Text style={[h4,{textAlign: 'center',color: '#fff'}]}>You are on {networkType}</Text>
+						<Text style={[h4,{textAlign: 'center',color: '#fff'}]}>Order attachment size is {totalAttachmentSize.toFixed(2)} MB</Text>
+						{/* <Text>Uploading speed {currentUploadingSpeed}</Text> */}
+						<View style={{paddingVertical: 10}}></View>
+						<ActivityIndicator color="#fff" size={40}></ActivityIndicator>
+						<Text style={[h4,{textAlign: 'center',color: '#fff'}]}>{generatingMessage}...</Text>
 					</View>
 				</View>
 			:
@@ -346,13 +421,13 @@ function OrderCreate({navigation}): JSX.Element {
 				
 
 				
-				<View style={[{},height6]}>
+				<View style={[{},height8]}>
                     <HeaderComponent navigation={navigation} title="order create" />
                 </View>
 				<ScrollView horizontal={false} style={{flex: 1}}>
 					<ScrollView>
 						
-						<View style={[{} , height85]} >
+						<View style={[{} , height83]} >
 								
 							<InputConponents placeholder="Order Number" inputValue={(value:any) => { setOrderNumber(value) }} style={inputStyleBlack} />
 							{/* <InputConponents placeholder="Select Vendor" inputValue={(value:any) => { setVendor(value) }} style={inputStyleBlack} />
@@ -372,9 +447,12 @@ function OrderCreate({navigation}): JSX.Element {
 											<View style={{paddingBottom: 10}}>
 												<Text>Select Vendor</Text>
 											</View>
+											<View style={{width: '100%' }}>
+												<InputConponents placeholder="Search Vendor" inputValue={(value:any) => { searchVendor(value) }} style={inputStyleBlack}/>
+											</View>
 											<FlatList
 												data={vendorList}
-												renderItem={({item}) => <Item item={item} />}
+												renderItem={({item}) => {return <View><Item item={item} /></View>}}
 												keyExtractor={item => item.id}
 												showsVerticalScrollIndicator={false}
 											/>
@@ -399,6 +477,9 @@ function OrderCreate({navigation}): JSX.Element {
 										<View style={styles.modalView}>
 											<View style={{paddingBottom: 10}}>
 												<Text>Select Salesman</Text>
+											</View>
+											<View style={{width: '100%' }}>
+												<InputConponents placeholder="Search Vendor" inputValue={(value:any) => { searchSalesman(value) }} style={inputStyleBlack}/>
 											</View>
 											<FlatList
 												data={salesmanList}
@@ -543,6 +624,13 @@ function OrderCreate({navigation}): JSX.Element {
 										});
 										setPrductPhotoType(pickerResult[0].type);
 										setPrductPhotoData(pickerResult)
+										// if(pickerResult[0].size <= 2000000){
+										// 	setPrductPhotoType(pickerResult[0].type);
+										// 	setPrductPhotoData(pickerResult)
+										// }else{
+										// 	showToast('Image should be less than 2MB');
+										// }
+										
 									} catch (e) {
 										handleError(e)
 									}
@@ -572,6 +660,13 @@ function OrderCreate({navigation}): JSX.Element {
 										});
 										setPrductMeasureType(pickerResult[0].type);
 										setPrductMeasurementData(pickerResult)
+										// if(pickerResult[0].size <= 2000000){
+										// 	setPrductMeasureType(pickerResult[0].type);
+										// 	setPrductMeasurementData(pickerResult)
+										// }else{
+										// 	showToast('Image should be less than 2MB');
+										// }
+										
 									} catch (e) {
 										handleError(e)
 									}
@@ -596,12 +691,22 @@ function OrderCreate({navigation}): JSX.Element {
 									try {
 										const pickerResult = await DocumentPicker.pick({
 											presentationStyle: 'fullScreen',
-											
 											copyTo: 'cachesDirectory',
-											type: [types.video]
+											type: [types.video],
+
 										});
+
+										console.log(pickerResult[0]);
+										let sourceUri = pickerResult[0].fileCopyUri;
 										setPrductVideoType(pickerResult[0].type);
 										setProductVideoData(pickerResult);
+
+										// if( pickerResult[0].size <= 5000000 ){
+										// 	setPrductVideoType(pickerResult[0].type);
+										// 	setProductVideoData(pickerResult);
+										// }else{
+										// 	showToast('Max file upload size is 5MB');
+										// }
 									} catch (e) {
 										handleError(e)
 									}
@@ -610,15 +715,28 @@ function OrderCreate({navigation}): JSX.Element {
 								>
 									<Text style={{color: goldenColor,textAlign: 'center'}}>Upload Product Video</Text>
 								</TouchableOpacity>
+								<View style={styles.container}>
+									
+									<View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
+										{/* <Camera /> */}
+										{/* <TouchableOpacity onPress={} style={styles.capture}>
+											<Text style={{ fontSize: 14 }}> SNAP </Text>
+										</TouchableOpacity> */}
+									</View>
+								</View>
+								
+								
+
+
 								{(productVideoData != undefined && productVideoData.length > 0)?
 									<View style={{width: '100%' , height: 400}}>
 										<Video source={{uri: productVideoData[0].fileCopyUri }}
-											
 											style={styles.backgroundVideo}
 											controls={true}
 											ref={ref => (videoPlayer.current = ref)}
-											resizeMode="contain"
-											paused={true}
+											resizeMode={"contain"}
+											paused={false}
+											muted={true}
 										/>
 									</View>
 									
@@ -648,9 +766,25 @@ function OrderCreate({navigation}): JSX.Element {
 
 const styles = StyleSheet.create({
 	container: {
-	  flex: 1,
-	  marginTop: StatusBar.currentHeight || 0,
-	},
+		flex: 1,
+		flexDirection: 'column',
+		backgroundColor: 'black',
+	  },
+	  preview: {
+		flex: 1,
+		justifyContent: 'flex-end',
+		alignItems: 'center',
+	  },
+	  capture: {
+		flex: 0,
+		backgroundColor: '#fff',
+		borderRadius: 5,
+		padding: 15,
+		paddingHorizontal: 20,
+		alignSelf: 'center',
+		margin: 20,
+	  },
+	
 	item: {
 	  backgroundColor: secondaryBackgroundColor,
 	  padding: 15,
@@ -696,14 +830,14 @@ const styles = StyleSheet.create({
 		flex: 100,
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginTop: 22,
+		marginTop: 10,
 	  },
 	  modalView: {
 		borderColor: '#ededed',
 		borderWidth: 2,
 		margin: 20,
 		width: '80%',
-		height: 400,
+		height: '70%',
 		backgroundColor: 'white',
 		borderRadius: 20,
 		padding: 10,

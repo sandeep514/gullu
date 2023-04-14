@@ -26,7 +26,7 @@ import DocumentPicker, {
 import {
 	Colors,
 } from 'react-native/Libraries/NewAppScreen';
-import { flexDirectionRow, h3, h4, h5, height100, height6, height85, height9, inputStyleBlack, justifyContentCenter, marginRight10, marginTop10, padding10, padding15, primaryBackgroundColor, secondaryBackgroundColor, textAlignCenter,gulluColor,primaryGulluLightBackgroundColor } from '../assets/styles';
+import { flexDirectionRow, h3, h4, h5, height100, height6, height85, height9, inputStyleBlack, justifyContentCenter, marginRight10, marginTop10, padding10, padding15, primaryBackgroundColor, secondaryBackgroundColor, textAlignCenter,gulluColor,primaryGulluLightBackgroundColor, height8, height83 } from '../assets/styles';
 import InputConponents from '../components/InputComponents';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
@@ -47,6 +47,7 @@ function OrderEdit({ navigation, route }): JSX.Element {
 	const [selectedImage, setSelectedImage] = useState();
 	const [loader, setLoader] = useState(false);
 	const [dataUpdated, setDataUpdated] = useState(false);
+	const [loadStart, setLoadStart] = useState(false);
 
 	const videoPlayer = React.useRef();
 
@@ -107,11 +108,11 @@ function OrderEdit({ navigation, route }): JSX.Element {
 			/>
 			<View style={[height100, primaryGulluLightBackgroundColor]}>
 				<View style={[{}, height100]}>
-					<View style={[{}, height6]}>
+					<View style={[{}, height8]}>
 						<HeaderComponent navigation={navigation} title="order edit" />
 					</View>
 					<ScrollView>
-						<View style={[{}, height85]} >
+						<View style={[{}, height83]} >
 							{(item != undefined) ?
 								<View style={[{}, flexDirectionRow, padding10]}>
 									<View style={[marginRight10, { width: '100%', overflow: 'hidden' }]}>
@@ -157,21 +158,30 @@ function OrderEdit({ navigation, route }): JSX.Element {
 																transparent={true}
 																visible={modalVisible}
 																onRequestClose={() => {
-																	Alert.alert('Modal has been closed.');
+																	// Alert.alert('Modal has been closed.');
 																	setModalVisible(!modalVisible);
 																}}>
 																<View style={styles.centeredView}>
 																	<View style={styles.modalView}>
 																		<View style={{ width: '100%', height: 400, paddingVertical: 20 }}>
 																			<Video source={{ uri: imagePath + '' + attachment.attachment }}
-
 																				style={styles.backgroundVideo}
 																				controls={true}
 																				ref={ref => (videoPlayer.current = ref)}
-																				resizeMode="stretch"
+																				resizeMode={"contain"}
 																				paused={false}
-																				onBuffer={() => { console.log("jere") }}
+																				onLoad={() => { console.log("jnk"); }}
+																				onLoadStart={() => { setLoadStart(true); }}
+																				onBuffer={() => { console.log("onBuffer"); }}
 																			/>
+																			{(loadStart)?
+																				<View style={[{},justifyContentCenter]}>
+																					<Text style={{textAlign: 'center'}}>Loading Video...</Text>
+																				</View>
+																			:
+																				null
+																			}
+
 																		</View>
 																		<Pressable
 																			style={[styles.button, styles.buttonClose]}
@@ -204,7 +214,7 @@ function OrderEdit({ navigation, route }): JSX.Element {
 											transparent={true}
 											visible={modalVisibleImage}
 											onRequestClose={() => {
-												Alert.alert('Modal has been closed.');
+												// Alert.alert('Modal has been closed.');
 												setModalVisibleImage(!modalVisibleImage);
 											}}>
 											<View style={styles.centeredView}>

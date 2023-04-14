@@ -25,7 +25,7 @@ import InputConponents from '../components/InputComponents';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
 
-import { cardBackgroundColor, h1, h2, h3, height10, height100, height14, height15, height20, height4, height5, height50, height6, height80, height82, height84, height85, height87, height9, height90, height92, inputStyleBlack, justifyContentCenter, padding15, padding20, primaryBackgroundColor, primaryColor, screenheight, secondaryBackgroundColor, textAlignCenter,inputStyle,gulluColor,primaryGulluLightBackgroundColor } from '../assets/styles';
+import { cardBackgroundColor, h1, h2, h3, height10, height100, height14, height15, height20, height4, height5, height50, height6, height80, height82, height84, height85, height87, height9, height90, height92, inputStyleBlack, justifyContentCenter, padding15, padding20, primaryBackgroundColor, primaryColor, screenheight, secondaryBackgroundColor, textAlignCenter,inputStyle,gulluColor,primaryGulluLightBackgroundColor, height8, height83 } from '../assets/styles';
 import { post, showToast } from '../services/services';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -94,16 +94,16 @@ function SalesmanCreate({navigation}): JSX.Element {
 			/>
 			<View style={[height100, primaryGulluLightBackgroundColor]}>
 			<View style={[{} , height100]}>
-				<View style={[{},height6]}>
+				<View style={[{},height8]}>
                     <HeaderComponent navigation={navigation} title="Create Salesman" />
                 </View>
-				<View style={[{} , height85]} >
+				<View style={[{} , height83]} >
 
-					<InputConponents placeholder="Name" inputValue={(value:any) => { setName(value) }} style={inputStyle} />
-					{/* <InputConponents placeholder="Email" inputValue={(value:any) => { setEmail(value) }} style={inputStyle} /> */}
-					<InputConponents placeholder="Code" inputValue={(value:any) => { setCode(value) }} style={inputStyle} />
-					<InputConponents placeholder="Password" inputValue={(value:any) => { setPassword(value) }} style={inputStyle} />
-					<InputConponents placeholder="Phone" inputValue={(value:any) => { setPhone(value) }} style={inputStyle} />
+					<InputConponents placeholder="Name" inputValue={(value:any) => { setName(value) }} style={inputStyleBlack} />
+					<InputConponents placeholder="Email" inputValue={(value:any) => { setEmail(value) }} style={inputStyleBlack} />
+					<InputConponents placeholder="Code" inputValue={(value:any) => { setCode(value) }} style={inputStyleBlack} />
+					<InputConponents placeholder="Password" inputValue={(value:any) => { setPassword(value) }} style={inputStyleBlack} />
+					<InputConponents placeholder="Phone" inputValue={(value:any) => { setPhone(value) }} style={inputStyleBlack} />
 					{(!loader)?
 						<View style={{alignItems: 'center'}}>
 							<TouchableOpacity onPress={() => { submitSalesman() }} style={[{width: 'auto',backgroundColor: gulluColor,borderRadius: 10},padding15,justifyContentCenter]} >

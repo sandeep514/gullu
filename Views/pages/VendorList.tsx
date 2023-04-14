@@ -20,7 +20,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import { cardBackgroundColor, gulluColor, h1, h2, h3, height10, height100, height20, height50, height6, height80, height85, height9, height90, padding20, primaryBackgroundColor, primaryColor, primaryGulluLightBackgroundColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
+import { cardBackgroundColor, gulluColor, h1, h2, h3, height10, height100, height20, height50, height6, height8, height80, height83, height85, height9, height90, padding20, primaryBackgroundColor, primaryColor, primaryGulluLightBackgroundColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
 import InputConponents from '../components/InputComponents';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
@@ -68,8 +68,8 @@ function VendorList({navigation}): JSX.Element {
 	
 	const Item = ({item}:any) => (
 		<Pressable onPress={() => {navigation.push('vendorEdit' , {vendorId : item.id})}} style={styles.item}>
-			<Text style={[{},h3]}>{item.name}</Text>
-			<Text style={[{},h3]}>{item.phone}</Text>
+			<Text style={[{},h3, {color: gulluColor}]}>{item.name}</Text>
+			<Text style={[{},h3, {color: gulluColor}]}>{item.phone}</Text>
 		</Pressable>
 	);
   return (
@@ -79,10 +79,10 @@ function VendorList({navigation}): JSX.Element {
 			/>
 			<View style={[height100, primaryGulluLightBackgroundColor]}>
 			<View style={[{} , height100]}>
-				<View style={[{},height6]}>
+				<View style={[{},height8]}>
                     <HeaderComponent navigation={navigation} title="Vendor List" />
                 </View>
-				<View style={[{} , height85]} >
+				<View style={[{} , height83]} >
 					{(activityIndicator)? 
 						<ActivityIndicator color={gulluColor} size={20}></ActivityIndicator>
 					:
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
 	  marginTop: StatusBar.currentHeight || 0,
 	},
 	item: {
-	  backgroundColor: secondaryBackgroundColor,
+	  backgroundColor: '#fff',
 	  padding: 15,
 	  marginVertical: 8,
 	  marginHorizontal: 16,
