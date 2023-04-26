@@ -45,7 +45,7 @@ function VendorEdit({navigation , route}): JSX.Element {
 
     const getVendorDetails = (vendorId) => {
 		setGetLoader(true)
-		AsyncStorage.getItem('api_token').then((token) => {
+		AsyncStorage.getItem('id').then((token) => {
 			let postedData = {role:'vendor', id: vendorId, api_token : token};
 			get('users/get' , postedData).then((res) => {
 				console.log(res.data.data.data);
@@ -77,7 +77,7 @@ function VendorEdit({navigation , route}): JSX.Element {
 			,email
 			,code
 			,phone)
-		AsyncStorage.getItem('api_token').then((token) => {
+		AsyncStorage.getItem('id').then((token) => {
 			if( phone.length == 10){
 				if( name != '' && email != '' && code != '' && phone != ''){
 					let postedData = { name : name , email: email, code : code , password: password , phone: phone , role: role ,api_token : token , id: data.id};

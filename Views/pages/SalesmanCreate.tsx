@@ -53,7 +53,7 @@ function SalesmanCreate({navigation}): JSX.Element {
 	};
 	const submitSalesman = () => {
 		setLoader(true);
-		AsyncStorage.getItem('api_token').then((token) => {
+		AsyncStorage.getItem('id').then((token) => {
 
 			if( phone.length == 10){
 				if( name != '' && code != '' && password != '' && phone != ''){

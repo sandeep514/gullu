@@ -90,7 +90,7 @@ function Dashboard({ navigation }): JSX.Element {
 
 	const getData = () => {
 		setLoader(true)
-		AsyncStorage.getItem('api_token').then((token) => {
+		AsyncStorage.getItem('id').then((token) => {
 			let postedData = { api_token : token};
 			get('/orders/list/pending' , postedData).then((res) => {
 				console.log(res);

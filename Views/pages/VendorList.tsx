@@ -48,7 +48,7 @@ function VendorList({navigation}): JSX.Element {
 	const getVendorList = () => {
 		setActivityIndicator(true)
 
-		AsyncStorage.getItem('api_token').then((token) => {
+		AsyncStorage.getItem('id').then((token) => {
 			let postedData = { role: 'vendor',api_token : token};
 			get('users/get' , postedData).then((res) => {
 				setActivityIndicator(false)

@@ -60,7 +60,7 @@ function OrderEdit({ navigation, route }): JSX.Element {
 			setItem(route.params.orderData);
 		}
 
-		AsyncStorage.getItem('api_token').then((token) => {
+		AsyncStorage.getItem('id').then((token) => {
 			// console.log(token);
 		}).catch((err) => {
 
@@ -74,7 +74,7 @@ function OrderEdit({ navigation, route }): JSX.Element {
 	}, [])
 	const updateOrder = (status) => {
 		setLoader(true);
-		AsyncStorage.getItem('api_token').then((token) => {
+		AsyncStorage.getItem('id').then((token) => {
 			let postedData = { 'status': status,'api_token' : token ,'applicationId' : item?.id };
 			get('/update/order/status' , postedData).then((res) => {
 				// console.log(res.data.data.data);			

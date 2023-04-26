@@ -84,6 +84,7 @@ function Login({navigation}): JSX.Element {
 				let params = {email : email , password: password};
 
 				post('/login' ,params ).then((res:any) => {
+					console.log(res);
 					AsyncStorage.setItem('api_token' , res.data.api_token);
 					AsyncStorage.setItem('email' , res.data.email);
 					AsyncStorage.setItem('id' , (res.data.id).toString());

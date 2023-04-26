@@ -44,7 +44,7 @@ function SalesmanEdit({navigation , route}): JSX.Element {
 	} , []);
     const getSalesmanDetails = (salesmanId) => {
 		setGetLoader(true)
-		AsyncStorage.getItem('api_token').then((token) => {
+		AsyncStorage.getItem('id').then((token) => {
 			let postedData = {role:'salesman', id: salesmanId, api_token : token};
 			get('users/get' , postedData).then((res) => {
 				setGetLoader(false)
@@ -69,7 +69,7 @@ function SalesmanEdit({navigation , route}): JSX.Element {
 	};
 	const submitSalesman = () => {                                                                                                                 
 		setLoader(true)
-		AsyncStorage.getItem('api_token').then((token) => {
+		AsyncStorage.getItem('id').then((token) => {
 			if(phone.length == 10){
 				if( name != '' && email != '' && code != '' && phone != ''){
 					let postedData = { name : name , email: email, code : code , password: password , phone: phone , role: role ,api_token : token , id: data.id};

@@ -49,7 +49,7 @@ function SalesmanList({navigation}): JSX.Element {
 	const getSalesmanList = () => {
 		setActivityIndicator(true)
 
-		AsyncStorage.getItem('api_token').then((token) => {
+		AsyncStorage.getItem('id').then((token) => {
 			let postedData = { role: 'salesman',api_token : token};
 			get('users/get' , postedData).then((res) => {
 				setActivityIndicator(false)

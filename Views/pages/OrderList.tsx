@@ -59,7 +59,7 @@ function OrderList({navigation}): JSX.Element {
 	};
 	useEffect(() => {
 		SetSelectedOrderStatus('pending');
-		AsyncStorage.getItem('api_token').then((token) => {
+		AsyncStorage.getItem('id').then((token) => {
 			setLoader(true)
 			let postedData = { role: 'salesman',api_token : token};
 			get('/orders/list' , postedData).then((res) => {

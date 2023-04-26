@@ -45,7 +45,7 @@ function VendorCreate({navigation}): JSX.Element {
 		setLoader(true)
 		console.log("uhnjik");
 		if(name != undefined && name != '' &&code != undefined && code != '' && password != undefined && password != '' && phone != undefined && phone != ''){
-			AsyncStorage.getItem('api_token').then((token) => {
+			AsyncStorage.getItem('id').then((token) => {
 				if( phone.length == 10){
 					console.log('phone')
 					
