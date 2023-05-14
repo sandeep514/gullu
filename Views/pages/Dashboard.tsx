@@ -75,6 +75,7 @@ function Dashboard({ navigation }): JSX.Element {
 	const isDarkMode = useColorScheme() === 'dark';
 	useEffect(() => {
 		AsyncStorage.getItem('role').then((roleId) => {
+			console.log(roleId);
 			setRole(roleId);
 		}).catch((err) =>{
 			// console.log(err);
@@ -123,14 +124,21 @@ function Dashboard({ navigation }): JSX.Element {
 						<Text style={[{fontWeight: 'bold'},h5,gulluFont,marginRight10]}>Color</Text>
 						<Text style={[{marginTop: 0},h5,gulluFont]}>{item?.color}</Text>
 					</View>
-					<View style={[{} , flexDirectionRow]}> 
-						<Text style={[{fontWeight: 'bold'},h5,gulluFont,marginRight10]}>Salesman</Text>
-						<Text style={[{marginTop: 0},h5,gulluFont]}>{item?.salesman?.name}</Text>
-					</View>
-					<View style={[{} , flexDirectionRow]}> 
-						<Text style={[{fontWeight: 'bold'},h5,gulluFont,marginRight10]}>Vendor</Text>
-						<Text style={[{marginTop: 0},h5,gulluFont]}>{item?.vendor?.name}</Text>
-					</View>
+					{(role == 1)?
+						<View>
+							<View style={[{} , flexDirectionRow]}> 
+								<Text style={[{fontWeight: 'bold'},h5,gulluFont,marginRight10]}>Salesman</Text>
+								<Text style={[{marginTop: 0},h5,gulluFont]}>{item?.salesman?.name}</Text>
+							</View>
+							<View style={[{} , flexDirectionRow]}> 
+								<Text style={[{fontWeight: 'bold'},h5,gulluFont,marginRight10]}>Vendor</Text>
+								<Text style={[{marginTop: 0},h5,gulluFont]}>{item?.vendor?.name}</Text>
+							</View>
+
+						</View>					
+					:
+						null
+					}
 					
 
 				</View>

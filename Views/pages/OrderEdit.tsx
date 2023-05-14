@@ -130,14 +130,21 @@ function OrderEdit({ navigation, route }): JSX.Element {
 													<Text style={[{ fontWeight: 'bold' }, h4, marginRight10 ,{color: gulluColor}]}>Color</Text>
 													<Text style={[{ marginTop: 0 }, h4 , {color: gulluColor}]}>{item?.color}</Text>
 												</View>
-												<View style={[{}, flexDirectionRow]}>
-													<Text style={[{ fontWeight: 'bold' }, h4, marginRight10 ,{color: gulluColor}]}>Salesman</Text>
-													<Text style={[{ marginTop: 0 }, h4 , {color: gulluColor}]}>{item?.salesman.name}</Text>
-												</View>
-												<View style={[{}, flexDirectionRow]}>
-													<Text style={[{ fontWeight: 'bold' }, h4, marginRight10 ,{color: gulluColor}]}>Vendor</Text>
-													<Text style={[{ marginTop: 0 }, h4 , {color: gulluColor}]}>{item?.vendor.name}</Text>
-												</View>
+												{(role == 1)?
+													<View>
+														<View style={[{}, flexDirectionRow]}>
+															<Text style={[{ fontWeight: 'bold' }, h4, marginRight10 ,{color: gulluColor}]}>Salesman</Text>
+															<Text style={[{ marginTop: 0 }, h4 , {color: gulluColor}]}>{item?.salesman.name}</Text>
+														</View>
+														<View style={[{}, flexDirectionRow]}>
+															<Text style={[{ fontWeight: 'bold' }, h4, marginRight10 ,{color: gulluColor}]}>Vendor</Text>
+															<Text style={[{ marginTop: 0 }, h4 , {color: gulluColor}]}>{item?.vendor.name}</Text>
+														</View>
+													</View>
+												:
+													null
+												}
+												
 											</View>
 											
 										</View>
@@ -249,10 +256,16 @@ function OrderEdit({ navigation, route }): JSX.Element {
 											:
 												null
 											}
-											
 
 
 											{( role == 1 && item?.status == 1)?
+												<View style={{width: '100%'}}>
+													<Text style={{color: secondaryBackgroundColor}}>Order not Ready yet.</Text>
+												</View>
+											:
+												null
+											}
+											{( role == 3 && item?.status == 1)?
 												<View style={{width: '100%'}}>
 													<Text style={{color: secondaryBackgroundColor}}>Order not Ready yet.</Text>
 												</View>

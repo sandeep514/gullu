@@ -52,7 +52,9 @@ function OrderList({navigation}): JSX.Element {
 	const [ selectedOrderData , SetSelectedOrderData] = useState('');
 
 	useEffect(()=> {
-		
+		AsyncStorage.getItem('role').then((userRole) => {
+			console.log(userRole);
+		})
 	} , [])
 	const backgroundStyle = {
 		backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
