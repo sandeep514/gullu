@@ -61,6 +61,8 @@ function Login({navigation}): JSX.Element {
 
 	const [ validationError , setValidationError ] = useState('');
 	const [ activityIndicator , setActivityIndicator ] = useState(false);
+	const [ hasError , setHasError ] = useState(false);
+	const [ errorMessage , setErrorMessage ] = useState('');
 
   	const isDarkMode = useColorScheme() === 'dark';
   	useEffect(()=> {
@@ -98,7 +100,8 @@ function Login({navigation}): JSX.Element {
 				}).catch((error) => {
 					setActivityIndicator(false)
 					setActivityIndicator(false)
-					
+					setHasError(true)
+					setErrorMessage('Invalid login')
 					// console.log(error);
 				})
 			}else{
@@ -150,6 +153,11 @@ function Login({navigation}): JSX.Element {
 								<TouchableOpacity onPress={() => { tryLogin() }} style={[{width: 150,backgroundColor: goldenColor,borderRadius: 10},padding15,justifyContentCenter]} >
 									<Text style={[h3,{color: gulluColor} , textAlignCenter]}>Login</Text>
 								</TouchableOpacity>
+							}
+							{(hasError)?
+								<Text style={{color: '#fff'}}>{errorMessage}</Text>
+							:
+								null
 							}
 						</View>
 							

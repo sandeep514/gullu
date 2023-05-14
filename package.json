@@ -16,6 +16,8 @@
     "@react-native-community/image-editor": "^2.3.0",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-native-community/netinfo": "^9.3.7",
+    "@react-native-firebase/app": "^17.4.3",
+    "@react-native-firebase/storage": "^17.4.3",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
     "@rneui/base": "^4.0.0-rc.7",
