@@ -1,0 +1,572 @@
+{
+    "Status": "Success",
+    "ResponseInfo": {
+        "ApplicationId": 36389562,
+        "SolutionSetInstanceId": "c10b7832-51f1-408e-96bc-3e1aa276426f"
+    },
+    "Fields": {
+        "Applicants": {
+            "Applicant": {
+                "ApplicantFirstName": "Pramod Yadav",
+                "ApplicantMiddleName": "",
+                "ApplicantLastName": "",
+                "DateOfBirth": "15121990",
+                "Gender": "male",
+                "EmailAddress": "",
+                "Identifiers": {
+                    "Identifier": [
+                        {
+                            "IdNumber": "AFZPY7672J",
+                            "IdType": "01"
+                        }
+                    ]
+                },
+                "Telephones": {
+                    "Telephone": {
+                        "TelephoneNumber": "9116150323",
+                        "TelephoneType": "01",
+                        "TelephoneCountryCode": "91"
+                    }
+                },
+                "Addresses": {
+                    "Address": {
+                        "AddressType": "01",
+                        "AddressLine1": "S O Rajendra Prasad Yadav A 772 Gali No,",
+                        "AddressLine2": "27",
+                        "AddressLine3": "",
+                        "AddressLine4": "",
+                        "AddressLine5": "",
+                        "City": "DHULE",
+                        "PinCode": "424001",
+                        "ResidenceType": "01",
+                        "StateCode": "27"
+                    }
+                },
+                "KeyPersonRelation": "test1",
+                "KeyPersonName": "test2",
+                "MemberRelationName1": "test3",
+                "MemberRelationType1": "test4",
+                "MemberRelationName2": "test5",
+                "MemberRelationType2": "test6",
+                "MemberRelationName3": "test7",
+                "MemberRelationType3": "test8",
+                "MemberRelationName4": "test9",
+                "MemberRelationType4": "test10",
+                "NomineeName": "test11",
+                "NomineeRelation": "test12",
+                "MemberOtherId1": "test13",
+                "MemberOtherId1Type": "test14",
+                "MemberOtherId2": "test15",
+                "MemberOtherId2Type": "test16",
+                "MemberOtherId3": "test17",
+                "MemberOtherId3Type": "test18",
+                "MemberOtherId4": "test19",
+                "MemberOtherId4Type": "test20",
+                "Accounts": {
+                    "Account": {
+                        "AccountNumber": "test21"
+                    }
+                },
+                "Services": {
+                    "Service": [
+                        {
+                            "Id": "CORE",
+                            "Operations": {
+                                "Operation": [
+                                    {
+                                        "Name": "ConsumerCIR",
+                                        "Params": {
+                                            "Param": [
+                                                {
+                                                    "Name": "CibilBureauFlag",
+                                                    "Value": "false"
+                                                },
+                                                {
+                                                    "Name": "Amount",
+                                                    "Value": "100000"
+                                                },
+                                                {
+                                                    "Name": "Purpose",
+                                                    "Value": "05"
+                                                },
+                                                {
+                                                    "Name": "ScoreType",
+                                                    "Value": "08"
+                                                },
+                                                {
+                                                    "Name": "MemberCode",
+                                                    "Value": "BR04468888_UATC2CNPE"
+                                                },
+                                                {
+                                                    "Name": "Password",
+                                                    "Value": "W3tclvffywsqotj^b"
+                                                },
+                                                {
+                                                    "Name": "FormattedReport",
+                                                    "Value": "true"
+                                                },
+                                                {
+                                                    "Name": "GSTStateCode",
+                                                    "Value": ""
+                                                }
+                                            ]
+                                        },
+                                        "Id": "",
+                                        "Data": {
+                                            "Response": {
+                                                "RawResponse": {
+                                                    "BureauResponseXml": "<CreditReport><Header><SegmentTag>TUEF</SegmentTag><Version>12</Version><ReferenceNumber>36389420</ReferenceNumber><MemberCode>BR04468888_UATC2CNPE          </MemberCode><SubjectReturnCode>1</SubjectReturnCode><EnquiryControlNumber>002158701496</EnquiryControlNumber><DateProcessed>15052023</DateProcessed><TimeProcessed>175236</TimeProcessed></Header><NameSegment><Length>03</Length><SegmentTag>N01</SegmentTag><ConsumerName1FieldLength>05</ConsumerName1FieldLength><ConsumerName1>YADAV</ConsumerName1><ConsumerName2FieldLength>06</ConsumerName2FieldLength><ConsumerName2>PRAMOD</ConsumerName2><ConsumerName3FieldLength>05</ConsumerName3FieldLength><ConsumerName3>KUMAR</ConsumerName3><DateOfBirthFieldLength>08</DateOfBirthFieldLength><DateOfBirth>15121990</DateOfBirth><GenderFieldLength>01</GenderFieldLength><Gender>2</Gender></NameSegment><IDSegment><Length>03</Length><SegmentTag>I01</SegmentTag><IDType>01</IDType><IDNumberFieldLength>10</IDNumberFieldLength><IDNumber>AFZPY7672J</IDNumber></IDSegment><IDSegment><Length>03</Length><SegmentTag>I02</SegmentTag><IDType>04</IDType><IDNumberFieldLength>12</IDNumberFieldLength><IDNumber>769401632154</IDNumber></IDSegment><IDSegment><Length>03</Length><SegmentTag>I03</SegmentTag><IDType>06</IDType><IDNumberFieldLength>12</IDNumberFieldLength><IDNumber>769401632154</IDNumber></IDSegment><TelephoneSegment><Length>03</Length><SegmentTag>T01</SegmentTag><TelephoneNumberFieldLength>10</TelephoneNumberFieldLength><TelephoneNumber>9810511307</TelephoneNumber><TelephoneType>01</TelephoneType><EnrichedThroughEnquiry>Y</EnrichedThroughEnquiry></TelephoneSegment><TelephoneSegment><Length>03</Length><SegmentTag>T02</SegmentTag><TelephoneNumberFieldLength>07</TelephoneNumberFieldLength><TelephoneNumber>4660639</TelephoneNumber><TelephoneType>03</TelephoneType><EnrichedThroughEnquiry>Y</EnrichedThroughEnquiry></TelephoneSegment><TelephoneSegment><Length>03</Length><SegmentTag>T03</SegmentTag><TelephoneNumberFieldLength>10</TelephoneNumberFieldLength><TelephoneNumber>7827271159</TelephoneNumber><TelephoneType>01</TelephoneType></TelephoneSegment><TelephoneSegment><Length>03</Length><SegmentTag>T04</SegmentTag><TelephoneNumberFieldLength>08</TelephoneNumberFieldLength><TelephoneNumber>73500000</TelephoneNumber><TelephoneType>03</TelephoneType><EnrichedThroughEnquiry>Y</EnrichedThroughEnquiry></TelephoneSegment><EmailContactSegment><Length>03</Length><SegmentTag>C01</SegmentTag><EmailIDFieldLength>20</EmailIDFieldLength><EmailID>WATSAPUSE1@GMAIL.COM</EmailID></EmailContactSegment><EmailContactSegment><Length>03</Length><SegmentTag>C02</SegmentTag><EmailIDFieldLength>24</EmailIDFieldLength><EmailID>YADAV.PRAMOD36@GMAIL.COM</EmailID></EmailContactSegment><EmailContactSegment><Length>03</Length><SegmentTag>C03</SegmentTag><EmailIDFieldLength>21</EmailIDFieldLength><EmailID>HR@ADHUNIKCOOLING.COM</EmailID></EmailContactSegment><EmailContactSegment><Length>03</Length><SegmentTag>C04</SegmentTag><EmailIDFieldLength>24</EmailIDFieldLength><EmailID>YADAV.PARMOD36@YAHOO.COM</EmailID></EmailContactSegment><EmploymentSegment><Length>03</Length><SegmentTag>E01</SegmentTag><AccountType>05</AccountType><DateReportedCertified>30062022</DateReportedCertified><OccupationCode>04</OccupationCode></EmploymentSegment><ScoreSegment><Length>10</Length><ScoreName>CIBILTUSC3</ScoreName><ScoreCardName>08</ScoreCardName><ScoreCardVersion>10</ScoreCardVersion><ScoreDate>15052023</ScoreDate><Score>00777</Score><ReasonCode1FieldLength>02</ReasonCode1FieldLength><ReasonCode1>40</ReasonCode1><ReasonCode2FieldLength>02</ReasonCode2FieldLength><ReasonCode2>41</ReasonCode2><BureauCharacterstics></BureauCharacterstics></ScoreSegment><Address><AddressSegmentTag>PA</AddressSegmentTag><Length>03</Length><SegmentTag>A01</SegmentTag><AddressLine1FieldLength>40</AddressLine1FieldLength><AddressLine1>S O RAJENDRA PRASAD YADAV A 772 GALI NO,</AddressLine1><AddressLine2FieldLength>02</AddressLine2FieldLength><AddressLine2>27</AddressLine2><AddressLine5FieldLength>05</AddressLine5FieldLength><AddressLine5>DHULE</AddressLine5><StateCode>27</StateCode><PinCodeFieldLength>06</PinCodeFieldLength><PinCode>424001</PinCode><AddressCategory>01</AddressCategory><ResidenceCode>01</ResidenceCode><DateReported>12052023</DateReported><EnrichedThroughEnquiry>Y</EnrichedThroughEnquiry></Address><Address><AddressSegmentTag>PA</AddressSegmentTag><Length>03</Length><SegmentTag>A02</SegmentTag><AddressLine1FieldLength>40</AddressLine1FieldLength><AddressLine1>S O RAJENDRA PRASAD YADAV A 772 GALI NO,</AddressLine1><AddressLine2FieldLength>39</AddressLine2FieldLength><AddressLine2>20 MAHAVEER ENCLAVE PART 2 UTTAM NAGAR,</AddressLine2><AddressLine3FieldLength>30</AddressLine3FieldLength><AddressLine3>IWEST DELHI DELHI 110059 DHULE</AddressLine3><StateCode>27</StateCode><PinCodeFieldLength>06</PinCodeFieldLength><PinCode>424001</PinCode><AddressCategory>03</AddressCategory><DateReported>22092022</DateReported><EnrichedThroughEnquiry>Y</EnrichedThroughEnquiry></Address><Address><AddressSegmentTag>PA</AddressSegmentTag><Length>03</Length><SegmentTag>A03</SegmentTag><AddressLine1FieldLength>39</AddressLine1FieldLength><AddressLine1>PYRAMID APPARTMENT FLAT NO 303 TOWER NO</AddressLine1><AddressLine2FieldLength>14</AddressLine2FieldLength><AddressLine2>-06 SECTOR 70A</AddressLine2><StateCode>06</StateCode><PinCodeFieldLength>06</PinCodeFieldLength><PinCode>122101</PinCode><AddressCategory>02</AddressCategory><ResidenceCode>02</ResidenceCode><DateReported>04052022</DateReported></Address><Address><AddressSegmentTag>PA</AddressSegmentTag><Length>03</Length><SegmentTag>A04</SegmentTag><AddressLine1FieldLength>05</AddressLine1FieldLength><AddressLine1>DELHI</AddressLine1><AddressLine2FieldLength>05</AddressLine2FieldLength><AddressLine2>DELHI</AddressLine2><AddressLine3FieldLength>05</AddressLine3FieldLength><AddressLine3>DELHI</AddressLine3><AddressLine4FieldLength>05</AddressLine4FieldLength><AddressLine4>DELHI</AddressLine4><StateCode>07</StateCode><PinCodeFieldLength>06</PinCodeFieldLength><PinCode>110059</PinCode><AddressCategory>02</AddressCategory><DateReported>12022021</DateReported></Address><Account><Length>04</Length><SegmentTag>T001</SegmentTag><Account_Summary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength></Account_Summary_Segment_Fields><Account_NonSummary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength><ReportingMemberShortName>NOT DISCLOSED</ReportingMemberShortName><AccountType>10</AccountType><OwenershipIndicator>1</OwenershipIndicator><DateOpenedOrDisbursed>05052022</DateOpenedOrDisbursed><DateOfLastPayment>16062022</DateOfLastPayment><DateReportedAndCertified>30062022</DateReportedAndCertified><HighCreditOrSanctionedAmountFieldLength>05</HighCreditOrSanctionedAmountFieldLength><HighCreditOrSanctionedAmount>26861</HighCreditOrSanctionedAmount><CurrentBalanceFieldLength>01</CurrentBalanceFieldLength><CurrentBalance>0</CurrentBalance><PaymentHistory1FieldLength>06</PaymentHistory1FieldLength><PaymentHistory1>000000</PaymentHistory1><PaymentHistoryStartDate>01062022</PaymentHistoryStartDate><PaymentHistoryEndDate>01052022</PaymentHistoryEndDate><CreditLimitFieldLength>06</CreditLimitFieldLength><CreditLimit>148000</CreditLimit><ActualPaymentAmountFieldLength>02</ActualPaymentAmountFieldLength><ActualPaymentAmount>22</ActualPaymentAmount></Account_NonSummary_Segment_Fields></Account><Account><Length>04</Length><SegmentTag>T002</SegmentTag><Account_Summary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength></Account_Summary_Segment_Fields><Account_NonSummary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength><ReportingMemberShortName>NOT DISCLOSED</ReportingMemberShortName><AccountType>05</AccountType><OwenershipIndicator>1</OwenershipIndicator><DateOpenedOrDisbursed>14022022</DateOpenedOrDisbursed><DateOfLastPayment>06062022</DateOfLastPayment><DateReportedAndCertified>30062022</DateReportedAndCertified><HighCreditOrSanctionedAmountFieldLength>06</HighCreditOrSanctionedAmountFieldLength><HighCreditOrSanctionedAmount>200000</HighCreditOrSanctionedAmount><CurrentBalanceFieldLength>06</CurrentBalanceFieldLength><CurrentBalance>170486</CurrentBalance><PaymentHistory1FieldLength>15</PaymentHistory1FieldLength><PaymentHistory1>000000000000000</PaymentHistory1><PaymentHistoryStartDate>01062022</PaymentHistoryStartDate><PaymentHistoryEndDate>01022022</PaymentHistoryEndDate><RateOfInterestFieldLength>05</RateOfInterestFieldLength><RateOfInterest>18.00</RateOfInterest><RepaymentTenureFieldLength>02</RepaymentTenureFieldLength><RepaymentTenure>24</RepaymentTenure><EmiAmountFieldLength>04</EmiAmountFieldLength><EmiAmount>9985</EmiAmount><PaymentFrequency>03</PaymentFrequency><ActualPaymentAmountFieldLength>05</ActualPaymentAmountFieldLength><ActualPaymentAmount>39940</ActualPaymentAmount></Account_NonSummary_Segment_Fields></Account><Account><Length>04</Length><SegmentTag>T003</SegmentTag><Account_Summary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength></Account_Summary_Segment_Fields><Account_NonSummary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength><ReportingMemberShortName>NOT DISCLOSED</ReportingMemberShortName><AccountType>00</AccountType><OwenershipIndicator>1</OwenershipIndicator><DateOpenedOrDisbursed>13082021</DateOpenedOrDisbursed><DateOfLastPayment>28052022</DateOfLastPayment><DateReportedAndCertified>31052022</DateReportedAndCertified><HighCreditOrSanctionedAmountFieldLength>05</HighCreditOrSanctionedAmountFieldLength><HighCreditOrSanctionedAmount>25000</HighCreditOrSanctionedAmount><CurrentBalanceFieldLength>05</CurrentBalanceFieldLength><CurrentBalance>16082</CurrentBalance><PaymentHistory1FieldLength>30</PaymentHistory1FieldLength><PaymentHistory1>000000000000000000000000000000</PaymentHistory1><PaymentHistoryStartDate>01052022</PaymentHistoryStartDate><PaymentHistoryEndDate>01082021</PaymentHistoryEndDate></Account_NonSummary_Segment_Fields></Account><Account><Length>04</Length><SegmentTag>T004</SegmentTag><Account_Summary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength></Account_Summary_Segment_Fields><Account_NonSummary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength><ReportingMemberShortName>NOT DISCLOSED</ReportingMemberShortName><AccountType>01</AccountType><OwenershipIndicator>1</OwenershipIndicator><DateOpenedOrDisbursed>28022019</DateOpenedOrDisbursed><DateOfLastPayment>06062022</DateOfLastPayment><DateReportedAndCertified>30062022</DateReportedAndCertified><HighCreditOrSanctionedAmountFieldLength>06</HighCreditOrSanctionedAmountFieldLength><HighCreditOrSanctionedAmount>436261</HighCreditOrSanctionedAmount><CurrentBalanceFieldLength>06</CurrentBalanceFieldLength><CurrentBalance>177512</CurrentBalance><PaymentHistory1FieldLength>54</PaymentHistory1FieldLength><PaymentHistory1>000000000000000000000000000000000000000000000000000000</PaymentHistory1><PaymentHistory2FieldLength>54</PaymentHistory2FieldLength><PaymentHistory2>000000000000000000000000000000000000000000000000000000</PaymentHistory2><PaymentHistoryStartDate>01062022</PaymentHistoryStartDate><PaymentHistoryEndDate>01072019</PaymentHistoryEndDate><PaymentFrequency>03</PaymentFrequency><ActualPaymentAmountFieldLength>04</ActualPaymentAmountFieldLength><ActualPaymentAmount>9237</ActualPaymentAmount></Account_NonSummary_Segment_Fields></Account><Account><Length>04</Length><SegmentTag>T005</SegmentTag><Account_Summary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength></Account_Summary_Segment_Fields><Account_NonSummary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength><ReportingMemberShortName>NOT DISCLOSED</ReportingMemberShortName><AccountType>10</AccountType><OwenershipIndicator>1</OwenershipIndicator><DateOpenedOrDisbursed>14022019</DateOpenedOrDisbursed><DateOfLastPayment>15062022</DateOfLastPayment><DateReportedAndCertified>18072022</DateReportedAndCertified><HighCreditOrSanctionedAmountFieldLength>06</HighCreditOrSanctionedAmountFieldLength><HighCreditOrSanctionedAmount>117652</HighCreditOrSanctionedAmount><CurrentBalanceFieldLength>05</CurrentBalanceFieldLength><CurrentBalance>52101</CurrentBalance><PaymentHistory1FieldLength>15</PaymentHistory1FieldLength><PaymentHistory1>000000000000000</PaymentHistory1><PaymentHistoryStartDate>01072022</PaymentHistoryStartDate><PaymentHistoryEndDate>01032022</PaymentHistoryEndDate><CreditLimitFieldLength>06</CreditLimitFieldLength><CreditLimit>121000</CreditLimit><CashLimitFieldLength>05</CashLimitFieldLength><CashLimit>12100</CashLimit><PaymentFrequency>03</PaymentFrequency><ActualPaymentAmountFieldLength>05</ActualPaymentAmountFieldLength><ActualPaymentAmount>40264</ActualPaymentAmount></Account_NonSummary_Segment_Fields></Account><Account><Length>04</Length><SegmentTag>T006</SegmentTag><Account_Summary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength></Account_Summary_Segment_Fields><Account_NonSummary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength><ReportingMemberShortName>NOT DISCLOSED</ReportingMemberShortName><AccountType>10</AccountType><OwenershipIndicator>1</OwenershipIndicator><DateOpenedOrDisbursed>14022019</DateOpenedOrDisbursed><DateOfLastPayment>13082021</DateOfLastPayment><DateClosed>18082021</DateClosed><DateReportedAndCertified>17092021</DateReportedAndCertified><HighCreditOrSanctionedAmountFieldLength>06</HighCreditOrSanctionedAmountFieldLength><HighCreditOrSanctionedAmount>117652</HighCreditOrSanctionedAmount><CurrentBalanceFieldLength>01</CurrentBalanceFieldLength><CurrentBalance>0</CurrentBalance><PaymentHistory1FieldLength>54</PaymentHistory1FieldLength><PaymentHistory1>000000000000000000000000000000000000000000000000000000</PaymentHistory1><PaymentHistory2FieldLength>36</PaymentHistory2FieldLength><PaymentHistory2>000000000000000000000000000000000000</PaymentHistory2><PaymentHistoryStartDate>01082021</PaymentHistoryStartDate><PaymentHistoryEndDate>01032019</PaymentHistoryEndDate><CreditLimitFieldLength>06</CreditLimitFieldLength><CreditLimit>121000</CreditLimit><CashLimitFieldLength>05</CashLimitFieldLength><CashLimit>12100</CashLimit><PaymentFrequency>03</PaymentFrequency></Account_NonSummary_Segment_Fields></Account><Account><Length>04</Length><SegmentTag>T007</SegmentTag><Account_Summary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength></Account_Summary_Segment_Fields><Account_NonSummary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength><ReportingMemberShortName>NOT DISCLOSED</ReportingMemberShortName><AccountType>10</AccountType><OwenershipIndicator>1</OwenershipIndicator><DateOpenedOrDisbursed>14022019</DateOpenedOrDisbursed><DateOfLastPayment>14022022</DateOfLastPayment><DateClosed>22022022</DateClosed><DateReportedAndCertified>17042022</DateReportedAndCertified><HighCreditOrSanctionedAmountFieldLength>06</HighCreditOrSanctionedAmountFieldLength><HighCreditOrSanctionedAmount>117652</HighCreditOrSanctionedAmount><CurrentBalanceFieldLength>01</CurrentBalanceFieldLength><CurrentBalance>0</CurrentBalance><PaymentHistory1FieldLength>24</PaymentHistory1FieldLength><PaymentHistory1>000000000000000000000000</PaymentHistory1><PaymentHistoryStartDate>01042022</PaymentHistoryStartDate><PaymentHistoryEndDate>01092021</PaymentHistoryEndDate><CreditLimitFieldLength>06</CreditLimitFieldLength><CreditLimit>121000</CreditLimit><CashLimitFieldLength>05</CashLimitFieldLength><CashLimit>12100</CashLimit><PaymentFrequency>03</PaymentFrequency></Account_NonSummary_Segment_Fields></Account><Account><Length>04</Length><SegmentTag>T008</SegmentTag><Account_Summary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength></Account_Summary_Segment_Fields><Account_NonSummary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength><ReportingMemberShortName>NOT DISCLOSED</ReportingMemberShortName><AccountType>05</AccountType><OwenershipIndicator>1</OwenershipIndicator><DateOpenedOrDisbursed>25012019</DateOpenedOrDisbursed><DateOfLastPayment>08052022</DateOfLastPayment><DateReportedAndCertified>31052022</DateReportedAndCertified><HighCreditOrSanctionedAmountFieldLength>06</HighCreditOrSanctionedAmountFieldLength><HighCreditOrSanctionedAmount>815787</HighCreditOrSanctionedAmount><CurrentBalanceFieldLength>06</CurrentBalanceFieldLength><CurrentBalance>247857</CurrentBalance><PaymentHistory1FieldLength>54</PaymentHistory1FieldLength><PaymentHistory1>000000000000000000000000000000000000000000000000000000</PaymentHistory1><PaymentHistory2FieldLength>54</PaymentHistory2FieldLength><PaymentHistory2>000000000000000000000000000000000000000000000000000000</PaymentHistory2><PaymentHistoryStartDate>01052022</PaymentHistoryStartDate><PaymentHistoryEndDate>01062019</PaymentHistoryEndDate><RateOfInterestFieldLength>05</RateOfInterestFieldLength><RateOfInterest>13.00</RateOfInterest><RepaymentTenureFieldLength>02</RepaymentTenureFieldLength><RepaymentTenure>53</RepaymentTenure><PaymentFrequency>03</PaymentFrequency><ActualPaymentAmountFieldLength>06</ActualPaymentAmountFieldLength><ActualPaymentAmount>724356</ActualPaymentAmount></Account_NonSummary_Segment_Fields></Account><Account><Length>04</Length><SegmentTag>T009</SegmentTag><Account_Summary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength></Account_Summary_Segment_Fields><Account_NonSummary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength><ReportingMemberShortName>NOT DISCLOSED</ReportingMemberShortName><AccountType>10</AccountType><OwenershipIndicator>1</OwenershipIndicator><DateOpenedOrDisbursed>18012019</DateOpenedOrDisbursed><DateOfLastPayment>11062022</DateOfLastPayment><DateReportedAndCertified>30062022</DateReportedAndCertified><HighCreditOrSanctionedAmountFieldLength>06</HighCreditOrSanctionedAmountFieldLength><HighCreditOrSanctionedAmount>112639</HighCreditOrSanctionedAmount><CurrentBalanceFieldLength>05</CurrentBalanceFieldLength><CurrentBalance>21420</CurrentBalance><PaymentHistory1FieldLength>54</PaymentHistory1FieldLength><PaymentHistory1>000000000000000000000000000000000000000000000000000000</PaymentHistory1><PaymentHistory2FieldLength>54</PaymentHistory2FieldLength><PaymentHistory2>000000000000000000000000000000000000000000000000000000</PaymentHistory2><PaymentHistoryStartDate>01062022</PaymentHistoryStartDate><PaymentHistoryEndDate>01072019</PaymentHistoryEndDate><CreditLimitFieldLength>06</CreditLimitFieldLength><CreditLimit>130000</CreditLimit><CashLimitFieldLength>05</CashLimitFieldLength><CashLimit>26000</CashLimit><PaymentFrequency>03</PaymentFrequency></Account_NonSummary_Segment_Fields></Account><Account><Length>04</Length><SegmentTag>T010</SegmentTag><Account_Summary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength></Account_Summary_Segment_Fields><Account_NonSummary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength><ReportingMemberShortName>NOT DISCLOSED</ReportingMemberShortName><AccountType>10</AccountType><OwenershipIndicator>1</OwenershipIndicator><DateOpenedOrDisbursed>17102018</DateOpenedOrDisbursed><DateOfLastPayment>04122021</DateOfLastPayment><DateReportedAndCertified>17062022</DateReportedAndCertified><HighCreditOrSanctionedAmountFieldLength>05</HighCreditOrSanctionedAmountFieldLength><HighCreditOrSanctionedAmount>50935</HighCreditOrSanctionedAmount><CurrentBalanceFieldLength>02</CurrentBalanceFieldLength><CurrentBalance>-2</CurrentBalance><PaymentHistory1FieldLength>54</PaymentHistory1FieldLength><PaymentHistory1>000000000000000000000000000000000000000000000000000000</PaymentHistory1><PaymentHistory2FieldLength>54</PaymentHistory2FieldLength><PaymentHistory2>000000000000000000000000000000000000000000000000000000</PaymentHistory2><PaymentHistoryStartDate>01062022</PaymentHistoryStartDate><PaymentHistoryEndDate>01072019</PaymentHistoryEndDate><CreditLimitFieldLength>05</CreditLimitFieldLength><CreditLimit>49000</CreditLimit><CashLimitFieldLength>05</CashLimitFieldLength><CashLimit>13720</CashLimit><RateOfInterestFieldLength>06</RateOfInterestFieldLength><RateOfInterest>40.200</RateOfInterest><PaymentFrequency>03</PaymentFrequency></Account_NonSummary_Segment_Fields></Account><Account><Length>04</Length><SegmentTag>T011</SegmentTag><Account_Summary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength></Account_Summary_Segment_Fields><Account_NonSummary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength><ReportingMemberShortName>NOT DISCLOSED</ReportingMemberShortName><AccountType>10</AccountType><OwenershipIndicator>1</OwenershipIndicator><DateOpenedOrDisbursed>26022018</DateOpenedOrDisbursed><DateOfLastPayment>03012022</DateOfLastPayment><DateReportedAndCertified>31012022</DateReportedAndCertified><HighCreditOrSanctionedAmountFieldLength>06</HighCreditOrSanctionedAmountFieldLength><HighCreditOrSanctionedAmount>203009</HighCreditOrSanctionedAmount><CurrentBalanceFieldLength>06</CurrentBalanceFieldLength><CurrentBalance>203009</CurrentBalance><PaymentHistory1FieldLength>54</PaymentHistory1FieldLength><PaymentHistory1>000000000000000000000000000000000000000000000000000000</PaymentHistory1><PaymentHistory2FieldLength>54</PaymentHistory2FieldLength><PaymentHistory2>000000000000000000000000000000000000000000000000000000</PaymentHistory2><PaymentHistoryStartDate>01012022</PaymentHistoryStartDate><PaymentHistoryEndDate>01022019</PaymentHistoryEndDate><CreditLimitFieldLength>06</CreditLimitFieldLength><CreditLimit>220000</CreditLimit><CashLimitFieldLength>05</CashLimitFieldLength><CashLimit>16991</CashLimit><PaymentFrequency>03</PaymentFrequency><ActualPaymentAmountFieldLength>05</ActualPaymentAmountFieldLength><ActualPaymentAmount>27669</ActualPaymentAmount></Account_NonSummary_Segment_Fields></Account><Account><Length>04</Length><SegmentTag>T012</SegmentTag><Account_Summary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength></Account_Summary_Segment_Fields><Account_NonSummary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength><ReportingMemberShortName>NOT DISCLOSED</ReportingMemberShortName><AccountType>10</AccountType><OwenershipIndicator>1</OwenershipIndicator><DateOpenedOrDisbursed>26022018</DateOpenedOrDisbursed><DateOfLastPayment>28062022</DateOfLastPayment><DateReportedAndCertified>30062022</DateReportedAndCertified><HighCreditOrSanctionedAmountFieldLength>06</HighCreditOrSanctionedAmountFieldLength><HighCreditOrSanctionedAmount>215323</HighCreditOrSanctionedAmount><CurrentBalanceFieldLength>06</CurrentBalanceFieldLength><CurrentBalance>193298</CurrentBalance><PaymentHistory1FieldLength>15</PaymentHistory1FieldLength><PaymentHistory1>000000000000000</PaymentHistory1><PaymentHistoryStartDate>01062022</PaymentHistoryStartDate><PaymentHistoryEndDate>01022022</PaymentHistoryEndDate><CreditLimitFieldLength>06</CreditLimitFieldLength><CreditLimit>220000</CreditLimit><CashLimitFieldLength>05</CashLimitFieldLength><CashLimit>26702</CashLimit><RateOfInterestFieldLength>05</RateOfInterestFieldLength><RateOfInterest>41.40</RateOfInterest><PaymentFrequency>03</PaymentFrequency><ActualPaymentAmountFieldLength>05</ActualPaymentAmountFieldLength><ActualPaymentAmount>21537</ActualPaymentAmount></Account_NonSummary_Segment_Fields></Account><Account><Length>04</Length><SegmentTag>T013</SegmentTag><Account_Summary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength></Account_Summary_Segment_Fields><Account_NonSummary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength><ReportingMemberShortName>NOT DISCLOSED</ReportingMemberShortName><AccountType>10</AccountType><OwenershipIndicator>1</OwenershipIndicator><DateOpenedOrDisbursed>22122017</DateOpenedOrDisbursed><DateOfLastPayment>29072019</DateOfLastPayment><DateReportedAndCertified>30062022</DateReportedAndCertified><HighCreditOrSanctionedAmountFieldLength>05</HighCreditOrSanctionedAmountFieldLength><HighCreditOrSanctionedAmount>42924</HighCreditOrSanctionedAmount><CurrentBalanceFieldLength>02</CurrentBalanceFieldLength><CurrentBalance>-4</CurrentBalance><PaymentHistory1FieldLength>54</PaymentHistory1FieldLength><PaymentHistory1>000000000000000000000000000000000000000000000000000000</PaymentHistory1><PaymentHistory2FieldLength>54</PaymentHistory2FieldLength><PaymentHistory2>000000000000000000000000000000000000000000000000000000</PaymentHistory2><PaymentHistoryStartDate>01062022</PaymentHistoryStartDate><PaymentHistoryEndDate>01072019</PaymentHistoryEndDate><CreditLimitFieldLength>05</CreditLimitFieldLength><CreditLimit>46000</CreditLimit><CashLimitFieldLength>05</CashLimitFieldLength><CashLimit>13800</CashLimit></Account_NonSummary_Segment_Fields></Account><Account><Length>04</Length><SegmentTag>T014</SegmentTag><Account_Summary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength></Account_Summary_Segment_Fields><Account_NonSummary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength><ReportingMemberShortName>NOT DISCLOSED</ReportingMemberShortName><AccountType>10</AccountType><OwenershipIndicator>1</OwenershipIndicator><DateOpenedOrDisbursed>05122017</DateOpenedOrDisbursed><DateOfLastPayment>23112021</DateOfLastPayment><DateReportedAndCertified>12062022</DateReportedAndCertified><HighCreditOrSanctionedAmountFieldLength>05</HighCreditOrSanctionedAmountFieldLength><HighCreditOrSanctionedAmount>76692</HighCreditOrSanctionedAmount><CurrentBalanceFieldLength>03</CurrentBalanceFieldLength><CurrentBalance>-20</CurrentBalance><PaymentHistory1FieldLength>54</PaymentHistory1FieldLength><PaymentHistory1>000000000000000000000000000000000000000000000000000000</PaymentHistory1><PaymentHistory2FieldLength>54</PaymentHistory2FieldLength><PaymentHistory2>000000000000000000000000000000000000000000000000000000</PaymentHistory2><PaymentHistoryStartDate>01062022</PaymentHistoryStartDate><PaymentHistoryEndDate>01072019</PaymentHistoryEndDate><CreditLimitFieldLength>06</CreditLimitFieldLength><CreditLimit>240000</CreditLimit><CashLimitFieldLength>05</CashLimitFieldLength><CashLimit>24000</CashLimit></Account_NonSummary_Segment_Fields></Account><Account><Length>04</Length><SegmentTag>T015</SegmentTag><Account_Summary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength></Account_Summary_Segment_Fields><Account_NonSummary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength><ReportingMemberShortName>NOT DISCLOSED</ReportingMemberShortName><AccountType>37</AccountType><OwenershipIndicator>1</OwenershipIndicator><DateOpenedOrDisbursed>04112017</DateOpenedOrDisbursed><DateOfLastPayment>01062022</DateOfLastPayment><DateReportedAndCertified>30062022</DateReportedAndCertified><HighCreditOrSanctionedAmountFieldLength>06</HighCreditOrSanctionedAmountFieldLength><HighCreditOrSanctionedAmount>455000</HighCreditOrSanctionedAmount><CurrentBalanceFieldLength>06</CurrentBalanceFieldLength><CurrentBalance>154585</CurrentBalance><PaymentHistory1FieldLength>54</PaymentHistory1FieldLength><PaymentHistory1>000000000000000000000000000000000000000000000000000000</PaymentHistory1><PaymentHistory2FieldLength>54</PaymentHistory2FieldLength><PaymentHistory2>000000000000000000000000000000000000000000000000000000</PaymentHistory2><PaymentHistoryStartDate>01062022</PaymentHistoryStartDate><PaymentHistoryEndDate>01072019</PaymentHistoryEndDate></Account_NonSummary_Segment_Fields></Account><Account><Length>04</Length><SegmentTag>T016</SegmentTag><Account_Summary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength></Account_Summary_Segment_Fields><Account_NonSummary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength><ReportingMemberShortName>NOT DISCLOSED</ReportingMemberShortName><AccountType>05</AccountType><OwenershipIndicator>1</OwenershipIndicator><DateOpenedOrDisbursed>01112017</DateOpenedOrDisbursed><DateOfLastPayment>29012019</DateOfLastPayment><DateClosed>29012019</DateClosed><DateReportedAndCertified>31012019</DateReportedAndCertified><HighCreditOrSanctionedAmountFieldLength>06</HighCreditOrSanctionedAmountFieldLength><HighCreditOrSanctionedAmount>500000</HighCreditOrSanctionedAmount><CurrentBalanceFieldLength>01</CurrentBalanceFieldLength><CurrentBalance>0</CurrentBalance><PaymentHistory1FieldLength>45</PaymentHistory1FieldLength><PaymentHistory1>000000000000000000000000000000000000000000000</PaymentHistory1><PaymentHistoryStartDate>01012019</PaymentHistoryStartDate><PaymentHistoryEndDate>01112017</PaymentHistoryEndDate><RepaymentTenureFieldLength>02</RepaymentTenureFieldLength><RepaymentTenure>36</RepaymentTenure><PaymentFrequency>03</PaymentFrequency></Account_NonSummary_Segment_Fields></Account><Account><Length>04</Length><SegmentTag>T017</SegmentTag><Account_Summary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength></Account_Summary_Segment_Fields><Account_NonSummary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength><ReportingMemberShortName>NOT DISCLOSED</ReportingMemberShortName><AccountType>10</AccountType><OwenershipIndicator>1</OwenershipIndicator><DateOpenedOrDisbursed>27072016</DateOpenedOrDisbursed><DateOfLastPayment>10052019</DateOfLastPayment><DateClosed>17072019</DateClosed><DateReportedAndCertified>30072022</DateReportedAndCertified><HighCreditOrSanctionedAmountFieldLength>05</HighCreditOrSanctionedAmountFieldLength><HighCreditOrSanctionedAmount>51858</HighCreditOrSanctionedAmount><CurrentBalanceFieldLength>01</CurrentBalanceFieldLength><CurrentBalance>0</CurrentBalance><PaymentHistory1FieldLength>54</PaymentHistory1FieldLength><PaymentHistory1>000000000000000XXX000000000000000000000000000000000XXX</PaymentHistory1><PaymentHistory2FieldLength>54</PaymentHistory2FieldLength><PaymentHistory2>000000000000000000000000000000000XXX000000000000000000</PaymentHistory2><PaymentHistoryStartDate>01072022</PaymentHistoryStartDate><PaymentHistoryEndDate>01082019</PaymentHistoryEndDate><CreditLimitFieldLength>05</CreditLimitFieldLength><CreditLimit>50000</CreditLimit><CashLimitFieldLength>04</CashLimitFieldLength><CashLimit>5000</CashLimit><PaymentFrequency>03</PaymentFrequency></Account_NonSummary_Segment_Fields></Account><Account><Length>04</Length><SegmentTag>T018</SegmentTag><Account_Summary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength></Account_Summary_Segment_Fields><Account_NonSummary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength><ReportingMemberShortName>NOT DISCLOSED</ReportingMemberShortName><AccountType>05</AccountType><OwenershipIndicator>1</OwenershipIndicator><DateOpenedOrDisbursed>01072016</DateOpenedOrDisbursed><DateOfLastPayment>10112017</DateOfLastPayment><DateClosed>10112017</DateClosed><DateReportedAndCertified>30112017</DateReportedAndCertified><HighCreditOrSanctionedAmountFieldLength>06</HighCreditOrSanctionedAmountFieldLength><HighCreditOrSanctionedAmount>319000</HighCreditOrSanctionedAmount><CurrentBalanceFieldLength>01</CurrentBalanceFieldLength><CurrentBalance>0</CurrentBalance><PaymentHistory1FieldLength>51</PaymentHistory1FieldLength><PaymentHistory1>000000000000000000000000000000000000000000000000000</PaymentHistory1><PaymentHistoryStartDate>01112017</PaymentHistoryStartDate><PaymentHistoryEndDate>01072016</PaymentHistoryEndDate><PaymentFrequency>03</PaymentFrequency><ActualPaymentAmountFieldLength>06</ActualPaymentAmountFieldLength><ActualPaymentAmount>224748</ActualPaymentAmount></Account_NonSummary_Segment_Fields></Account><Account><Length>04</Length><SegmentTag>T019</SegmentTag><Account_Summary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength></Account_Summary_Segment_Fields><Account_NonSummary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength><ReportingMemberShortName>NOT DISCLOSED</ReportingMemberShortName><AccountType>10</AccountType><OwenershipIndicator>1</OwenershipIndicator><DateOpenedOrDisbursed>22082015</DateOpenedOrDisbursed><DateOfLastPayment>28062022</DateOfLastPayment><DateReportedAndCertified>30062022</DateReportedAndCertified><HighCreditOrSanctionedAmountFieldLength>06</HighCreditOrSanctionedAmountFieldLength><HighCreditOrSanctionedAmount>410837</HighCreditOrSanctionedAmount><CurrentBalanceFieldLength>06</CurrentBalanceFieldLength><CurrentBalance>152818</CurrentBalance><PaymentHistory1FieldLength>54</PaymentHistory1FieldLength><PaymentHistory1>000000000000000000000000000000000000000000000000000000</PaymentHistory1><PaymentHistory2FieldLength>51</PaymentHistory2FieldLength><PaymentHistory2>000000000000000000000000000000000000000000000000000</PaymentHistory2><PaymentHistoryStartDate>01062022</PaymentHistoryStartDate><PaymentHistoryEndDate>01082019</PaymentHistoryEndDate></Account_NonSummary_Segment_Fields></Account><Account><Length>04</Length><SegmentTag>T020</SegmentTag><Account_Summary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength></Account_Summary_Segment_Fields><Account_NonSummary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength><ReportingMemberShortName>NOT DISCLOSED</ReportingMemberShortName><AccountType>05</AccountType><OwenershipIndicator>1</OwenershipIndicator><DateOpenedOrDisbursed>23062015</DateOpenedOrDisbursed><DateOfLastPayment>02072016</DateOfLastPayment><DateClosed>02072016</DateClosed><DateReportedAndCertified>31072016</DateReportedAndCertified><HighCreditOrSanctionedAmountFieldLength>06</HighCreditOrSanctionedAmountFieldLength><HighCreditOrSanctionedAmount>150000</HighCreditOrSanctionedAmount><CurrentBalanceFieldLength>01</CurrentBalanceFieldLength><CurrentBalance>0</CurrentBalance><PaymentHistory1FieldLength>42</PaymentHistory1FieldLength><PaymentHistory1>000000000000000000000000000000000000000000</PaymentHistory1><PaymentHistoryStartDate>01072016</PaymentHistoryStartDate><PaymentHistoryEndDate>01062015</PaymentHistoryEndDate><PaymentFrequency>03</PaymentFrequency><ActualPaymentAmountFieldLength>06</ActualPaymentAmountFieldLength><ActualPaymentAmount>119427</ActualPaymentAmount></Account_NonSummary_Segment_Fields></Account><Account><Length>04</Length><SegmentTag>T021</SegmentTag><Account_Summary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength></Account_Summary_Segment_Fields><Account_NonSummary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength><ReportingMemberShortName>NOT DISCLOSED</ReportingMemberShortName><AccountType>10</AccountType><OwenershipIndicator>1</OwenershipIndicator><DateOpenedOrDisbursed>05102018</DateOpenedOrDisbursed><DateOfLastPayment>27022020</DateOfLastPayment><DateClosed>06062020</DateClosed><DateReportedAndCertified>06072020</DateReportedAndCertified><HighCreditOrSanctionedAmountFieldLength>03</HighCreditOrSanctionedAmountFieldLength><HighCreditOrSanctionedAmount>590</HighCreditOrSanctionedAmount><CurrentBalanceFieldLength>01</CurrentBalanceFieldLength><CurrentBalance>0</CurrentBalance><PaymentHistory1FieldLength>54</PaymentHistory1FieldLength><PaymentHistory1>XXX000000000000000000000000000000000000000000000000000</PaymentHistory1><PaymentHistory2FieldLength>03</PaymentHistory2FieldLength><PaymentHistory2>000</PaymentHistory2><PaymentHistoryStartDate>01062020</PaymentHistoryStartDate><PaymentHistoryEndDate>01122018</PaymentHistoryEndDate><CreditLimitFieldLength>05</CreditLimitFieldLength><CreditLimit>25000</CreditLimit><CashLimitFieldLength>04</CashLimitFieldLength><CashLimit>8000</CashLimit></Account_NonSummary_Segment_Fields></Account><Account><Length>04</Length><SegmentTag>T022</SegmentTag><Account_Summary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength></Account_Summary_Segment_Fields><Account_NonSummary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength><ReportingMemberShortName>NOT DISCLOSED</ReportingMemberShortName><AccountType>10</AccountType><OwenershipIndicator>1</OwenershipIndicator><DateOpenedOrDisbursed>27072016</DateOpenedOrDisbursed><DateOfLastPayment>25042018</DateOfLastPayment><DateClosed>17072019</DateClosed><DateReportedAndCertified>30092019</DateReportedAndCertified><HighCreditOrSanctionedAmountFieldLength>05</HighCreditOrSanctionedAmountFieldLength><HighCreditOrSanctionedAmount>51858</HighCreditOrSanctionedAmount><CurrentBalanceFieldLength>01</CurrentBalanceFieldLength><CurrentBalance>0</CurrentBalance><PaymentHistory1FieldLength>54</PaymentHistory1FieldLength><PaymentHistory1>XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX000000000XXX</PaymentHistory1><PaymentHistory2FieldLength>54</PaymentHistory2FieldLength><PaymentHistory2>000000000003000000000000000000000XXX000000000000000000</PaymentHistory2><PaymentHistoryStartDate>01072019</PaymentHistoryStartDate><PaymentHistoryEndDate>01082016</PaymentHistoryEndDate><CreditLimitFieldLength>05</CreditLimitFieldLength><CreditLimit>50000</CreditLimit><CashLimitFieldLength>04</CashLimitFieldLength><CashLimit>5000</CashLimit><PaymentFrequency>03</PaymentFrequency><ActualPaymentAmountFieldLength>05</ActualPaymentAmountFieldLength><ActualPaymentAmount>19707</ActualPaymentAmount></Account_NonSummary_Segment_Fields></Account><Account><Length>04</Length><SegmentTag>T023</SegmentTag><Account_Summary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength></Account_Summary_Segment_Fields><Account_NonSummary_Segment_Fields><ReportingMemberShortNameFieldLength>13</ReportingMemberShortNameFieldLength><ReportingMemberShortName>NOT DISCLOSED</ReportingMemberShortName><AccountType>10</AccountType><OwenershipIndicator>1</OwenershipIndicator><DateOpenedOrDisbursed>22082015</DateOpenedOrDisbursed><DateOfLastPayment>31072019</DateOfLastPayment><DateClosed>18082019</DateClosed><DateReportedAndCertified>31082020</DateReportedAndCertified><HighCreditOrSanctionedAmountFieldLength>06</HighCreditOrSanctionedAmountFieldLength><HighCreditOrSanctionedAmount>104061</HighCreditOrSanctionedAmount><CurrentBalanceFieldLength>01</CurrentBalanceFieldLength><CurrentBalance>0</CurrentBalance><PaymentHistory1FieldLength>54</PaymentHistory1FieldLength><PaymentHistory1>XXX000000000000000000000000000000000000000000000000000</PaymentHistory1><PaymentHistory2FieldLength>54</PaymentHistory2FieldLength><PaymentHistory2>000000000000000000000000000000000000000000000000000000</PaymentHistory2><PaymentHistoryStartDate>01082019</PaymentHistoryStartDate><PaymentHistoryEndDate>01092016</PaymentHistoryEndDate></Account_NonSummary_Segment_Fields></Account><Enquiry><Length>04</Length><SegmentTag>I001</SegmentTag><DateOfEnquiryFields>15052023</DateOfEnquiryFields><EnquiringMemberShortNameFieldLength>12</EnquiringMemberShortNameFieldLength><EnquiringMemberShortName>BARODARAJKGB</EnquiringMemberShortName><EnquiryPurpose>10</EnquiryPurpose><EnquiryAmountFieldLength>06</EnquiryAmountFieldLength><EnquiryAmount>400000</EnquiryAmount></Enquiry><Enquiry><Length>04</Length><SegmentTag>I002</SegmentTag><DateOfEnquiryFields>12052023</DateOfEnquiryFields><EnquiringMemberShortNameFieldLength>12</EnquiringMemberShortNameFieldLength><EnquiringMemberShortName>BARODARAJKGB</EnquiringMemberShortName><EnquiryPurpose>10</EnquiryPurpose><EnquiryAmountFieldLength>06</EnquiryAmountFieldLength><EnquiryAmount>400000</EnquiryAmount></Enquiry><Enquiry><Length>04</Length><SegmentTag>I003</SegmentTag><DateOfEnquiryFields>12052023</DateOfEnquiryFields><EnquiringMemberShortNameFieldLength>12</EnquiringMemberShortNameFieldLength><EnquiringMemberShortName>BARODARAJKGB</EnquiringMemberShortName><EnquiryPurpose>10</EnquiryPurpose><EnquiryAmountFieldLength>06</EnquiryAmountFieldLength><EnquiryAmount>400000</EnquiryAmount></Enquiry><Enquiry><Length>04</Length><SegmentTag>I004</SegmentTag><DateOfEnquiryFields>10042023</DateOfEnquiryFields><EnquiringMemberShortNameFieldLength>13</EnquiringMemberShortNameFieldLength><EnquiringMemberShortName>NOT DISCLOSED</EnquiringMemberShortName><EnquiryPurpose>02</EnquiryPurpose><EnquiryAmountFieldLength>07</EnquiryAmountFieldLength><EnquiryAmount>1000000</EnquiryAmount></Enquiry><Enquiry><Length>04</Length><SegmentTag>I005</SegmentTag><DateOfEnquiryFields>14032023</DateOfEnquiryFields><EnquiringMemberShortNameFieldLength>13</EnquiringMemberShortNameFieldLength><EnquiringMemberShortName>NOT DISCLOSED</EnquiringMemberShortName><EnquiryPurpose>05</EnquiryPurpose><EnquiryAmountFieldLength>05</EnquiryAmountFieldLength><EnquiryAmount>85000</EnquiryAmount></Enquiry><Enquiry><Length>04</Length><SegmentTag>I006</SegmentTag><DateOfEnquiryFields>14022023</DateOfEnquiryFields><EnquiringMemberShortNameFieldLength>13</EnquiringMemberShortNameFieldLength><EnquiringMemberShortName>NOT DISCLOSED</EnquiringMemberShortName><EnquiryPurpose>05</EnquiryPurpose><EnquiryAmountFieldLength>05</EnquiryAmountFieldLength><EnquiryAmount>49500</EnquiryAmount></Enquiry><Enquiry><Length>04</Length><SegmentTag>I007</SegmentTag><DateOfEnquiryFields>11022023</DateOfEnquiryFields><EnquiringMemberShortNameFieldLength>13</EnquiringMemberShortNameFieldLength><EnquiringMemberShortName>NOT DISCLOSED</EnquiringMemberShortName><EnquiryPurpose>10</EnquiryPurpose><EnquiryAmountFieldLength>04</EnquiryAmountFieldLength><EnquiryAmount>1500</EnquiryAmount></Enquiry><Enquiry><Length>04</Length><SegmentTag>I008</SegmentTag><DateOfEnquiryFields>06102022</DateOfEnquiryFields><EnquiringMemberShortNameFieldLength>13</EnquiringMemberShortNameFieldLength><EnquiringMemberShortName>NOT DISCLOSED</EnquiringMemberShortName><EnquiryPurpose>05</EnquiryPurpose><EnquiryAmountFieldLength>05</EnquiryAmountFieldLength><EnquiryAmount>10000</EnquiryAmount></Enquiry><Enquiry><Length>04</Length><SegmentTag>I009</SegmentTag><DateOfEnquiryFields>06102022</DateOfEnquiryFields><EnquiringMemberShortNameFieldLength>13</EnquiringMemberShortNameFieldLength><EnquiringMemberShortName>NOT DISCLOSED</EnquiringMemberShortName><EnquiryPurpose>05</EnquiryPurpose><EnquiryAmountFieldLength>05</EnquiryAmountFieldLength><EnquiryAmount>10000</EnquiryAmount></Enquiry><Enquiry><Length>04</Length><SegmentTag>I010</SegmentTag><DateOfEnquiryFields>22092022</DateOfEnquiryFields><EnquiringMemberShortNameFieldLength>13</EnquiringMemberShortNameFieldLength><EnquiringMemberShortName>NOT DISCLOSED</EnquiringMemberShortName><EnquiryPurpose>05</EnquiryPurpose><EnquiryAmountFieldLength>05</EnquiryAmountFieldLength><EnquiryAmount>10000</EnquiryAmount></Enquiry><Enquiry><Length>04</Length><SegmentTag>I011</SegmentTag><DateOfEnquiryFields>22092022</DateOfEnquiryFields><EnquiringMemberShortNameFieldLength>13</EnquiringMemberShortNameFieldLength><EnquiringMemberShortName>NOT DISCLOSED</EnquiringMemberShortName><EnquiryPurpose>05</EnquiryPurpose><EnquiryAmountFieldLength>05</EnquiryAmountFieldLength><EnquiryAmount>10000</EnquiryAmount></Enquiry><Enquiry><Length>04</Length><SegmentTag>I012</SegmentTag><DateOfEnquiryFields>26082022</DateOfEnquiryFields><EnquiringMemberShortNameFieldLength>13</EnquiringMemberShortNameFieldLength><EnquiringMemberShortName>NOT DISCLOSED</EnquiringMemberShortName><EnquiryPurpose>05</EnquiryPurpose><EnquiryAmountFieldLength>05</EnquiryAmountFieldLength><EnquiryAmount>10000</EnquiryAmount></Enquiry><Enquiry><Length>04</Length><SegmentTag>I013</SegmentTag><DateOfEnquiryFields>26082022</DateOfEnquiryFields><EnquiringMemberShortNameFieldLength>13</EnquiringMemberShortNameFieldLength><EnquiringMemberShortName>NOT DISCLOSED</EnquiringMemberShortName><EnquiryPurpose>05</EnquiryPurpose><EnquiryAmountFieldLength>05</EnquiryAmountFieldLength><EnquiryAmount>10000</EnquiryAmount></Enquiry><Enquiry><Length>04</Length><SegmentTag>I014</SegmentTag><DateOfEnquiryFields>03082022</DateOfEnquiryFields><EnquiringMemberShortNameFieldLength>13</EnquiringMemberShortNameFieldLength><EnquiringMemberShortName>NOT DISCLOSED</EnquiringMemberShortName><EnquiryPurpose>05</EnquiryPurpose><EnquiryAmountFieldLength>06</EnquiryAmountFieldLength><EnquiryAmount>700000</EnquiryAmount></Enquiry><Enquiry><Length>04</Length><SegmentTag>I015</SegmentTag><DateOfEnquiryFields>03082022</DateOfEnquiryFields><EnquiringMemberShortNameFieldLength>13</EnquiringMemberShortNameFieldLength><EnquiringMemberShortName>NOT DISCLOSED</EnquiringMemberShortName><EnquiryPurpose>05</EnquiryPurpose><EnquiryAmountFieldLength>07</EnquiryAmountFieldLength><EnquiryAmount>1000000</EnquiryAmount></Enquiry><Enquiry><Length>04</Length><SegmentTag>I016</SegmentTag><DateOfEnquiryFields>02082022</DateOfEnquiryFields><EnquiringMemberShortNameFieldLength>13</EnquiringMemberShortNameFieldLength><EnquiringMemberShortName>NOT DISCLOSED</EnquiringMemberShortName><EnquiryPurpose>05</EnquiryPurpose><EnquiryAmountFieldLength>07</EnquiryAmountFieldLength><EnquiryAmount>1000000</EnquiryAmount></Enquiry><Enquiry><Length>04</Length><SegmentTag>I017</SegmentTag><DateOfEnquiryFields>02082022</DateOfEnquiryFields><EnquiringMemberShortNameFieldLength>05</EnquiringMemberShortNameFieldLength><EnquiringMemberShortName>FICCL</EnquiringMemberShortName><EnquiryPurpose>05</EnquiryPurpose><EnquiryAmountFieldLength>07</EnquiryAmountFieldLength><EnquiryAmount>1200000</EnquiryAmount></Enquiry><Enquiry><Length>04</Length><SegmentTag>I018</SegmentTag><DateOfEnquiryFields>04052022</DateOfEnquiryFields><EnquiringMemberShortNameFieldLength>13</EnquiringMemberShortNameFieldLength><EnquiringMemberShortName>NOT DISCLOSED</EnquiringMemberShortName><EnquiryPurpose>10</EnquiryPurpose><EnquiryAmountFieldLength>05</EnquiryAmountFieldLength><EnquiryAmount>10000</EnquiryAmount></Enquiry><Enquiry><Length>04</Length><SegmentTag>I019</SegmentTag><DateOfEnquiryFields>12022021</DateOfEnquiryFields><EnquiringMemberShortNameFieldLength>13</EnquiringMemberShortNameFieldLength><EnquiringMemberShortName>NOT DISCLOSED</EnquiringMemberShortName><EnquiryPurpose>05</EnquiryPurpose><EnquiryAmountFieldLength>01</EnquiryAmountFieldLength><EnquiryAmount>1</EnquiryAmount></Enquiry><Enquiry><Length>04</Length><SegmentTag>I020</SegmentTag><DateOfEnquiryFields>15012021</DateOfEnquiryFields><EnquiringMemberShortNameFieldLength>08</EnquiringMemberShortNameFieldLength><EnquiringMemberShortName>CITIBANK</EnquiringMemberShortName><EnquiryPurpose>10</EnquiryPurpose><EnquiryAmountFieldLength>05</EnquiryAmountFieldLength><EnquiryAmount>50000</EnquiryAmount></Enquiry><Enquiry><Length>04</Length><SegmentTag>I021</SegmentTag><DateOfEnquiryFields>08012021</DateOfEnquiryFields><EnquiringMemberShortNameFieldLength>13</EnquiringMemberShortNameFieldLength><EnquiringMemberShortName>NOT DISCLOSED</EnquiringMemberShortName><EnquiryPurpose>05</EnquiryPurpose><EnquiryAmountFieldLength>06</EnquiryAmountFieldLength><EnquiryAmount>800000</EnquiryAmount></Enquiry><Enquiry><Length>04</Length><SegmentTag>I022</SegmentTag><DateOfEnquiryFields>02012021</DateOfEnquiryFields><EnquiringMemberShortNameFieldLength>13</EnquiringMemberShortNameFieldLength><EnquiringMemberShortName>NOT DISCLOSED</EnquiringMemberShortName><EnquiryPurpose>05</EnquiryPurpose><EnquiryAmountFieldLength>06</EnquiryAmountFieldLength><EnquiryAmount>800000</EnquiryAmount></Enquiry><End><SegmentTag>ES07</SegmentTag><TotalLength>0007194</TotalLength></End></CreditReport>",
+                                                    "SecondaryReportXml": "<Root></Root>",
+                                                    "Document": {
+                                                        "Id": 13610235,
+                                                        "Name": "36389562_Cons_CIR_Pramod Yadav.html"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "Status": "Pass"
+                                    },
+                                    {
+                                        "Name": "IDV",
+                                        "Params": {
+                                            "Param": [
+                                                {
+                                                    "Name": "IDVerificationFlag",
+                                                    "Value": "false"
+                                                },
+                                                {
+                                                    "Name": "ConsumerConsentForUIDAIAuthentication",
+                                                    "Value": "N"
+                                                },
+                                                {
+                                                    "Name": "GSTStateCode",
+                                                    "Value": "33"
+                                                }
+                                            ]
+                                        },
+                                        "Id": "",
+                                        "Data": {
+                                            "Response": {
+                                                "RawResponse": {
+                                                    "DsIDVision": {
+                                                        "CPVAttributes": {
+                                                            "Match": {
+                                                                "ContactabilityAadhaarTelephone1Match": "-",
+                                                                "AddressAadhaarPermanentMatch": "-",
+                                                                "AddressAadhaarResidenceMatch": "-",
+                                                                "IDAadhaarIdentifierMatch": "-",
+                                                                "IDAadharGenderMatch": "-",
+                                                                "IDAadharDOBYearMatch": "-",
+                                                                "IDAadharNameMatch": "-",
+                                                                "AddressVoterPermanentMatch": "-",
+                                                                "AddressVoterResidenceMatch": "-",
+                                                                "IDVoterIdentifierMatch": "-",
+                                                                "IDVoterGenderMatch": "-",
+                                                                "IDVoterNameMatch": "-",
+                                                                "IDNSDLIdentifierMatch": "NA",
+                                                                "IDNSDLNameMatch": "NA",
+                                                                "ContactabilityOfficeNumberMatch": "-",
+                                                                "ContactabilityResidenceNumberMatch": "-",
+                                                                "ContactabilityMobileNumberMatch": "0",
+                                                                "AddressCIBILOfficeMatch": "-",
+                                                                "AddressCIBILPermanentMatch": "0",
+                                                                "AddressCIBILResidenceMatch": "-",
+                                                                "IDCIBILDrivingLicenseIDMatch": "-",
+                                                                "IDCIBILRationCardIDMatch": "-",
+                                                                "IDCIBILPassportIDMatch": "-",
+                                                                "IDCIBILAadhaarIDMacth": "-",
+                                                                "IDCIBILVoterIDMatch": "-",
+                                                                "IDCIBILPANMatch": "100",
+                                                                "IDCIBILGenderMatch": "100",
+                                                                "IDCIBILDOBMatch": "100",
+                                                                "IDCIBILNameMatch": "70",
+                                                                "ExceptionMessage": {
+                                                                    "PANMessage": "Unable to retrieve PAN Information"
+                                                                }
+                                                            },
+                                                            "EnquiryInfo": {
+                                                                "MobileNumber": "9116150323",
+                                                                "PermanentAddressCity": "DHULE",
+                                                                "PermanentAddressState": "MAHARASHTRA",
+                                                                "PermanentAddressStateCode": "27",
+                                                                "PermanentAddressPinCode": "424001",
+                                                                "PermanentAddressLine": "S O Rajendra Prasad Yadav A 772 Gali No, 27",
+                                                                "PAN": "AFZPY7672J",
+                                                                "EmailID": {},
+                                                                "DateofBirth": "15/12/1990",
+                                                                "Gender": "MALE",
+                                                                "LastName": {},
+                                                                "MiddleName": {},
+                                                                "FirstName": "PRAMOD YADAV"
+                                                            },
+                                                            "CIBILReport": {
+                                                                "Telephones": {
+                                                                    "Telephone": [
+                                                                        {
+                                                                            "DateReported": {},
+                                                                            "EnrichedThroughEnquiry": "E",
+                                                                            "Match": "NO_MATCH",
+                                                                            "SegmentTag": "T04",
+                                                                            "FID": "0354840533",
+                                                                            "SNo": "0506529120",
+                                                                            "TelephoneType": "03",
+                                                                            "TelephoneNumber": "42210958"
+                                                                        },
+                                                                        {
+                                                                            "DateReported": {},
+                                                                            "EnrichedThroughEnquiry": "T",
+                                                                            "Match": "NO_MATCH",
+                                                                            "SegmentTag": "T03",
+                                                                            "FID": "0354840533",
+                                                                            "SNo": "0375919973",
+                                                                            "TelephoneType": "00",
+                                                                            "TelephoneNumber": "9582942552"
+                                                                        },
+                                                                        {
+                                                                            "DateReported": {},
+                                                                            "EnrichedThroughEnquiry": "T",
+                                                                            "Match": "NO_MATCH",
+                                                                            "SegmentTag": "T02",
+                                                                            "FID": "0354840533",
+                                                                            "SNo": "0395794049",
+                                                                            "TelephoneType": "03",
+                                                                            "TelephoneNumber": "4232104"
+                                                                        },
+                                                                        {
+                                                                            "DateReported": {},
+                                                                            "EnrichedThroughEnquiry": "T",
+                                                                            "Match": "NO_MATCH",
+                                                                            "SegmentTag": "T01",
+                                                                            "FID": "0354840533",
+                                                                            "SNo": "0432831677",
+                                                                            "TelephoneType": "02",
+                                                                            "TelephoneNumber": "9582942552"
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "Addresses": {
+                                                                    "Address": [
+                                                                        {
+                                                                            "EnrichedThroughEnquiry": "T",
+                                                                            "Match": "0.0",
+                                                                            "DateReported": "31/10/2015",
+                                                                            "SegmentTag": "A04",
+                                                                            "FID": "0354840533",
+                                                                            "SNo": "0658286791",
+                                                                            "PinCode": "122001",
+                                                                            "StateCode": "06",
+                                                                            "Address": "ADHUNIK COOLING SYSTEM P LTD SCO-91 SECTOR-10A IIND FLOOR KOTAK MAHINDRA BANK GURGAON HARYANA",
+                                                                            "AddressCategory": "02"
+                                                                        },
+                                                                        {
+                                                                            "EnrichedThroughEnquiry": "T",
+                                                                            "Match": "0.0",
+                                                                            "DateReported": "10/10/2014",
+                                                                            "SegmentTag": "A03",
+                                                                            "FID": "0354840533",
+                                                                            "SNo": "0552249869",
+                                                                            "PinCode": "122001",
+                                                                            "StateCode": "06",
+                                                                            "Address": "ADHUNIK COOLING SYSTEM P LTD ADHUNIK COOLING SYSTEM P LTD 87/21 RAJ NAGAR NH-8 LINK ROAD GURGAON HARYANA",
+                                                                            "AddressCategory": "04"
+                                                                        },
+                                                                        {
+                                                                            "EnrichedThroughEnquiry": "T",
+                                                                            "Match": "0.0",
+                                                                            "DateReported": "10/10/2014",
+                                                                            "SegmentTag": "A02",
+                                                                            "FID": "0354840533",
+                                                                            "SNo": "0552249868",
+                                                                            "PinCode": "110059",
+                                                                            "StateCode": "07",
+                                                                            "Address": "B-159B B-BLOCK GALI NO-25 MAHAVIR ENCLAV E PART-II NEW DELHI DELHI NEW DELHI DELHI",
+                                                                            "AddressCategory": "04"
+                                                                        },
+                                                                        {
+                                                                            "EnrichedThroughEnquiry": "E",
+                                                                            "Match": "0.0",
+                                                                            "DateReported": "31/03/2016",
+                                                                            "SegmentTag": "A01",
+                                                                            "FID": "0354840533",
+                                                                            "SNo": "0734061781",
+                                                                            "PinCode": "122001",
+                                                                            "StateCode": "06",
+                                                                            "Address": "SCO-91  2ND FLOOR SEC-10 GURGAON HARYANA",
+                                                                            "AddressCategory": "03"
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "Identifiers": {
+                                                                    "Identifier": {
+                                                                        "DateReported": {},
+                                                                        "EnrichedThroughEnquiry": "T",
+                                                                        "FID": "0354840533",
+                                                                        "SNo": "0156116187",
+                                                                        "IdNumber": "AFZPY7672J",
+                                                                        "IdType": "01"
+                                                                    }
+                                                                },
+                                                                "FID": "0354840533",
+                                                                "Gender": "2",
+                                                                "DateOfBirth": "15/12/1990",
+                                                                "EnquiryControlNumber": "001085772973",
+                                                                "ConsumerName": "YADAV PRAMOD KUMAR"
+                                                            },
+                                                            "VerificationScore": {
+                                                                "IDNameScore": 70,
+                                                                "IDNameStatus": null,
+                                                                "IDAltNameScore": 0,
+                                                                "IDAltDOBScore": 0,
+                                                                "IDDOBScore": 100,
+                                                                "IDDOBStatus": null,
+                                                                "IDAltGenderScore": 0,
+                                                                "IDGenderScore": 100,
+                                                                "IDGenderStatus": null,
+                                                                "IDAltIdentifierScore": 0,
+                                                                "IDIdentifierScore": 100,
+                                                                "IDIdentifierStatus": null,
+                                                                "AddAltResScore": 0,
+                                                                "AddressResidenceScore": 0,
+                                                                "AddressResidenceStatus": null,
+                                                                "AddAltPerScore": 0,
+                                                                "AddressPermanentScore": 0,
+                                                                "AddressPermanentStatus": null,
+                                                                "AddressOfficeScore": 0,
+                                                                "AddressOfficeStatus": null,
+                                                                "ConAltPhoneScore": 0,
+                                                                "ContactabilityTelephone1Score": 0,
+                                                                "ContactabilityTelephone1Status": null,
+                                                                "ContactabilityTelephone2Score": 0,
+                                                                "ContactabilityTelephone2Status": null,
+                                                                "ContactabilityTelephone3Score": 0,
+                                                                "ContactabilityTelephone3Status": null,
+                                                                "FinalIdentityScore": 91,
+                                                                "FinalIdentityStatus": null,
+                                                                "FinalAddressScore": 0,
+                                                                "FinalAddressStatus": null,
+                                                                "FinalContactabilityScore": 0,
+                                                                "FinalContactabilityStatus": null,
+                                                                "FinalVerificationScore": 36,
+                                                                "FinalVerificationStatus": null
+                                                            },
+                                                            "CIBILDetect": {
+                                                                "Responseheader": {
+                                                                    "ProcessDate": "15/05/2023",
+                                                                    "ErrorCount": "0",
+                                                                    "NoHitCount": "1",
+                                                                    "HitCount": "0"
+                                                                }
+                                                            },
+                                                            "Velocity": {
+                                                                "Message": "No Enquires Made in Past 6 months",
+                                                                "TotalAccount": "3"
+                                                            },
+                                                            "ECR": {
+                                                                "Message": "No Enquires Made in Past 6 months"
+                                                            },
+                                                            "WilfulDefaultDetails": {
+                                                                "SuitfiledandWilfuldefault": {
+                                                                    "Status": "No"
+                                                                },
+                                                                "WilfulDefault": {
+                                                                    "Status": "No"
+                                                                },
+                                                                "SuitFiled": {
+                                                                    "Status": "No"
+                                                                }
+                                                            },
+                                                            "PAN": {
+                                                                "ExceptionMessage": "Unable to retrieve PAN Information"
+                                                            },
+                                                            "MemberAttributes": {
+                                                                "AppEnvironment": "TUSSPL",
+                                                                "ExternalApplicationId": "36389562",
+                                                                "GSTStateCode": "33",
+                                                                "IDVision_EndTime": "5/15/2023 6:03:06 PM",
+                                                                "ApplicationId": 36389562,
+                                                                "MemberID": "BR0446",
+                                                                "ShortName": "BARODA RAJASTHAN",
+                                                                "CreatedUser": "BR0446GO01_UAT001"
+                                                            },
+                                                            "AvailableFlags": {
+                                                                "Telephone2Category": {},
+                                                                "Telephone1Category": "01",
+                                                                "Address2Category": "0",
+                                                                "Address1Category": "01",
+                                                                "TelOfficeInfo": "No",
+                                                                "TelResidantInfo": "No",
+                                                                "TelMobileInfo": "Yes",
+                                                                "AddrOfficeInfo": "No",
+                                                                "AddrResidantInfo": "No",
+                                                                "AddrPermanentInfo": "Yes",
+                                                                "IDAadharInfo": "No",
+                                                                "IDRationCardInfo": "No",
+                                                                "IDDriverLicInfo": "No",
+                                                                "IDVoterInfo": "No",
+                                                                "IDPassportInfo": "No",
+                                                                "IDNSDLInfo": "No"
+                                                            }
+                                                        },
+                                                        "ReturnMessage": null,
+                                                        "IDVApplicationID": "36389564",
+                                                        "SpecialMessages": "R02.No Detect Matches Found ;R01.No Wilful Default or Suit Filed Status Found ; ",
+                                                        "Document": {
+                                                            "Id": 13610242,
+                                                            "Name": "36389562_IDVReport_Pramod Yadav.html"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "Status": "Pass"
+                                    },
+                                    {
+                                        "Name": "NTC",
+                                        "Params": {
+                                            "Param": [
+                                                {
+                                                    "Name": "DSTuNtcFlag",
+                                                    "Value": "false"
+                                                },
+                                                {
+                                                    "Name": "NTCProductType",
+                                                    "Value": "CC"
+                                                }
+                                            ]
+                                        },
+                                        "Id": ""
+                                    },
+                                    {
+                                        "Name": "MFI",
+                                        "Params": {
+                                            "Param": [
+                                                {
+                                                    "Name": "MFIBureauFlag",
+                                                    "Value": "false"
+                                                },
+                                                {
+                                                    "Name": "MFIEnquiryAmount",
+                                                    "Value": "100000"
+                                                },
+                                                {
+                                                    "Name": "MFILoanPurpose",
+                                                    "Value": "10"
+                                                },
+                                                {
+                                                    "Name": "MFICenterReferenceNo",
+                                                    "Value": "center"
+                                                },
+                                                {
+                                                    "Name": "MFIBranchReferenceNo",
+                                                    "Value": "branch"
+                                                },
+                                                {
+                                                    "Name": "GSTStateCode",
+                                                    "Value": "33"
+                                                }
+                                            ]
+                                        },
+                                        "Id": ""
+                                    },
+                                    {
+                                        "Name": "HRA",
+                                        "Id": "SPD020P006",
+                                        "Data": {
+                                            "Response": {
+                                                "RawResponse": {
+                                                    "HRAAttributes": {
+                                                        "Attribute": [
+                                                            {
+                                                                "Value": "0.00",
+                                                                "Id": "SPD020P001TRD_VEL_1"
+                                                            },
+                                                            {
+                                                                "Value": "0.00",
+                                                                "Id": "SPD020P001INQ_VEL_6"
+                                                            },
+                                                            {
+                                                                "Value": "0",
+                                                                "Id": "SPD020P001DM257S"
+                                                            },
+                                                            {
+                                                                "Value": "0",
+                                                                "Id": "SPD020P001DM247S"
+                                                            },
+                                                            {
+                                                                "Value": "0",
+                                                                "Id": "SPD020P001DM211S"
+                                                            },
+                                                            {
+                                                                "Value": "0",
+                                                                "Id": "SPD020P001DM201S"
+                                                            },
+                                                            {
+                                                                "Value": "85",
+                                                                "Id": "SPD020P001DM236S"
+                                                            },
+                                                            {
+                                                                "Value": "0",
+                                                                "Id": "SPD020P002A169"
+                                                            },
+                                                            {
+                                                                "Value": "91",
+                                                                "Id": "SPD020P002A022"
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "Status": "Pass"
+                                    },
+                                    {
+                                        "Name": "HRARULEBLOCK",
+                                        "Id": "SPD020P007",
+                                        "Data": {
+                                            "Response": {
+                                                "RawResponse": {
+                                                    "HRARuleAttributes": {
+                                                        "Attribute": [
+                                                            {
+                                                                "Id": "RankSegment",
+                                                                "Value": "LOW"
+                                                            },
+                                                            {
+                                                                "Id": "Rank",
+                                                                "Value": "5"
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "Status": "Pass"
+                                    }
+                                ]
+                            },
+                            "Status": "Pass",
+                            "Name": ""
+                        }
+                    ]
+                },
+                "ApplicantIdentifier": "644843ea-259d-413a-ac86-a2725ecdb545"
+            }
+        },
+        "ApplicationData": {
+            "GSTStateCode": "27",
+            "Services": {
+                "Service": {
+                    "Id": "CORE",
+                    "Skip": "N",
+                    "Consent": "true",
+                    "EnableSimulation": "False",
+                    "Name": ""
+                }
+            },
+            "GoSolutionSetId": "1130",
+            "GoSolutionSetVersion": "1"
+        },
+        "Decision": "Pass",
+        "ApplicationId": "36389562"
+    }
+}

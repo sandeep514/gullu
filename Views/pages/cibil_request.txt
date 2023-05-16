@@ -1,0 +1,210 @@
+{
+                  "RequestInfo": {
+                    "SolutionSetName": "GO_baroda_graminbank_AGSS ",
+                    "ExecuteLatestVersion": "true"
+                  },
+                  "Fields": {
+                    "Applicants": {
+                	
+                      "Applicant": 
+                	 
+                        {
+                			
+                          "ApplicantFirstName": "'.$name.'",
+                          "ApplicantMiddleName": "",
+                          "ApplicantLastName": "",
+                          "DateOfBirth": "'.$dob.'",
+                           "Gender": "male",
+                          "EmailAddress": "",
+                           "Identifiers": {
+                          "Identifier": [
+                            {
+                              "IdNumber": "'.$pan.'",
+                              "IdType": "01"
+                            }
+                            
+                          ]
+                        },
+                          "Telephones": {
+                            "Telephone": {
+                              "TelephoneNumber": "'.$mobile.'",
+                              "TelephoneType": "01",
+                              "TelephoneCountryCode": "91"            
+                            }
+                          },
+                		  "Addresses": {
+                		  "Address": {
+                		  "AddressType": "01",
+                		  "AddressLine1": "'.$address_lane1.'",
+                		   "AddressLine2": "27",
+                		    "AddressLine3": "",
+                			"AddressLine4": "",
+                			"AddressLine5": "",
+                			"City": "DHULE",
+                			"PinCode": "'.$pincode.'",
+                			"ResidenceType": "01",
+                			"StateCode": "27"
+                			}
+                			},
+                			"KeyPersonRelation": "test1",
+                						"KeyPersonName": "test2",
+                						"MemberRelationName1": "test3",
+                						"MemberRelationType1": "test4",
+                						"MemberRelationName2": "test5",
+                						"MemberRelationType2": "test6",
+                						"MemberRelationName3": "test7",
+                						"MemberRelationType3": "test8",
+                						"MemberRelationName4": "test9",
+                						"MemberRelationType4": "test10",
+                						"NomineeName": "test11",
+                						"NomineeRelation": "test12",
+                						"MemberOtherId1": "test13",
+                						"MemberOtherId1Type": "test14",
+                						"MemberOtherId2": "test15",
+                						"MemberOtherId2Type": "test16",
+                						"MemberOtherId3": "test17",
+                						"MemberOtherId3Type": "test18",
+                						"MemberOtherId4": "test19",
+                						"MemberOtherId4Type": "test20",
+                						"Accounts": {
+                						 "Account": {
+                							"AccountNumber": "test21"
+                						}
+                						},
+                          "Services": {
+                            "Service": 
+                              
+                              {
+                            "Id": "CORE",
+                            "Operations": {
+                              "Operation": [
+                                {
+                                  "Name": "ConsumerCIR",
+                                  "Params": {
+                                    "Param": [
+                                      {
+                                        "Name": "CibilBureauFlag",
+                                        "Value": "false"
+                                      },
+                                      {
+                                        "Name": "Amount",
+                                        "Value": "'.$amount.'"
+                                      },
+                                      {
+                                        "Name": "Purpose",
+                                        "Value": "05"
+                                      },
+                                      {
+                                        "Name": "ScoreType",
+                                        "Value": "08"
+                                      },
+                                      {
+                                        "Name": "MemberCode",
+                                        "Value": "BR04468888_UATC2CNPE"
+                                      },
+                                      {
+                                        "Name": "Password",
+                                        "Value": "W3tclvffywsqotj^b"
+                                      },
+                                      {
+                                        "Name": "FormattedReport",
+                                        "Value": "true"
+                                      },
+                                      {
+                                        "Name": "GSTStateCode",
+                                        "Value": ""
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  "Name": "IDV",
+                                  "Params": {
+                                    "Param": [
+                                      {
+                                        "Name": "IDVerificationFlag",
+                                        "Value": "false"
+                                      },
+                                      {
+                                        "Name": "ConsumerConsentForUIDAIAuthentication",
+                                        "Value": "N"
+                                      },
+                                      {
+                                        "Name": "GSTStateCode",
+                                        "Value": "33"
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  "Name": "NTC",
+                                  "Params": {
+                                    "Param": [
+                                      {
+                                        "Name": "DSTuNtcFlag",
+                                        "Value": "false"
+                                      },
+                                      {
+                                        "Name": "NTCProductType",
+                                        "Value": "CC"
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  "Name": "MFI",
+                                  "Params": {
+                                    "Param": [
+                                      {
+                                        "Name": "MFIBureauFlag",
+                                        "Value": "false"
+                                      },
+                                      {
+                                        "Name": "MFIEnquiryAmount",
+                                        "Value": "100000"
+                                      },
+                                      {
+                                        "Name": "MFILoanPurpose",
+                                        "Value": "10"
+                                      },
+                                      {
+                                        "Name": "MFICenterReferenceNo",
+                                        "Value": "center"
+                                      },
+                                      {
+                                        "Name": "MFIBranchReferenceNo",
+                                        "Value": "branch"
+                                      },
+                                      {
+                                        "Name": "GSTStateCode",
+                                        "Value": "33"
+                                      }
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                            
+                          }
+                        }
+                	  
+                    },
+                    "ApplicationData": {
+                	 "GSTStateCode": "27",
+                      "Services": {
+                	  
+                        "Service": 
+                		 
+                           {
+                            "Id": "CORE",
+                            "Skip": "N",
+                            "Consent": "true",
+                            "EnableSimulation": "False"
+                          }
+                		
+                      }
+                    }
+                    
+                  }
+                }

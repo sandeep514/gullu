@@ -55,6 +55,7 @@ function OrderCreate({navigation}): JSX.Element {
 	const [color , setColor] = useState('');
 	const [item , setItem] = useState('');
     const [value, setValue] = useState(null);
+	const [modalVisibleItem, setModalVisibleItem] = useState(false);
 	const [modalVisibleVendor, setModalVisibleVendor] = useState(false);
 	const [modalVisibleSalesman, setModalVisibleSalesman] = useState(false);
 
@@ -75,6 +76,9 @@ function OrderCreate({navigation}): JSX.Element {
 	const [productVideoResult, setProductVideoResult] = useState();
 	const [apitoken, setApiToken] = useState();
 
+	const [ItemList , SetItemList] = useState();
+	const [ItemListAll , SetItemListAll] = useState();
+
 	const [vendorList , SetVendorList] = useState();
 	const [vendorListAll , SetVendorListAll] = useState();
 	const [salesmanList , SetSalesmanList] = useState();
@@ -82,18 +86,22 @@ function OrderCreate({navigation}): JSX.Element {
 	const [date, setDate] = useState(new Date())
   	const [open, setOpen] = useState(false)
   	const [showReadyDate, setshowReadyDate] = useState(false)
+  	const [showBufferReadyDate, setShowBufferReadyDate] = useState(false)
   	const [showDeliveryDate, setShowDeliveryDate] = useState(false)
   	const [generatingMessage, setGeneratingMessage] = useState('Generating new order')
 
 
 
+	const [selectedItemId , SetSelectedItemId] = useState();
 	const [selectedVendorId , SetSelectedVendorId] = useState();
 	const [selectedSalesmanId , SetSelectedSalesmanId] = useState();
+	const [selectedItemName , SetSelectedItemName] = useState();
 	const [selectedVendorName , SetSelectedVendorName] = useState();
 	const [selectedSalesmanName , SetSelectedSalesmanName] = useState();
 
 	const [readyDate , SetReadyDate] = useState();
 	const [deliveryDate , SetDeliveryDate] = useState();
+	const [bufferReadyDate , SetBufferReadyDate] = useState();
 
 	const [percentage, setPercentage] = useState(0);
 	const [networkType, setNetworkType] = useState();
@@ -107,6 +115,7 @@ function OrderCreate({navigation}): JSX.Element {
 		return base64String
 	}
 	useEffect(() => {
+		getItemList();
 		getVendorList();
 		getSalesmanList();
 		setshowReadyDate(false);
@@ -135,6 +144,7 @@ function OrderCreate({navigation}): JSX.Element {
 
 	var current = 0;
 	var interval:any;
+
 	let saveOrder = async () => {
 		let size1 = 0;
 		let size2 = 0;
@@ -165,11 +175,18 @@ function OrderCreate({navigation}): JSX.Element {
 			}
 			defaultTimeInterval = (Math.round(((totalAttachmentSize)/wifiDataSize)) * 1000);
 		}
-
+		console.log(order_number);
+		console.log(selectedVendorId);
+		console.log(selectedSalesmanId);
+		console.log(color);
+		console.log(item);
+		console.log(new Date(readyDate).getFullYear()+'-'+(new Date(readyDate).getMonth() + 1)+'-'+new Date(readyDate).getDate());
+		console.log(new Date(bufferReadyDate).getFullYear()+'-'+(new Date(bufferReadyDate).getMonth() + 1)+'-'+new Date(bufferReadyDate).getDate());
+		console.log(new Date(deliveryDate).getFullYear()+'-'+(new Date(deliveryDate).getMonth() + 1)+'-'+new Date(deliveryDate).getDate());
 
 
 		if( order_number != '' && order_number != undefined && selectedVendorId != '' && selectedVendorId != undefined && selectedSalesmanId != '' && selectedSalesmanId != undefined && color != '' && color != undefined && item != '' && item != undefined && readyDate != '' && readyDate != undefined && deliveryDate != '' && deliveryDate != undefined ){
-			if(productPhotoData.length > 0 && productMeasurementData.length > 0 && productVideoData.length > 0){
+			if(productPhotoData.length > 0 && productMeasurementData.length > 0){
 				// networkSpeed.startListenNetworkSpeed(({downLoadSpeed,downLoadSpeedCurrent,upLoadSpeed,upLoadSpeedCurrent}) => {
 				// 	// console.log(downLoadSpeed + 'kb/s') 
 				// 	// console.log(downLoadSpeedCurrent + 'kb/s') 
@@ -267,7 +284,20 @@ function OrderCreate({navigation}): JSX.Element {
 
 	}
 	
-	
+	const getItemList = () => {
+		AsyncStorage.getItem('id').then((token) => {
+			let postedData = { role: 'vendor',api_token : token};
+			get('item/get' , postedData).then((res) => {
+				SetItemList(res.data.data.data);
+				SetItemListAll(res.data.data.data);
+
+			}).catch((err) => {
+
+			});
+		}).catch((err) => {
+
+		});
+	}
 	const getVendorList = () => {
 		AsyncStorage.getItem('id').then((token) => {
 			let postedData = { role: 'vendor',api_token : token};
@@ -315,6 +345,18 @@ function OrderCreate({navigation}): JSX.Element {
 		backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
 	};
 	const Item = ({item}:any) => (
+		<Pressable onPress={() => { setItem(item.id) ,SetSelectedItemId(item.id) ,SetSelectedItemName(item.name) ,setModalVisibleItem(false) }} style={styles.item}>
+			<View style={[{} , flexDirectionRow]}>
+				<View style={[marginRight10,{width:'100%',overflow: 'hidden' }]}>
+					<View style={[{} , flexDirectionRow]}> 
+						<Text style={[{fontWeight: 'bold'},h5,marginRight10]}>{item.name}</Text>
+						<Text style={[{marginTop: 0},h5]}>{item.order_number}</Text>
+					</View>
+				</View>
+			</View>
+		</Pressable>
+  	);
+	const VendorItem = ({item}:any) => (
 		<Pressable onPress={() => { SetSelectedVendorId(item.id) ,SetSelectedVendorName(item.name) ,setModalVisibleVendor(false) }} style={styles.item}>
 			<View style={[{} , flexDirectionRow]}>
 				<View style={[marginRight10,{width:'100%',overflow: 'hidden' }]}>
@@ -348,11 +390,39 @@ function OrderCreate({navigation}): JSX.Element {
 	const openReadyDate = () => {
 		setshowReadyDate(true)
 		setShowDeliveryDate(false)
+		setShowBufferReadyDate(false);
 
+	}
+	const openBufferReadyDate = () => {
+		setshowReadyDate(false)
+		setShowDeliveryDate(false)
+		setShowBufferReadyDate(true);
 	}
 	const openDeliveryDate = () => {
 		setshowReadyDate(false)
 		setShowDeliveryDate(true)
+		setShowBufferReadyDate(false);
+
+	}
+	const searchItem = (searchedValue) => {
+		console.log();
+		if(searchedValue.length > 0 ){
+			let newSearchableArray = [];
+			if( ItemList.length > 0 ){
+				ItemList.filter((list) => {
+					let searchableLowercase = (list.name).toLowerCase();
+					if(searchableLowercase.includes((searchedValue).toLowerCase())){ 
+						newSearchableArray.push(list)
+					}
+				});
+				SetItemList(newSearchableArray);
+			}
+		}else{
+			SetItemList(ItemListAll);
+		}
+		
+		// vendorList.filter
+		// console.log(searchedValue);
 	}
 	const searchVendor = (searchedValue) => {
 		console.log();
@@ -433,7 +503,39 @@ function OrderCreate({navigation}): JSX.Element {
 							{/* <InputConponents placeholder="Select Vendor" inputValue={(value:any) => { setVendor(value) }} style={inputStyleBlack} />
 							<InputConponents placeholder="Select Salesman" inputValue={(value:any) => { setSalesman(value) }} style={inputStyleBlack} /> */}
 							<InputConponents placeholder="Color" inputValue={(value:any) => { setColor(value) }} style={inputStyleBlack} />
-							<InputConponents placeholder="Item" inputValue={(value:any) => { setItem(value) }} style={inputStyleBlack} />
+							{/* <InputConponents placeholder="Item" inputValue={(value:any) => { setItem(value) }} style={inputStyleBlack} /> */}
+
+							<Modal
+								animationType="slide"
+								transparent={true}
+								visible={modalVisibleItem}
+								onRequestClose={() => {
+									// Alert.alert('Modal has been closed.');
+									setModalVisibleItem(!modalVisibleItem);
+								}}>
+									<View style={styles.centeredView}>
+										<View style={styles.modalView}>
+											<View style={{paddingBottom: 10}}>
+												<Text>Select Item</Text>
+											</View>
+											<View style={{width: '100%' }}>
+												<InputConponents placeholder="Search Item" inputValue={(value:any) => { searchItem(value) }} style={inputStyleBlack}/>
+											</View>
+											<FlatList
+												data={ItemList}
+												renderItem={({item}) => {return <View><Item item={item} /></View>}}
+												keyExtractor={item => item.id}
+												showsVerticalScrollIndicator={false}
+											/>
+											<Pressable
+												style={[styles.button, styles.buttonClose]}
+												onPress={() => setModalVisibleItem(!modalVisibleItem)}>
+												<Text style={styles.textStyle}>Close</Text>
+											</Pressable>
+										</View>
+									</View>
+							</Modal>
+
 							<Modal
 								animationType="slide"
 								transparent={true}
@@ -452,7 +554,7 @@ function OrderCreate({navigation}): JSX.Element {
 											</View>
 											<FlatList
 												data={vendorList}
-												renderItem={({item}) => {return <View><Item item={item} /></View>}}
+												renderItem={({item}) => {return <View><VendorItem item={item} /></View>}}
 												keyExtractor={item => item.id}
 												showsVerticalScrollIndicator={false}
 											/>
@@ -496,6 +598,15 @@ function OrderCreate({navigation}): JSX.Element {
 									</View>
 							</Modal>
 							<View style={{paddingHorizontal: 20,paddingVertical: 10}}>
+								<View style={{ flexDirection: 'row' }}>
+									<Pressable 
+										style={{ backgroundColor: gulluColor,padding:20,borderRadius: 10,width: '50%',marginBottom: 10}}
+										onPress={() => setModalVisibleItem(true)}>
+										<Text style={{color: goldenColor,textAlign: 'center'}}>Select Item</Text>
+									</Pressable>
+
+									<Text style={[{ paddingVertical: 16 ,textTransform: 'capitalize'} , h4,marginLeft10,{color: gulluColor}]}>{selectedItemName}</Text>
+								</View>
 								<View style={{ flexDirection: 'row' }}>
 									<Pressable 
 										style={{ backgroundColor: gulluColor,padding:20,borderRadius: 10,width: '50%',marginBottom: 10}}
@@ -565,6 +676,21 @@ function OrderCreate({navigation}): JSX.Element {
 										null
 									}
 								</View>
+
+							
+								<View style={{ flexDirection: 'row' }}>
+									<Pressable onPress={() => openBufferReadyDate()} style={{ backgroundColor: gulluColor,padding:20,borderRadius: 10,width: '50%',marginBottom: 10}}>
+										<Text style={{color: goldenColor,textAlign: 'center'}}>Buffer Ready Date </Text>
+									</Pressable>
+									{(bufferReadyDate != undefined)?
+									
+										<View>
+											<Text style={[{ paddingVertical: 16 ,textTransform: 'capitalize'} , h4,marginLeft10,{color: gulluColor}]}>{bufferReadyDate.toString().substring(4, 15)}</Text>
+										</View>
+										:
+										null
+									}
+								</View>
 							
 								
 								<View style={{ flexDirection: 'row' }}>
@@ -606,6 +732,35 @@ function OrderCreate({navigation}): JSX.Element {
 										}
 									}}
 									onChange={(date) => {setShowDeliveryDate(false), SetDeliveryDate(new Date(date.nativeEvent.timestamp))}}
+									onDateChange={(date) => { console.log(date) }}
+								/>
+							:
+								null
+							}
+							{( showBufferReadyDate )?
+								<DatePicker
+									style={{width: 200}}
+									date={getAddedDate(6)}
+									value={getAddedDate(6)}
+									mode="date"
+									placeholder="select date"
+									format="YYYY-MM-DD"
+									minDate={new Date()}
+									maxDate="2050-06-01"
+									confirmBtnText="Confirm"
+									cancelBtnText="Cancel"
+									customStyles={{
+										dateIcon: {
+											position: 'absolute',
+											left: 0,
+											top: 4,
+											marginLeft: 0
+										},
+										dateInput: {
+											marginLeft: 36
+										}
+									}}
+									onChange={(date) => {setShowBufferReadyDate(false), SetBufferReadyDate(new Date(date.nativeEvent.timestamp))}}
 									onDateChange={(date) => { console.log(date) }}
 								/>
 							:
