@@ -20,11 +20,12 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import { h3, height100, height6, height85, height9, primaryBackgroundColor, primaryColor, secondaryBackgroundColor, textAlignCenter,gulluColor,primaryGulluLightBackgroundColor, height8, height83} from '../assets/styles';
+import { h3, height100, height6, height85, height9, primaryBackgroundColor, primaryColor, secondaryBackgroundColor, textAlignCenter,gulluColor,primaryGulluLightBackgroundColor, height8, height83, inputStyleBlack} from '../assets/styles';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { get } from '../services/services';
+import InputConponents from '../components/InputComponents';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -33,9 +34,11 @@ type SectionProps = PropsWithChildren<{
 
 function SalesmanList({navigation}): JSX.Element {
 	const [ activityIndicator , setActivityIndicator ] = useState(false);
+	const [searchableData, setSearchableData] = useState([]);
 
   	const isDarkMode = useColorScheme() === 'dark';
 	const [ DATA , SetData ] = useState();
+	const [ origianlData , SetOrigianlData ] = useState([]);
   	useEffect(()=> {
 		
 	} , [])
@@ -55,6 +58,7 @@ function SalesmanList({navigation}): JSX.Element {
 				setActivityIndicator(false)
 
 				SetData(res.data.data.data);
+				SetOrigianlData(res.data.data.data);
 			}).catch((err) => {
 				setActivityIndicator(false)
 
@@ -65,7 +69,27 @@ function SalesmanList({navigation}): JSX.Element {
 
 		});
 	}
+	const searchOrder = (searchableText) => {
+		let newSearchableArray = [];
+		if (origianlData.length > 0) {
+			origianlData.filter((list) => {
+				let searchableLowercase: any;
 	
+	
+				//search Vendor
+				let vendor = list?.name;
+				if(vendor != undefined){
+					searchableLowercase = (vendor).toLowerCase();
+					if (searchableLowercase.includes((searchableText).toLowerCase())) {
+					newSearchableArray.push(list)
+					}
+				}
+				
+			});
+		  setSearchableData(newSearchableArray);
+		  SetData(newSearchableArray);
+		}
+	}
 	const Item = ({item}:any) => (
 		<Pressable onPress={() => {navigation.push('salesmanEdit' , {salesmanId : item.id})}}  style={styles.item}>
 			<Text style={[{},h3, {color: gulluColor}]}>{item.name}</Text>
@@ -83,6 +107,9 @@ function SalesmanList({navigation}): JSX.Element {
                     <HeaderComponent navigation={navigation} title="Salesman List" />
                 </View>
 				<View style={[{} , height83]} >
+				<View>
+					<InputConponents placeholder="Search Order , Vendor , Salesman" style={[{}, inputStyleBlack]} inputValue={(value: any) => { searchOrder(value) }} />
+				</View>
 				{(activityIndicator)? 
 					<ActivityIndicator color={gulluColor} size={20}></ActivityIndicator>
 				:

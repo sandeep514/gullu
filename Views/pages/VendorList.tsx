@@ -20,7 +20,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import { cardBackgroundColor, gulluColor, h1, h2, h3, height10, height100, height20, height50, height6, height8, height80, height83, height85, height9, height90, padding20, primaryBackgroundColor, primaryColor, primaryGulluLightBackgroundColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
+import { cardBackgroundColor, gulluColor, h1, h2, h3, height10, height100, height15, height20, height50, height6, height8, height80, height83, height85, height9, height90, inputStyleBlack, padding20, primaryBackgroundColor, primaryColor, primaryGulluLightBackgroundColor, screenheight, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
 import InputConponents from '../components/InputComponents';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
@@ -35,6 +35,9 @@ type SectionProps = PropsWithChildren<{
 function VendorList({navigation}): JSX.Element {
 	const isDarkMode = useColorScheme() === 'dark';
 	const [ DATA , SetData ] = useState();
+	const [ origianlData , SetOrigianlData ] = useState([]);
+	const [searchableData, setSearchableData] = useState([]);
+
 	const [ activityIndicator , setActivityIndicator ] = useState(false);
   	useEffect(()=> {
 		
@@ -54,6 +57,7 @@ function VendorList({navigation}): JSX.Element {
 				setActivityIndicator(false)
 
 				SetData(res.data.data.data);
+				SetOrigianlData(res.data.data.data);
 				
 			}).catch((err) => {
 				console.log(err)
@@ -72,6 +76,26 @@ function VendorList({navigation}): JSX.Element {
 			<Text style={[{},h3, {color: gulluColor}]}>{item.phone}</Text>
 		</Pressable>
 	);
+
+	const searchOrder = (searchableText) => {
+		let newSearchableArray = [];
+		if (origianlData.length > 0) {
+			origianlData.filter((list) => {
+				let searchableLowercase: any;
+
+				//search salesman
+				let salesman = list?.name;
+				if(salesman != undefined){
+					searchableLowercase = (salesman).toLowerCase();
+					if (searchableLowercase.includes((searchableText).toLowerCase())) {
+					newSearchableArray.push(list)
+					}
+				}
+			});
+		  setSearchableData(newSearchableArray);
+		  SetData(newSearchableArray);
+		}
+	}
   return (
     <SafeAreaView style={{backgroundColor: '#ededed'}}>
 			<StatusBar
@@ -83,6 +107,9 @@ function VendorList({navigation}): JSX.Element {
                     <HeaderComponent navigation={navigation} title="Vendor List" />
                 </View>
 				<View style={[{} , height83]} >
+					<View style={[{}, height15]}>
+						<InputConponents placeholder="Search Vendor" style={[{}, inputStyleBlack]} inputValue={(value: any) => { searchOrder(value) }} />
+					</View>
 					{(activityIndicator)? 
 						<ActivityIndicator color={gulluColor} size={20}></ActivityIndicator>
 					:

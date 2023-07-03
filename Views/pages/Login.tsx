@@ -66,7 +66,6 @@ function Login({navigation}): JSX.Element {
 
   	const isDarkMode = useColorScheme() === 'dark';
   	useEffect(()=> {
-		
 	} , [])
 	function ValidateEmail(input) {
 		var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -86,13 +85,13 @@ function Login({navigation}): JSX.Element {
 				let params = {email : email , password: password};
 
 				post('/login' ,params ).then((res:any) => {
-					console.log(res);
+					console.log(res.data);
 					AsyncStorage.setItem('api_token' , res.data.api_token);
 					AsyncStorage.setItem('email' , res.data.email);
 					AsyncStorage.setItem('id' , (res.data.id).toString());
 					AsyncStorage.setItem('name' , res.data.name);
 					AsyncStorage.setItem('phone' , res.data.phone);
-					AsyncStorage.setItem('role' , res.data.role);
+					AsyncStorage.setItem('role' , (res.data.role).toString());
 	
 					setActivityIndicator(false)
 					navigation.push('Home')

@@ -49,9 +49,10 @@ function HeaderComponent( {title , navigation} ): JSX.Element {
                         <Image source={require('../assets/images/back-arrow-1767523-1502427.png')} style={{ height: 20,width: 15 }} />
                     </Pressable>
                     <Text style={{ color: gulluColor , fontSize: 17 , textTransform: 'capitalize' }}>{title}</Text>
-                    <Pressable style={{paddingHorizontal: 10}} onPress={() => {navigation.push('Home')}}>
-                        <Image source={require('../assets/images/home-2456658-2036112.png')} style={{ height: 25,width: 25 }} />
+                    <Pressable style={{}} onPress={() => {navigation.push('Gallery')}}>
+                        <Image source={require('../assets/images/gallery.png')} style={{ height: 35,width: 35 }} />
                     </Pressable>
+                   
                 </View>
             </View>
         </View>

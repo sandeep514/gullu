@@ -23,10 +23,11 @@ import DocumentPicker, {
 	isInProgress,
 	types,
 } from 'react-native-document-picker'
+import ImageViewer from 'react-native-image-zoom-viewer';
 import {
 	Colors,
 } from 'react-native/Libraries/NewAppScreen';
-import { flexDirectionRow, h3, h4, h5, height100, height6, height85, height9, inputStyleBlack, justifyContentCenter, marginRight10, marginTop10, padding10, padding15, primaryBackgroundColor, secondaryBackgroundColor, textAlignCenter,gulluColor,primaryGulluLightBackgroundColor, height8, height83 } from '../assets/styles';
+import { flexDirectionRow, h3, h4, h5, height100, height6, height85, height9, inputStyleBlack, justifyContentCenter, marginRight10, marginTop10, padding10, padding15, primaryBackgroundColor, secondaryBackgroundColor, textAlignCenter,gulluColor,primaryGulluLightBackgroundColor, height8, height83, gulluFont } from '../assets/styles';
 import InputConponents from '../components/InputComponents';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
@@ -46,8 +47,14 @@ function OrderEdit({ navigation, route }): JSX.Element {
 	const [modalVisibleImage, setModalVisibleImage] = useState(false);
 	const [selectedImage, setSelectedImage] = useState();
 	const [loader, setLoader] = useState(false);
+	const [deleteLoader, setDeleteLoader] = useState(false);
 	const [dataUpdated, setDataUpdated] = useState(false);
 	const [loadStart, setLoadStart] = useState(false);
+
+	const [productPhoto, setProductPhoto] = useState();
+	const [productMeasurement, setProductMeasurement] = useState();
+	const [productVideo, setProductVideo] = useState();
+	const [showBox, setShowBox] = useState(true);
 
 	const videoPlayer = React.useRef();
 
@@ -55,8 +62,58 @@ function OrderEdit({ navigation, route }): JSX.Element {
 		const base64String = await readFile(uri, "base64");
 		return base64String
 	}
+	const showConfirmDialog = (orderId) => {
+		return Alert.alert(
+		  "Are your sure?",
+		  "Are you sure you want to delete this order...?",
+		  [
+			// The "Yes" button
+			{
+			  text: "Yes",
+			  onPress: () => {
+				console.log("deleted");
+				deleteOrder(orderId)
+				setShowBox(false);
+			  },
+			},
+			// The "No" button
+			// Does nothing but dismiss the dialog when tapped
+			{
+			  text: "No",
+			},
+		  ]
+		);
+	  };
 	useEffect(() => {
 		if( !dataUpdated ){
+			let orderData = (route.params.orderData)['attachments'];
+			// const params = {
+			// 	Bucket: 'uploadbygulluapp',
+			// 	Key: 'IMG-20230518-WA0003.jpg',
+			// 	ContentType: 'image/jpeg',
+			// 	// ACL: 'public-read', // Adjust the access control policy as needed
+			//   };
+			//   const s3 = new S3({
+			// 	region: 'us-east-2',
+			// 	accessKeyId: 'AKIA2OM62YUJYMJ6PT2E',
+			// 	secretAccessKey: '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',
+			//   });
+			//   s3.getObject({Key: 'happy-face.jpg'}, function(err,file){
+			// 	console.log(file);
+			// 		// console.log("data:image/jpeg;base64," + encode(file.Body));
+			// });
+			// for(let i = 0 ; i < orderData.length ; i++){
+			// 	if( orderData.attachment_for = "Product photo" ){
+			// 		setProductPhoto();
+			// 	}
+			// 	if( orderData.attachment_for = "Product Measurement" ){
+
+			// 	}
+			// 	if( orderData.attachment_for = "Product Video" ){
+
+			// 	}
+			// 	console.log(orderData[i]);
+			// }
 			setItem(route.params.orderData);
 		}
 
@@ -77,7 +134,7 @@ function OrderEdit({ navigation, route }): JSX.Element {
 		AsyncStorage.getItem('id').then((token) => {
 			let postedData = { 'status': status,'api_token' : token ,'applicationId' : item?.id };
 			get('/update/order/status' , postedData).then((res) => {
-				// console.log(res.data.data.data);			
+				
 				setItem(res.data.data.data);
 				setLoader(false);
 				setDataUpdated(true);
@@ -89,7 +146,26 @@ function OrderEdit({ navigation, route }): JSX.Element {
 		}).catch((err) => {
 			setLoader(false);
 		});
-		
+	}
+	const deleteOrder = (orderId) => {
+		setDeleteLoader(true);
+		AsyncStorage.getItem('id').then((token) => {
+			let postedData = { 'status': '-1','api_token' : token ,'applicationId' : orderId };
+			get('/update/order/status' , postedData).then((res) => {
+				
+				// setItem(res.data.data.data);
+				setDeleteLoader(false);
+				setDataUpdated(true);
+
+				navigation.navigate('Home');
+			}).catch((err) => {
+				setDeleteLoader(false);
+				// console.log(err)
+			});
+
+		}).catch((err) => {
+			setDeleteLoader(false);
+		});
 	}
 
 
@@ -118,13 +194,23 @@ function OrderEdit({ navigation, route }): JSX.Element {
 									<View style={[marginRight10, { width: '100%', overflow: 'hidden' }]}>
 										<View style={{flexDirection: 'row'}}>
 											<View style={{width: '100%'}}>
+											<View style={styles.screen}>
+												{/* {showBox && <View style={styles.box}></View>} */}
+												<Button title="Delete" onPress={() => showConfirmDialog(item?.id)} />
+												
+												{(deleteLoader)?
+													<ActivityIndicator size={20} color={gulluColor} />
+												: 
+													null
+												}
+											</View>
 												<View style={[{}, flexDirectionRow]}>
 													<Text style={[{ fontWeight: 'bold' }, h4, marginRight10 ,{color: gulluColor}]}>Order Number</Text>
 													<Text style={[{ marginTop: 0 }, h4 , {color: gulluColor}]}>{item?.order_number}</Text>
 												</View>
 												<View style={[{}, flexDirectionRow]}>
 													<Text style={[{ fontWeight: 'bold' }, h4, marginRight10 ,{color: gulluColor}]}>Item </Text>
-													<Text style={[{ marginTop: 0 }, h4 , {color: gulluColor}]}>{item?.item} </Text>
+													<Text style={[{ marginTop: 0 }, h4 , {color: gulluColor}]}>{item?.item?.name} </Text>
 												</View>
 												<View style={[{}, flexDirectionRow]}>
 													<Text style={[{ fontWeight: 'bold' }, h4, marginRight10 ,{color: gulluColor}]}>Color</Text>
@@ -133,12 +219,26 @@ function OrderEdit({ navigation, route }): JSX.Element {
 												{(role == 1)?
 													<View>
 														<View style={[{}, flexDirectionRow]}>
+															<Text style={[{ fontWeight: 'bold' }, h5, gulluFont, marginRight10]}>Ready date</Text>
+															<Text style={[{ marginTop: 0 }, h5, gulluFont]}>{ item?.ready_date }</Text>
+														</View>
+														<View style={[{}, flexDirectionRow]}>
+															<Text style={[{ fontWeight: 'bold' }, h5, gulluFont, marginRight10]}>Buffer ready date</Text>
+															<Text style={[{ marginTop: 0 }, h5, gulluFont]}>{ item?.buffered_ready_date }</Text>
+															{/* <Text style={[{ marginTop: 0 }, h5, gulluFont]}>{item?.pending_days} ({ item?.buffered_ready_date })</Text> */}
+														</View>
+
+														<View style={[{}, flexDirectionRow]}>
+															<Text style={[{ fontWeight: 'bold' }, h5, gulluFont, marginRight10]}>Delivery Date</Text>
+															<Text style={[{ marginTop: 0 }, h5, gulluFont]}>{item?.delivery_date}</Text>
+														</View>
+														<View style={[{}, flexDirectionRow]}>
 															<Text style={[{ fontWeight: 'bold' }, h4, marginRight10 ,{color: gulluColor}]}>Salesman</Text>
-															<Text style={[{ marginTop: 0 }, h4 , {color: gulluColor}]}>{item?.salesman.name}</Text>
+															<Text style={[{ marginTop: 0 }, h4 , {color: gulluColor}]}>{item?.salesman?.name}</Text>
 														</View>
 														<View style={[{}, flexDirectionRow]}>
 															<Text style={[{ fontWeight: 'bold' }, h4, marginRight10 ,{color: gulluColor}]}>Vendor</Text>
-															<Text style={[{ marginTop: 0 }, h4 , {color: gulluColor}]}>{item?.vendor.name}</Text>
+															<Text style={[{ marginTop: 0 }, h4 , {color: gulluColor}]}>{item?.vendor?.name}</Text>
 														</View>
 													</View>
 												:
@@ -225,14 +325,15 @@ function OrderEdit({ navigation, route }): JSX.Element {
 												setModalVisibleImage(!modalVisibleImage);
 											}}>
 											<View style={styles.centeredView}>
-												<View style={styles.modalView}>
-													<View style={{ width: '100%', height: 400, paddingVertical: 20}}>
-														<Image source={{uri : selectedImage}}  resizeMode="contain" style={{ height: '100%', width: '100%' }} />
+												<View style={[styles.modalView, {margin: 0,padding: 10}]}>
+													<View style={{ width: '100%', height: '100%', paddingVertical: 20}}>
+														{/* <Image source={{uri : selectedImage}} resizeMode='contain' resizeMethod='scale'  style={{ height: '100%', width: '100%' }} /> */}
+														<ImageViewer imageUrls={[{url: selectedImage}]} renderIndicator={() => null} />
 													</View>
 													<Pressable
-														style={[styles.button, styles.buttonClose]}
+														style={[{position: 'absolute',backgroundColor: 'red',height: 50,width: 50,justifyContent: 'center',borderRadius: 100,right: 10}]}
 														onPress={() => setModalVisibleImage(!modalVisibleImage)}>
-														<Text style={styles.textStyle}>Hide</Text>
+														<Text style={[styles.textStyle, {fontSize: 20}]}>X</Text>
 													</Pressable>
 												</View>
 											</View>
@@ -415,5 +516,19 @@ const styles = StyleSheet.create({
 		marginBottom: 15,
 		textAlign: 'center',
 	},
+	screen: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+	  },
+	  box: {
+		width: 300,
+		height: 300,
+		backgroundColor: "red",
+		marginBottom: 30,
+	  },
+	  text: {
+		fontSize: 30,
+	  },
 });
 export default OrderEdit;
