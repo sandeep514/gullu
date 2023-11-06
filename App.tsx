@@ -164,6 +164,11 @@ function App(): JSX.Element {
             component={OrderEdit}
             options={{headerShown: false}}
           />
+           <Stack.Screen
+            name="Gallery"
+            component={Gallery}
+            options={{headerShown: false}}
+          />
         </Stack.Navigator>
       ) : null}
     </NavigationContainer>

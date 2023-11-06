@@ -254,10 +254,16 @@ function OrderEdit({ navigation, route }): JSX.Element {
                       <View style={{ width: "100%" }}>
                         <View style={styles.screen}>
                           {/* {showBox && <View style={styles.box}></View>} */}
+                        {(role == 1)?
                           <Button
                             title="Delete"
                             onPress={() => showConfirmDialog(item?.id)}
                           />
+                      
+
+                          :
+                          null
+                        }
 
                           {deleteLoader ? (
                             <ActivityIndicator size={20} color={gulluColor} />
