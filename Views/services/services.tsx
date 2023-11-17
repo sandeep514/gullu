@@ -20,6 +20,7 @@ export const post = (url: any, params: any) => {
   return new Promise((resolve, reject) => {
     apiClient.post(url, params).then(
       (res: any) => {
+        console.log(res)
         if (res.data.data.status == "true" || res.data.data.status == true) {
           resolve(res.data.data);
         } else {
