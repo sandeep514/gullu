@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
-import type { PropsWithChildren } from "react";
 import {
   Button,
-  FlatList,
-  Image,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -11,73 +8,65 @@ import {
   Text,
   Alert,
   Modal,
-  TouchableOpacity,
   useColorScheme,
   View,
   Pressable,
   ImageBackground,
   ActivityIndicator,
 } from "react-native";
-import DocumentPicker, {
-  DirectoryPickerResponse,
-  DocumentPickerResponse,
-  isInProgress,
-  types,
-} from "react-native-document-picker";
 import ImageViewer from "react-native-image-zoom-viewer";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import {
   flexDirectionRow,
-  h3,
   h4,
   h5,
   height100,
-  height6,
-  height85,
   height9,
-  inputStyleBlack,
   justifyContentCenter,
   marginRight10,
   marginTop10,
   padding10,
-  padding15,
-  primaryBackgroundColor,
   secondaryBackgroundColor,
-  textAlignCenter,
   gulluColor,
   primaryGulluLightBackgroundColor,
   height8,
   height83,
   gulluFont,
 } from "../assets/styles";
-import InputConponents from "../components/InputComponents";
 import HeaderComponent from "../components/HeaderComponent";
 import FooterComponent from "../components/FooterComponent";
-import { decode as atob, encode as btoa } from "base-64";
 import { readFile } from "react-native-fs";
 import Video from "react-native-video";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { imagePath } from "../services/Client";
-import { get } from "../services/services";
+import { get, showToast } from "../services/services";
 import RNFetchBlob from "rn-fetch-blob";
+import { RNS3 } from 'react-native-s3-upload';
+import { S3 } from 'aws-sdk';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 function OrderEdit({ navigation, route }): JSX.Element {
-  const [item, setItem] = useState();
-  const [role, setRole] = useState();
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalVisibleImage, setModalVisibleImage] = useState(false);
-  const [selectedImage, setSelectedImage] = useState();
-  const [loader, setLoader] = useState(false);
-  const [deleteLoader, setDeleteLoader] = useState(false);
-  const [dataUpdated, setDataUpdated] = useState(false);
-  const [loadStart, setLoadStart] = useState(false);
+	const [item, setItem] = useState();
+	const [role, setRole] = useState();
+	const [modalVisible, setModalVisible] = useState(false);
+	const [modalVisibleImage, setModalVisibleImage] = useState(false);
+	const [selectedImage, setSelectedImage] = useState();
+	const [loader, setLoader] = useState(false);
+	const [deleteLoader, setDeleteLoader] = useState(false);
+	const [dataUpdated, setDataUpdated] = useState(false);
+	const [loadStart, setLoadStart] = useState(false);
+	const [S3ProductImageUpload, setS3ProductImageUpload] = useState(false);
+	const [product_video_type, setPrductVideoType] = useState('');
+	const [productVideoData, setProductVideoData] = useState({});
 
-  const [productPhoto, setProductPhoto] = useState();
-  const [productMeasurement, setProductMeasurement] = useState();
-  const [productVideo, setProductVideo] = useState();
-  const [showBox, setShowBox] = useState(true);
+	const [productPhoto, setProductPhoto] = useState();
+	const [productMeasurement, setProductMeasurement] = useState();
+	const [productVideo, setProductVideo] = useState();
+	const [UplaodedImage, setUplaodedImage] = useState();
+	const [showBox, setShowBox] = useState(true);
+	const [uploadingAttachment, setuploadingAttachment] = useState(false);
 
-  const videoPlayer = React.useRef();
+	const videoPlayer = React.useRef();
 
   async function getUriToBase64(uri) {
     const base64String = await readFile(uri, "base64");
@@ -108,33 +97,6 @@ function OrderEdit({ navigation, route }): JSX.Element {
   useEffect(() => {
     if (!dataUpdated) {
       let orderData = route.params.orderData["attachments"];
-      // const params = {
-      // 	Bucket: 'uploadbygulluapp',
-      // 	Key: 'IMG-20230518-WA0003.jpg',
-      // 	ContentType: 'image/jpeg',
-      // 	// ACL: 'public-read', // Adjust the access control policy as needed
-      //   };
-      //   const s3 = new S3({
-      // 	region: 'us-east-2',
-      // 	accessKeyId: 'AKIA2OM62YUJYMJ6PT2E',
-      // 	secretAccessKey: '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',
-      //   });
-      //   s3.getObject({Key: 'happy-face.jpg'}, function(err,file){
-      // 	console.log(file);
-      // 		// console.log("data:image/jpeg;base64," + encode(file.Body));
-      // });
-      // for(let i = 0 ; i < orderData.length ; i++){
-      // 	if( orderData.attachment_for = "Product photo" ){
-      // 		setProductPhoto();
-      // 	}
-      // 	if( orderData.attachment_for = "Product Measurement" ){
-
-      // 	}
-      // 	if( orderData.attachment_for = "Product Video" ){
-
-      // 	}
-      // 	console.log(orderData[i]);
-      // }
       setItem(route.params.orderData);
     }
 
@@ -149,6 +111,82 @@ function OrderEdit({ navigation, route }): JSX.Element {
       })
       .catch((err) => {});
   }, []);
+
+	const uploadFileToS3 = async (ImageURI, filename, fileSize, type, variant) => {
+
+		console.log('type');
+		console.log(type);
+		setuploadingAttachment(true)
+		const fileUri = ImageURI; // File path on the device
+		const fileName = filename; // Unique name for the file on S3
+
+		const s3 = new S3({
+			region: 'us-east-2',
+			accessKeyId: 'AKIA2OM62YUJYMJ6PT2E',
+			secretAccessKey: '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',
+		});
+		const file = {
+			uri: fileUri,
+			name: fileName,
+			type: type,
+		};
+
+		const options = {
+			keyPrefix: "/",
+			bucket: "uploadbygulluapp",
+			region: "us-east-2",
+			accessKey: "AKIA2OM62YUJYMJ6PT2E",
+			secretKey: "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",
+			successActionStatus: 201
+		}
+
+		RNS3.put(file, options).then(response => {
+			console.log('response 143');
+			console.log(response);
+			if (response.status !== 201) {
+				throw new Error("Failed to upload image to S3");
+			} else {
+				setuploadingAttachment(false)
+				updateDeliveredImageAndStatus(3, fileName );
+				setUplaodedImage(imagePath+'/'+fileName);
+
+				
+			}
+		});
+		return false;
+	};
+	const uploadDeliveredProductImage = () => {
+		let options = {
+			mediaType: 'photo',
+			maxWidth: 300,
+			maxHeight: 550,
+			quality: 0.5,
+			base64: true
+		};
+		launchImageLibrary(options, (response: any) => {
+			console.log('Response = ', response);
+
+			if (response.didCancel) {
+				return;
+			} else if (response.errorCode == 'camera_unavailable') {
+				return;
+			} else if (response.errorCode == 'permission') {
+				return;
+			} else if (response.errorCode == 'others') {
+				return;
+			}
+			if (response.assets[0].fileSize <= 30000000) {
+
+				setPrductVideoType(response.assets[0].type);
+				setProductVideoData(response.assets);
+				let sourceUri = response.assets[0].uri;
+
+				uploadFileToS3(sourceUri, response.assets[0].fileName, response.assets[0].fileSize, response.assets[0].type, 'deliveredProduct');
+			} else {
+				showToast('Max Video upload size is 30MB.');
+			}
+		});
+	}
   const updateOrder = (status) => {
     setLoader(true);
     AsyncStorage.getItem("id")
@@ -157,6 +195,31 @@ function OrderEdit({ navigation, route }): JSX.Element {
           status: status,
           api_token: token,
           applicationId: item?.id,
+        };
+        get("/update/order/status", postedData)
+          .then((res) => {
+            setItem(res.data.data.data);
+            setLoader(false);
+            setDataUpdated(true);
+          })
+          .catch((err) => {
+            setLoader(false);
+            // console.log(err)
+          });
+      })
+      .catch((err) => {
+        setLoader(false);
+      });
+  };
+  const updateDeliveredImageAndStatus = (status , image) => {
+    setLoader(true);
+    AsyncStorage.getItem("id")
+      .then((token) => {
+        let postedData = {
+          	status: status,
+			api_token: token,
+			image: image,
+			applicationId: item?.id,
         };
         get("/update/order/status", postedData)
           .then((res) => {
@@ -734,6 +797,33 @@ function OrderEdit({ navigation, route }): JSX.Element {
                           >
                             Order Delivered{" "}
                           </Text>
+						{(UplaodedImage != undefined)?
+							<ImageBackground
+								source={{
+									uri: UplaodedImage,
+								}}
+								resizeMode="contain"
+								style={{ height: "100%", width: "100%" }}
+							/>
+						:
+							<View
+								style={[
+									{ height: 300, width: "47%" },
+									marginTop10,
+									marginRight10,
+								]}
+							>
+								<ImageBackground
+									source={{
+										uri: imagePath + '' + item.delivered_image,
+									}}
+									resizeMode="contain"
+									style={{ height: "100%", width: "100%" }}
+								/>
+							</View>
+						}
+						
+
                         </View>
                       ) : null}
 
@@ -754,7 +844,8 @@ function OrderEdit({ navigation, route }): JSX.Element {
                                 paddingVertical: 10,
                                 borderRadius: 10,
                               }}
-                              onPress={() => updateOrder(3)}
+                              // onPress={() => updateOrder(3)}
+                              onPress={() => uploadDeliveredProductImage()}
                             >
                               <Text style={styles.textStyle}>
                                 Update order status to DELIVERED
