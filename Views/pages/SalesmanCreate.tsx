@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import type {PropsWithChildren} from 'react';
 import {
 	ActivityIndicator,
@@ -141,4 +141,4 @@ const styles = StyleSheet.create({
 	},
   });
 
-export default SalesmanCreate;
+export default memo(SalesmanCreate);

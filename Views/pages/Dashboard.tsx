@@ -160,46 +160,63 @@ function Dashboard({ navigation }): JSX.Element {
 			});
 	};
 	const searchOrder = (searchableText) => {
-		let newSearchableArray = [];
-		if (OriginalPending.length > 0) {
-			OriginalPending.filter((list) => {
-				let searchableLowercase: any;
+		if (searchableText.length > 0 ){
+			let newSearchableArray = [];
+			let alreadyAvailableProductId = [];
+			if (OriginalPending.length > 0) {
+				OriginalPending.filter((list) => {
+					let searchableLowercase: any;
 
-				// search order number
-				searchableLowercase = list.order_number.toLowerCase();
-				if (searchableLowercase.includes(searchableText.toLowerCase())) {
-					newSearchableArray.push(list);
-				}
-
-				//search Vendor
-				let vendor = list.vendor?.name;
-				if (vendor != undefined) {
-					searchableLowercase = vendor.toLowerCase();
+					// search order number
+					searchableLowercase = list.order_number.toLowerCase();
 					if (searchableLowercase.includes(searchableText.toLowerCase())) {
-						newSearchableArray.push(list);
+						if (!alreadyAvailableProductId.includes(list.id) ){
+							newSearchableArray.push(list);
+							alreadyAvailableProductId.push(list.id);
+						}
 					}
-				}
 
-				//search Salesman
-				let salesman = list.salesman?.name;
-				if (salesman != undefined) {
-					searchableLowercase = salesman.toLowerCase();
-					if (searchableLowercase.includes(searchableText.toLowerCase())) {
-						newSearchableArray.push(list);
+					//search Vendor
+					let vendor = list.vendor?.name;
+					if (vendor != undefined) {
+						searchableLowercase = vendor.toLowerCase();
+						if (searchableLowercase.includes(searchableText.toLowerCase())) {
+							if (!alreadyAvailableProductId.includes(list.id) ){
+								newSearchableArray.push(list);
+								alreadyAvailableProductId.push(list.id);
+							}
+						}
 					}
-				}
 
-				// search item
-				let item = list?.item?.name;
-				if (item != undefined) {
-					searchableLowercase = item.toLowerCase();
-					if (searchableLowercase.includes(searchableText.toLowerCase())) {
-						newSearchableArray.push(list);
+					//search Salesman
+					let salesman = list.salesman?.name;
+					if (salesman != undefined) {
+						searchableLowercase = salesman.toLowerCase();
+						if (searchableLowercase.includes(searchableText.toLowerCase())) {
+							if (!alreadyAvailableProductId.includes(list.id) ){
+								newSearchableArray.push(list);
+								alreadyAvailableProductId.push(list.id);
+							}
+						}
 					}
-				}
-			});
-			setSearchableData(newSearchableArray);
-			setPending(newSearchableArray);
+
+					// search item
+					let item = list?.item?.name;
+					if (item != undefined) {
+						searchableLowercase = item.toLowerCase();
+						if (searchableLowercase.includes(searchableText.toLowerCase())) {
+							if (!alreadyAvailableProductId.includes(list.id) ){
+								newSearchableArray.push(list);
+								alreadyAvailableProductId.push(list.id);
+							}
+						}
+					}
+				});
+				setSearchableData(newSearchableArray);
+				setPending(newSearchableArray);
+			}
+		}else{
+			setPending(OriginalPending);
 		}
 	};
 	const shortnerURL = async (url) => {
@@ -400,6 +417,7 @@ function Dashboard({ navigation }): JSX.Element {
 							source={{ uri: imagePath + "" + item?.attachments[0].attachment }}
 							resizeMode="contain"
 							style={{ height: 100, width: 100 }}
+							
 						/>
 					</View>
 					<Pressable
@@ -415,11 +433,9 @@ function Dashboard({ navigation }): JSX.Element {
 								marginRight: 20,
 							}}
 						>
+							{/* <Text>Whatsapp</Text> */}
 							<Image
-								source={{
-									uri:
-										"https://cdn-icons-png.flaticon.com/512/3670/3670051.png",
-								}}
+								source={require('../assets/images/3670051.png')}
 								style={{ height: 40, width: 40 }}
 							/>
 						</View>
@@ -460,7 +476,7 @@ function Dashboard({ navigation }): JSX.Element {
 													onRefresh={onRefresh} // Added pull to refresh control
 													data={Object.values(pending)}
 													renderItem={({ item }) => <Item item={item} />}
-													keyExtractor={(item) => item?.id + "" + Math.random()}
+													keyExtractor={(item) => item?.id }
 													showsVerticalScrollIndicator={false}
 												/>
 											</View>

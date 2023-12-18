@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import {
 	FlatList,
 	SafeAreaView,
@@ -78,6 +78,8 @@ function OrderCreate({ navigation }): JSX.Element {
 	const [productMeasurementData, setPrductMeasurementData] = useState({});
 	const [productVideoData, setProductVideoData] = useState({});
 
+	const [vdCode, setVDcode] = useState('');
+	const [designNumber, setDesignNumber ] = useState('');
 	const [prductPhotoResult, setPrductPhotoResult] = useState();
 	const [productMeasurementResult, setProductMeasurementResult] = useState();
 	const [productVideoResult, setProductVideoResult] = useState();
@@ -272,6 +274,8 @@ function OrderCreate({ navigation }): JSX.Element {
 			data.append('salesman', dataSelectedSalesmanId);
 			data.append('api_token', apitoken);
 			data.append('color', dataColor);
+			data.append('vd_code', vdCode);
+			data.append('design_number', designNumber);
 			data.append('item', dataItem);
 			data.append('ready_date', dataReadyDate);
 			data.append('buffered_ready_date', dataBufferReadyDate);
@@ -827,9 +831,14 @@ function OrderCreate({ navigation }): JSX.Element {
 							<View style={[{}, height83]} >
 
 								<InputConponents placeholder="Order Number" inputValue={(value: any) => { setOrderNumber(value) }} style={inputStyleBlack} />
+								
 								{/* <InputConponents placeholder="Select Vendor" inputValue={(value:any) => { setVendor(value) }} style={inputStyleBlack} />
 							<InputConponents placeholder="Select Salesman" inputValue={(value:any) => { setSalesman(value) }} style={inputStyleBlack} /> */}
 								<InputConponents placeholder="Color" inputValue={(value: any) => { setColor(value) }} style={inputStyleBlack} />
+
+								<InputConponents placeholder="VD Code" inputValue={(value: any) => { setVDcode(value) }} style={inputStyleBlack} />
+								<InputConponents placeholder="Design Number" inputValue={(value: any) => { setDesignNumber(value) }} style={inputStyleBlack} />
+
 								{/* <InputConponents placeholder="Item" inputValue={(value:any) => { setItem(value) }} style={inputStyleBlack} /> */}
 
 
@@ -1434,4 +1443,4 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 	},
 });
-export default OrderCreate;
+export default memo(OrderCreate);

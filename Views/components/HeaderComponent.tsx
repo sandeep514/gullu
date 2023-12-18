@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 
 import {
     Image,
@@ -60,4 +60,4 @@ function HeaderComponent( {title , navigation} ): JSX.Element {
     );
 }
 
-export default HeaderComponent;
+export default memo(HeaderComponent);

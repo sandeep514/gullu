@@ -5,7 +5,7 @@
  * @format
  */
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import {
   Pressable,
   SafeAreaView,
@@ -314,4 +314,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Gallery;
+export default memo(Gallery);

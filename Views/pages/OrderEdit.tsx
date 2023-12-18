@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import {
   Button,
   SafeAreaView,
@@ -956,4 +956,4 @@ const styles = StyleSheet.create({
     fontSize: 30,
   },
 });
-export default OrderEdit;
+export default memo(OrderEdit);

@@ -1549,6 +1549,6 @@ export const height98 ={height: '98%'}
 export const height99 ={height: '99%'}
 export const height100 ={height: '100%'}
 
-export const inputLoginStyle = [padding10 ,h3,paddingLeft20,margin15,{borderColor : goldenColor , borderWidth: 2,color: '#fff',borderRadius: 10,height: 50}] ;
-export const inputStyle = [padding10 ,h3,paddingLeft20,margin15,{borderColor : secondaryBackgroundColor , borderWidth: 2,color: '#fff',borderRadius: 10,height: 50}] ;
-export const inputStyleBlack = [padding10 ,h3,paddingLeft20,margin15,{borderColor : secondaryBackgroundColor , borderWidth: 2,color: '#000',borderRadius: 10,height: 50}] ;
+export const inputLoginStyle = [padding10 ,h3,paddingLeft20,margin15,{borderColor : goldenColor , borderWidth: 2,color: '#fff',borderRadius: 10,height: 50}];
+export const inputStyle = [padding10 ,h3,paddingLeft20,margin15,{borderColor : secondaryBackgroundColor , borderWidth: 2,color: '#fff',borderRadius: 10,height: 50}];
+export const inputStyleBlack = [padding10 ,h3,paddingLeft20,marginHorizontal15,marginVertical5,{borderColor : secondaryBackgroundColor , borderWidth: 2,color: '#000',borderRadius: 10,height: 50}];

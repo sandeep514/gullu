@@ -1,31 +1,34 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 
 import {
-  TextInput,
+	TextInput,
 } from 'react-native';
 import { inputStyle, inputStyleBlack, secondaryBackgroundColor } from '../assets/styles';
 
 
-function InputConponents( {placeholder, value=null , inputValue ,style} :any): JSX.Element {
-	const [ changedValue ,setChangeValue ] = useState();
-useEffect(() => {
-// console.log(style);
-} , [])
+function InputConponents({ placeholder, value = null, inputValue, style }: any): JSX.Element {
+	const [changedValue, setChangeValue] = useState();
 
-	const onChnageText = (value:any) => {
+	useEffect(() => {
+		// console.log(style);
+	}, [])
+
+	const onChnageText = (value: any) => {
 		setChangeValue(value);
 		inputValue(value);
 	}
+
 	return (
-        <TextInput
-            onChangeText={(event) => { onChnageText(event) }}
-            style={[style ]}
-            placeholder={placeholder}
-            keyboardType="default"
-            defaultValue={value}
-            placeholderTextColor={secondaryBackgroundColor}
-        />
-    );
+		<TextInput
+			onChangeText={(event) => { onChnageText(event) }}
+			style={[style]}
+			placeholder={placeholder}
+			keyboardType="default"
+			defaultValue={value}
+			placeholderTextColor={secondaryBackgroundColor}
+		/>
+	);
+	
 }
 
-export default InputConponents;
+export default memo(InputConponents);

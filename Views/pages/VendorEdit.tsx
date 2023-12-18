@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import {
 	ActivityIndicator,
 	FlatList,
@@ -166,4 +166,4 @@ const styles = StyleSheet.create({
 	},
   });
 
-export default VendorEdit;
+export default memo(VendorEdit);

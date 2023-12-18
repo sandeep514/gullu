@@ -1,13 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState } from 'react';
+import React,{ useEffect, useState,memo } from 'react';
 
-import {
-    Image,
-  Pressable,
-  Text,
-  TextInput, View,
-} from 'react-native';
-import { gulluColor, h4, h5, height10, height4, justifyContentCenter, margin10, padding10, primaryGulluBackgroundColor, secondaryBackgroundColor, textAlignCenter } from '../assets/styles';
+import { Image, Pressable, Text, View } from 'react-native';
+import { gulluColor, h5, margin10, padding10, textAlignCenter } from '../assets/styles';
 
 
 function FooterComponent( {navigation}): JSX.Element {
@@ -19,16 +14,21 @@ function FooterComponent( {navigation}): JSX.Element {
 			// console.log(err);
 		})
     } , []);
+
+    const goTo = (redirectedURL) => {
+        // console.log(redirectedURL);
+        navigation.navigate(redirectedURL)
+    }
     return (
         <View style={[{ backgroundColor: gulluColor,borderRadius: 10},padding10,margin10]}>
             <View style={[{flexDirection: 'row',justifyContent: 'space-between'}]}>
-                <Pressable style={[{alignItems:'center'}]} onPress={() => {navigation.push('Home')}}>
+                <Pressable style={[{alignItems:'center'}]} onPress={() => { goTo('Home')}}>
                     <Image source={require('../assets/images/NicePng_logo-instagram-blanco-png_3953291.png')} style={{ height: 20,width: 20 }} />
                     <Text style={[{color: 'white'},h5,textAlignCenter]}>Home</Text>
                 </Pressable>
 
                 {(role != undefined && role == 1)?
-                    <Pressable style={[{alignItems:'center'}]} onPress={() => { navigation.push('orderlist') }}>
+                    <Pressable style={[{alignItems:'center'}]} onPress={() => { goTo('orderlist') }}>
                         <Image source={require('../assets/images/list.png')} style={{ height: 20,width: 20 }} />
                         <Text style={[{color: 'white'},h5,textAlignCenter]}>Order</Text>
                     </Pressable>
@@ -36,7 +36,7 @@ function FooterComponent( {navigation}): JSX.Element {
                      null
                  }
                 {(role != undefined && role == 1)?  
-                    <Pressable style={[{alignItems:'center'}]} onPress={() => { navigation.push('vendorlist') }}>
+                    <Pressable style={[{alignItems:'center'}]} onPress={() => { goTo('vendorlist') }}>
                         <Image source={require('../assets/images/list.png')} style={{ height: 20,width: 20 }} />
                         <Text style={[{color: 'white'},h5,textAlignCenter]}>Vendor</Text>
                     </Pressable>
@@ -44,7 +44,7 @@ function FooterComponent( {navigation}): JSX.Element {
                     null
                 }
                 {(role != undefined && role == 1)?
-                    <Pressable style={[{alignItems:'center'}]} onPress={() => { navigation.push('salesmanlist') }}>
+                    <Pressable style={[{alignItems:'center'}]} onPress={() => { goTo('salesmanlist') }}>
                         <Image source={require('../assets/images/list.png')} style={{ height: 20,width: 20 }} />
                         <Text style={[{color: 'white'},h5,textAlignCenter]}>Salesman</Text>
                     </Pressable>
@@ -62,4 +62,4 @@ function FooterComponent( {navigation}): JSX.Element {
     );
 }
 
-export default FooterComponent;
+export default memo(FooterComponent);

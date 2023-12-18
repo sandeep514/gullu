@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import type {PropsWithChildren} from 'react';
 import {
 	FlatList,
@@ -72,8 +72,8 @@ function VendorList({navigation}): JSX.Element {
 	
 	const Item = ({item}:any) => (
 		<Pressable onPress={() => {navigation.push('vendorEdit' , {vendorId : item.id})}} style={styles.item}>
-			<Text style={[{},h3, {color: gulluColor}]}>{item.name}</Text>
-			<Text style={[{},h3, {color: gulluColor}]}>{item.phone}</Text>
+			<Text style={[{fontSize: 14}, {color: gulluColor}]}>{item.name}</Text>
+			<Text style={[{fontSize: 14}, {color: gulluColor}]}>{item.phone}</Text>
 		</Pressable>
 	);
 
@@ -139,12 +139,12 @@ const styles = StyleSheet.create({
 	  marginTop: StatusBar.currentHeight || 0,
 	},
 	item: {
-	  backgroundColor: '#fff',
-	  padding: 15,
-	  marginVertical: 8,
-	  marginHorizontal: 16,
-	  borderRadius: 10
+		backgroundColor: '#fff',
+		padding: 10,
+		marginVertical: 4,
+		marginHorizontal: 16,
+		borderRadius: 10
 	},
   });
 
-export default VendorList;
+export default memo(VendorList);

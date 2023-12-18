@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import type { PropsWithChildren } from "react";
 import {
   Button,
@@ -261,4 +261,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login;
+export default memo(Login);
