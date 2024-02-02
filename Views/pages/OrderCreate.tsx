@@ -79,7 +79,7 @@ function OrderCreate({ navigation }): JSX.Element {
 	const [productVideoData, setProductVideoData] = useState({});
 
 	const [vdCode, setVDcode] = useState('');
-	const [designNumber, setDesignNumber ] = useState('');
+	const [designNumber, setDesignNumber] = useState('');
 	const [prductPhotoResult, setPrductPhotoResult] = useState();
 	const [productMeasurementResult, setProductMeasurementResult] = useState();
 	const [productVideoResult, setProductVideoResult] = useState();
@@ -256,7 +256,7 @@ function OrderCreate({ navigation }): JSX.Element {
 		var dataProductPhotoData = ((Object.values((productPhotoData[0].name)).length > 0) ? productPhotoData[0].name : '');
 		var dataProductMeasurementData = ((Object.values((productMeasurementData[0].name)).length > 0) ? productMeasurementData[0].name : '');
 		var dataProductVideoData = ((Object.values(productVideoData).length > 0) ? productVideoData[0].fileName : '');
-		
+
 		if (dataOrder_number != '' && dataOrder_number != undefined &&
 			dataSelectedVendorId != '' && dataSelectedVendorId != undefined &&
 			dataSelectedSalesmanId != '' && dataSelectedSalesmanId != undefined &&
@@ -285,9 +285,8 @@ function OrderCreate({ navigation }): JSX.Element {
 			data.append('product_photo', dataProductPhotoData);
 			data.append('product_measurement', dataProductMeasurementData);
 			data.append('product_video', dataProductVideoData);
-			console.log(data)
 
-			let ress = await fetch('http://52.14.70.176/public/api/orders/create', {
+			let ress = await fetch('http://3.143.116.199/public/api/orders/create', {
 				method: 'POST',
 				body: data,
 				headers: {
@@ -296,6 +295,7 @@ function OrderCreate({ navigation }): JSX.Element {
 			});
 			console.log("i am here");
 			let response = await ress.json();
+			console.log('response')
 			console.log(response)
 			if (response.data.status == true || response.data.status == 'true') {
 				defaultTimeInterval = 5;
@@ -406,7 +406,7 @@ function OrderCreate({ navigation }): JSX.Element {
 
 		// 		}, defaultTimeInterval);
 
-		// 		let ress = await fetch('http://52.14.70.176/public/api/orders/create', {
+		// 		let ress = await fetch('http://3.143.116.199/public/api/orders/create', {
 		// 			method: 'POST',
 		// 			body: data,
 		// 			headers: {
@@ -831,7 +831,7 @@ function OrderCreate({ navigation }): JSX.Element {
 							<View style={[{}, height83]} >
 
 								<InputConponents placeholder="Order Number" inputValue={(value: any) => { setOrderNumber(value) }} style={inputStyleBlack} />
-								
+
 								{/* <InputConponents placeholder="Select Vendor" inputValue={(value:any) => { setVendor(value) }} style={inputStyleBlack} />
 							<InputConponents placeholder="Select Salesman" inputValue={(value:any) => { setSalesman(value) }} style={inputStyleBlack} /> */}
 								<InputConponents placeholder="Color" inputValue={(value: any) => { setColor(value) }} style={inputStyleBlack} />

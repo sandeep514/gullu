@@ -7,39 +7,39 @@
 
 import { useCallback, useEffect, useState } from "react";
 import {
-    Pressable,
-    SafeAreaView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    useColorScheme,
-    ImageBackground,
-    View,
-    FlatList,
-    ActivityIndicator,
-    Linking,
-    Image,
-    Share,
+	Pressable,
+	SafeAreaView,
+	StatusBar,
+	StyleSheet,
+	Text,
+	useColorScheme,
+	ImageBackground,
+	View,
+	FlatList,
+	ActivityIndicator,
+	Linking,
+	Image,
+	Share,
 } from "react-native";
 
 import {
-    flexDirectionRow,
-    goldenColor,
-    gulluColor,
-    gulluFont,
-    h4,
-    h5,
-    height10,
-    height100,
-    height8,
-    height83,
-    height9,
-    height90,
-    inputStyleBlack,
-    marginRight10,
-    marginTop30,
-    primaryGulluLightBackgroundColor,
-    textAlignCenter,
+	flexDirectionRow,
+	goldenColor,
+	gulluColor,
+	gulluFont,
+	h4,
+	h5,
+	height10,
+	height100,
+	height8,
+	height83,
+	height9,
+	height90,
+	inputStyleBlack,
+	marginRight10,
+	marginTop30,
+	primaryGulluLightBackgroundColor,
+	textAlignCenter,
 } from "../assets/styles";
 import FooterComponent from "../components/FooterComponent";
 import HeaderComponent from "../components/HeaderComponent";
@@ -49,7 +49,7 @@ import { imagePath } from "../services/Client";
 import { useIsFocused } from "@react-navigation/native";
 import NetInfo from "@react-native-community/netinfo";
 import InputConponents from "../components/InputComponents";
-import {memo} from 'react';
+import { memo } from 'react';
 
 function Dashboard({ navigation }): JSX.Element {
 	const [loader, setLoader] = useState(false);
@@ -97,7 +97,7 @@ function Dashboard({ navigation }): JSX.Element {
 				"\n URL: " +
 				imagePath +
 				"" +
-				item?.attachments[0].attachment,
+				item?.attachments[0]?.attachment,
 			subject: "Subject",
 		};
 		Share.share(shareOptions);
@@ -160,7 +160,7 @@ function Dashboard({ navigation }): JSX.Element {
 			});
 	};
 	const searchOrder = (searchableText) => {
-		if (searchableText.length > 0 ){
+		if (searchableText.length > 0) {
 			let newSearchableArray = [];
 			let alreadyAvailableProductId = [];
 			if (OriginalPending.length > 0) {
@@ -170,7 +170,7 @@ function Dashboard({ navigation }): JSX.Element {
 					// search order number
 					searchableLowercase = list.order_number.toLowerCase();
 					if (searchableLowercase.includes(searchableText.toLowerCase())) {
-						if (!alreadyAvailableProductId.includes(list.id) ){
+						if (!alreadyAvailableProductId.includes(list.id)) {
 							newSearchableArray.push(list);
 							alreadyAvailableProductId.push(list.id);
 						}
@@ -181,7 +181,7 @@ function Dashboard({ navigation }): JSX.Element {
 					if (vendor != undefined) {
 						searchableLowercase = vendor.toLowerCase();
 						if (searchableLowercase.includes(searchableText.toLowerCase())) {
-							if (!alreadyAvailableProductId.includes(list.id) ){
+							if (!alreadyAvailableProductId.includes(list.id)) {
 								newSearchableArray.push(list);
 								alreadyAvailableProductId.push(list.id);
 							}
@@ -193,7 +193,7 @@ function Dashboard({ navigation }): JSX.Element {
 					if (salesman != undefined) {
 						searchableLowercase = salesman.toLowerCase();
 						if (searchableLowercase.includes(searchableText.toLowerCase())) {
-							if (!alreadyAvailableProductId.includes(list.id) ){
+							if (!alreadyAvailableProductId.includes(list.id)) {
 								newSearchableArray.push(list);
 								alreadyAvailableProductId.push(list.id);
 							}
@@ -205,7 +205,7 @@ function Dashboard({ navigation }): JSX.Element {
 					if (item != undefined) {
 						searchableLowercase = item.toLowerCase();
 						if (searchableLowercase.includes(searchableText.toLowerCase())) {
-							if (!alreadyAvailableProductId.includes(list.id) ){
+							if (!alreadyAvailableProductId.includes(list.id)) {
 								newSearchableArray.push(list);
 								alreadyAvailableProductId.push(list.id);
 							}
@@ -215,7 +215,7 @@ function Dashboard({ navigation }): JSX.Element {
 				setSearchableData(newSearchableArray);
 				setPending(newSearchableArray);
 			}
-		}else{
+		} else {
 			setPending(OriginalPending);
 		}
 	};
@@ -414,10 +414,10 @@ function Dashboard({ navigation }): JSX.Element {
 				<View style={{ width: "40%" }}>
 					<View style={{ marginBottom: 20 }}>
 						<ImageBackground
-							source={{ uri: imagePath + "" + item?.attachments[0].attachment }}
+							source={{ uri: imagePath + "" + item?.attachments[0]?.attachment }}
 							resizeMode="contain"
 							style={{ height: 100, width: 100 }}
-							
+
 						/>
 					</View>
 					<Pressable
@@ -476,7 +476,7 @@ function Dashboard({ navigation }): JSX.Element {
 													onRefresh={onRefresh} // Added pull to refresh control
 													data={Object.values(pending)}
 													renderItem={({ item }) => <Item item={item} />}
-													keyExtractor={(item) => item?.id }
+													keyExtractor={(item) => item?.id}
 													showsVerticalScrollIndicator={false}
 												/>
 											</View>
