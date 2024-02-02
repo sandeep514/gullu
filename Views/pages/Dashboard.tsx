@@ -411,6 +411,7 @@ function Dashboard({ navigation }): JSX.Element {
 						</View>
 					) : null}
 				</View>
+
 				<View style={{ width: "40%" }}>
 					<View style={{ marginBottom: 20 }}>
 						<ImageBackground
