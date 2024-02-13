@@ -100,7 +100,8 @@ function Gallery({ navigation }): JSX.Element {
         let postedData = { api_token: token };
         get("/orders/list/gallery", postedData)
           .then((res) => {
-            // console.log(res.data.data);
+            console.log('res.data');
+            console.log(res.data);
             let pending = res.data.data.data;
 
             setPending(pending);

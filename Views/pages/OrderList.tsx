@@ -1,36 +1,36 @@
 import { memo, useEffect, useState } from "react";
 import type { PropsWithChildren } from "react";
 import {
-    FlatList,
-    Pressable,
-    SafeAreaView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    useColorScheme,
-    ImageBackground,
-    View,
-    PermissionsAndroid,
-    Alert,
+	FlatList,
+	Pressable,
+	SafeAreaView,
+	StatusBar,
+	StyleSheet,
+	Text,
+	useColorScheme,
+	ImageBackground,
+	View,
+	PermissionsAndroid,
+	Alert,
 } from "react-native";
 
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import {
-    height100,
-    padding10,
-    height6,
-    height85,
-    height9,
-    justifyContentCenter,
-    secondaryBackgroundColor,
-    textAlignCenter,
-    height15,
-    flexDirectionRow,
-    marginRight10,
-    h5,
-    gulluColor,
-    primaryGulluLightBackgroundColor,
-    marginBottom10,
+	height100,
+	padding10,
+	height6,
+	height85,
+	height9,
+	justifyContentCenter,
+	secondaryBackgroundColor,
+	textAlignCenter,
+	height15,
+	flexDirectionRow,
+	marginRight10,
+	h5,
+	gulluColor,
+	primaryGulluLightBackgroundColor,
+	marginBottom10,
 	paddingVertical4,
 } from "../assets/styles";
 import InputConponents from "../components/InputComponents";
@@ -57,8 +57,13 @@ function OrderList({ navigation }): JSX.Element {
 	const [pending, setPending] = useState({});
 	const [ready, setReady] = useState({});
 	const [delivered, setDelivered] = useState({});
+	const [pendingAll, setPendingAll] = useState({});
+	const [readyAll, setReadyAll] = useState({});
+	const [deliveredAll, setDeliveredAll] = useState({});
 	const [selectedOrderStatus, SetSelectedOrderStatus] = useState("");
+
 	const [allOrdersList, setAllOrdersList] = useState([]);
+
 	const [searchableData, setSearchableData] = useState([]);
 	const [defaultSearchValue, setDefaultSearchValue] = useState();
 
@@ -227,6 +232,10 @@ function OrderList({ navigation }): JSX.Element {
 						setReady(ready);
 						setDelivered(delivered);
 
+						setPendingAll(pending);
+						setReadyAll(ready);
+						setDeliveredAll(delivered);
+
 						let mergedArray1 = pending.concat(ready);
 						let mergedArray2 = mergedArray1.concat(delivered);
 						setAllOrdersList(mergedArray2);
@@ -246,13 +255,22 @@ function OrderList({ navigation }): JSX.Element {
 	}, []);
 
 	const searchOrder = (searchableText) => {
-		
+		let searchFrom = pendingAll;
+
 		if (searchableText.length > 0) {
 			let newSearchableArray = [];
-			let alreadyAvailableProductId = []; 
+			let alreadyAvailableProductId = [];
 
-			if (allOrdersList.length > 0) {
-				allOrdersList.filter((list) => {
+			if (selectedOrderStatus == 'delivered') {
+				searchFrom = deliveredAll;
+			}
+
+			if (selectedOrderStatus == 'ready') {
+				searchFrom = readyAll;
+			}
+
+			if (searchFrom.length > 0) {
+				searchFrom.filter((list) => {
 					let searchableLowercase = list.order_number.toLowerCase();
 					if (searchableLowercase.includes(searchableText.toLowerCase())) {
 						if (!alreadyAvailableProductId.includes(list.id)) {
@@ -300,7 +318,7 @@ function OrderList({ navigation }): JSX.Element {
 				SetSelectedOrderData(newSearchableArray);
 			}
 		} else {
-			SetSelectedOrderData(allOrdersList);
+			SetSelectedOrderData(searchFrom);
 		}
 	};
 
@@ -427,16 +445,7 @@ function OrderList({ navigation }): JSX.Element {
 									{/* pending
 									ready
 										delivered */}
-								{(selectedOrderStatus == 'pending')?
-									<InputConponents
-										placeholder="search Order, Salesman , Vendor"
-										style={[{}, inputStyleBlack]}
-										inputValue={(value: any) => {
-											searchOrder(value);
-										}}
-									/>
-								:
-									(selectedOrderStatus == 'ready')?
+									{(selectedOrderStatus == 'pending') ?
 										<InputConponents
 											placeholder="search Order, Salesman , Vendor"
 											style={[{}, inputStyleBlack]}
@@ -444,16 +453,25 @@ function OrderList({ navigation }): JSX.Element {
 												searchOrder(value);
 											}}
 										/>
-									:
-										<InputConponents
-											placeholder="search Order, Salesman , Vendor"
-											style={[{}, inputStyleBlack]}
-											inputValue={(value: any) => {
-												searchOrder(value);
-											}}
-										/>
-								}
-									
+										:
+										(selectedOrderStatus == 'ready') ?
+											<InputConponents
+												placeholder="search Order, Salesman , Vendor"
+												style={[{}, inputStyleBlack]}
+												inputValue={(value: any) => {
+													searchOrder(value);
+												}}
+											/>
+											:
+											<InputConponents
+												placeholder="search Order, Salesman , Vendor"
+												style={[{}, inputStyleBlack]}
+												inputValue={(value: any) => {
+													searchOrder(value);
+												}}
+											/>
+									}
+
 								</View>
 
 								<View style={[{}, height85]}>
@@ -556,19 +574,19 @@ function OrderList({ navigation }): JSX.Element {
 											</Text>
 										</Pressable>
 									</View>
-										{(selectedOrderData.length > 0 )?
-											<FlatList
-												data={selectedOrderData}
-												renderItem={({ item }) => <Item item={item} />}
-												keyExtractor={(item) => item?.id}
-												showsVerticalScrollIndicator={false}
-											/>
+									{(selectedOrderData.length > 0) ?
+										<FlatList
+											data={selectedOrderData}
+											renderItem={({ item }) => <Item item={item} />}
+											keyExtractor={(item) => item?.id}
+											showsVerticalScrollIndicator={false}
+										/>
 										:
-											<View style={[{justifyContent: 'center'},paddingVertical4]}>
-												<Text style={{ textAlign: 'center',fontSize: 16 }}>No Data Available</Text>
-											</View>
-											
-										}
+										<View style={[{ justifyContent: 'center' }, paddingVertical4]}>
+											<Text style={{ textAlign: 'center', fontSize: 16 }}>No Data Available</Text>
+										</View>
+
+									}
 								</View>
 								<Pressable
 									onPress={() => {
