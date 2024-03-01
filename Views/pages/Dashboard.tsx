@@ -145,6 +145,9 @@ function Dashboard({ navigation }): JSX.Element {
 				let postedData = { api_token: token };
 				get("/orders/list/pending", postedData)
 					.then((res) => {
+						console.log('res')
+						console.log(res)
+
 						let pending = res.data.data.data;
 
 						setPending(pending);
