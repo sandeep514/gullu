@@ -246,26 +246,31 @@ function Dashboard({ navigation }): JSX.Element {
 		>
 			<View style={[{}, flexDirectionRow]}>
 				<View style={[marginRight10, { width: "58%", overflow: "scroll" }]}>
-					<View>
-						<View
-							style={{
-								margin: 0,
-								backgroundColor: "#000",
-								paddingVertical: 5,
-								paddingHorizontal: 10,
-								alignSelf: "flex-start",
-							}}
-						>
-							<Text
-								onPress={() => {
-									Linking.openURL("tel:" + item?.salesman.phone);
+					{(role != undefined && role == 1) ?
+
+						<View>
+							<View
+								style={{
+									margin: 0,
+									backgroundColor: "#000",
+									paddingVertical: 5,
+									paddingHorizontal: 10,
+									alignSelf: "flex-start",
 								}}
-								style={{ color: "#fff" }}
 							>
-								Call Vendor
-							</Text>
+								<Text
+									onPress={() => {
+										Linking.openURL("tel:" + item?.salesman.phone);
+									}}
+									style={{ color: "#fff" }}
+								>
+									Call Vendor
+								</Text>
+							</View>
 						</View>
-					</View>
+						:
+						null
+					}
 					<View style={[{}, flexDirectionRow]}>
 						<Text
 							style={[{ fontWeight: "bold" }, h5, gulluFont, marginRight10]}
