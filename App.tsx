@@ -1,10 +1,10 @@
 Text.defaultProps = Text.defaultProps || {};
 Text.defaultProps.allowFontScaling = false;
 
-import React, { useEffect, useState } from 'react';
-import { View, Text } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React, {useEffect, useState} from 'react';
+import {View, Text} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Dashboard from './Views/pages/Dashboard';
 import VendorCreate from './Views/pages/VendorCreate';
 import OrderList from './Views/pages/OrderList';
@@ -18,30 +18,32 @@ import VendorEdit from './Views/pages/VendorEdit';
 import OrderEdit from './Views/pages/OrderEdit';
 import SalesmanEdit from './Views/pages/SalesmanEdit';
 import Gallery from './Views/pages/Gallery';
+import ROUTES from './Views/config/routes';
+import SplashScreen from './Views/pages/SplashScreen';
 
 const Stack = createNativeStackNavigator();
 
 function App(): JSX.Element {
-	const [defaultRoute, setDefaultRoute] = useState();
+  const [defaultRoute, setDefaultRoute] = useState();
 
-	useEffect(() => {
+  useEffect(() => {
+    if (Text.defaultProps == null) Text.defaultProps = {};
+    Text.defaultProps.allowFontScaling = false;
+    AsyncStorage.getItem('id')
+      .then((res: any) => {
+        console.log();
+        if (res != null) {
+          setDefaultRoute('Home');
+        } else {
+          setDefaultRoute('login');
+        }
+      })
+      .catch(() => {
+        setDefaultRoute('login');
+      });
+  }, []);
 
-		if (Text.defaultProps == null) Text.defaultProps = {};
-		Text.defaultProps.allowFontScaling = false;
-		AsyncStorage.getItem('id').then((res: any) => {
-			console.log();
-			if (res != null) {
-				setDefaultRoute('Home');
-			} else {
-				setDefaultRoute('login');
-			}
-		}).catch(() => {
-			setDefaultRoute('login');
-		})
-
-	}, []);
-	
-	return (
+  return (
     <NavigationContainer>
       {defaultRoute == 'Home' ? (
         <Stack.Navigator>
@@ -110,6 +112,11 @@ function App(): JSX.Element {
       {defaultRoute != 'Home' ? (
         <Stack.Navigator>
           <Stack.Screen
+            name={ROUTES.splashScreen}
+            component={SplashScreen}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
             name="login"
             component={Login}
             options={{headerShown: false}}
@@ -164,7 +171,7 @@ function App(): JSX.Element {
             component={OrderEdit}
             options={{headerShown: false}}
           />
-           <Stack.Screen
+          <Stack.Screen
             name="Gallery"
             component={Gallery}
             options={{headerShown: false}}
