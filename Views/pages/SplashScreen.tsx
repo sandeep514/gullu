@@ -1,4 +1,12 @@
-import {View, Text, StyleSheet, Image, Animated} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Animated,
+  StatusBar,
+  SafeAreaView,
+} from 'react-native';
 import React, {useEffect, useRef} from 'react';
 import ASSETS from '../assets';
 import COLOR from '../config/color';
@@ -8,6 +16,7 @@ import DIMENSIONS from '../config/dimensions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 import ROUTES from '../config/routes';
+import LOCALSTORAGE from '../config/localStorage';
 
 const SplashScreen = () => {
   const gulluLogo = useRef(new Animated.Value(0)).current;
@@ -16,17 +25,15 @@ const SplashScreen = () => {
   useEffect(() => {
     startLogoAnimation();
     setTimeout(() => {
-      AsyncStorage.getItem('id')
+      AsyncStorage.getItem(LOCALSTORAGE.ID)
         .then((res: any) => {
           console.log();
           if (res != null) {
-            console.log('-----> TO HOME ');
             navigate.reset({
               index: 0,
               routes: [{name: ROUTES.homeScreen as never}],
             });
           } else {
-            console.log('-----> TO LOGIN ');
             navigate.reset({
               index: 0,
               routes: [{name: ROUTES.loginScreen as never}],
@@ -34,7 +41,6 @@ const SplashScreen = () => {
           }
         })
         .catch(() => {
-          console.log('-----> TO LOGIN ');
           navigate.reset({
             index: 0,
             routes: [{name: ROUTES.loginScreen as never}],
@@ -53,7 +59,8 @@ const SplashScreen = () => {
   };
 
   return (
-    <View style={styles.splashBaseContainer}>
+    <SafeAreaView style={styles.splashBaseContainer}>
+      <StatusBar hidden={true} />
       <View style={styles.splashImageBaseContainer}>
         <Animated.Image
           source={ASSETS.splashBackImage}
@@ -100,7 +107,7 @@ const SplashScreen = () => {
           />
         </LinearGradient>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

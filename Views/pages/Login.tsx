@@ -1,241 +1,175 @@
-import React, { memo, useEffect, useState } from "react";
-import type { PropsWithChildren } from "react";
-import {
-  Button,
-  Image,
-  ImageBackground,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-  ActivityIndicator,
-} from "react-native";
+import React, {memo, useEffect, useState} from 'react';
+import {Image, SafeAreaView, StyleSheet, View} from 'react-native';
+import InputComponents from '../components/InputComponents';
+import {login} from '../services/services';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import LinearGradient from 'react-native-linear-gradient';
+import COLOR from '../config/color';
+import ASSETS from '../assets';
+import DIMENSIONS from '../config/dimensions';
+import MaterialDesignIcons from 'react-native-vector-icons/MaterialIcons';
+import CustomButton from '../components/CustomButton';
+import Toast from 'react-native-toast-message';
+import LOCALSTORAGE from '../config/localStorage';
+import {useNavigation} from '@react-navigation/native';
+import ROUTES from '../config/routes';
 
-import { Colors } from "react-native/Libraries/NewAppScreen";
-import {
-  fontWeightBold,
-  goldenColor,
-  gulluColor,
-  h2,
-  h3,
-  height100,
-  height40,
-  height60,
-  inputLoginStyle,
-  inputStyle,
-  inputStyleBlack,
-  justifyContentCenter,
-  marginBottom10,
-  padding15,
-  paddingHorizontal20,
-  paddingVertical30,
-  primaryColor,
-  textAlignCenter,
-} from "../assets/styles";
-import InputConponents from "../components/InputComponents";
-import { get, post, showToast } from "../services/services";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+function Login({navigation}: any): JSX.Element {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigation();
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({ children, title }: SectionProps): JSX.Element {
-  const isDarkMode = useColorScheme() === "dark";
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}
-      >
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}
-      >
-        {children}
-      </Text>
-    </View>
-  );
-}
-
-function Login({ navigation }): JSX.Element {
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-
-  const [validationError, setValidationError] = useState("");
-  const [activityIndicator, setActivityIndicator] = useState(false);
-  const [hasError, setHasError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const isDarkMode = useColorScheme() === "dark";
-  useEffect(() => {}, []);
-  function ValidateEmail(input) {
-    var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+  function ValidateEmail(input: any) {
+    var validRegex =
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     if (input.match(validRegex)) {
       return true;
     } else {
       return false;
     }
   }
-  const tryLogin = () => {
-    setActivityIndicator(true);
-    setValidationError("");
-    // if( ValidateEmail(email) ){
 
-    if (
-      email != "" &&
-      email != undefined &&
-      password != "" &&
-      password != undefined
-    ) {
-      console.log("jhb");
-      let params = { email: email, password: password };
-
-      post("/login", params)
-        .then((res: any) => {
-          AsyncStorage.setItem("api_token", res.data.api_token);
-          AsyncStorage.setItem("email", res.data.email);
-          AsyncStorage.setItem("id", res.data.id.toString());
-          AsyncStorage.setItem("name", res.data.name);
-          AsyncStorage.setItem("phone", res.data.phone);
-          AsyncStorage.setItem("role", res.data.role.toString());
-
-          setActivityIndicator(false);
-          navigation.push("Home");
-        })
-        .catch((error) => {
-          setActivityIndicator(false);
-          setActivityIndicator(false);
-          setHasError(true);
-          setErrorMessage("Invalid login");
-          // console.log(error);
-        });
-    } else {
-      console.log("kuhn");
-      setValidationError("Required fields are missing.");
-      setActivityIndicator(false);
-    }
-
-    // }else{
-    // 	setValidationError('Email is not valid.');
-    // 	setActivityIndicator(false)
-
-    // }
+  const resetField = () => {
+    setEmail('');
+    setPassword('');
   };
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+
+  const tryLogin = async () => {
+    setIsLoading(true);
+    if (email == '' || email == undefined) {
+      Toast.show({
+        type: 'error',
+        text1: 'Email is required',
+        text2: 'Please enter email',
+      });
+      setIsLoading(false);
+      return;
+    } else if (password == '' || password == undefined) {
+      Toast.show({
+        type: 'error',
+        text1: 'Password is required',
+        text2: 'Please enter password',
+      });
+      setIsLoading(false);
+      return;
+    } else if (!ValidateEmail(email)) {
+      Toast.show({
+        type: 'error',
+        text1: 'Email is invalid',
+        text2: 'Please enter valid email',
+      });
+      setIsLoading(false);
+      return;
+    } else {
+      try {
+        const response = await login(email, password);
+        // console.log(JSON.stringify(response));
+        if (response.data.status) {
+          AsyncStorage.setItem(
+            LOCALSTORAGE.APITOKEN,
+            response.data.data.api_token,
+          );
+          AsyncStorage.setItem(LOCALSTORAGE.EMAIL, response.data.data.email);
+          AsyncStorage.setItem(
+            LOCALSTORAGE.ID,
+            response.data.data.id.toString(),
+          );
+          AsyncStorage.setItem(LOCALSTORAGE.NAME, response.data.data.name);
+          AsyncStorage.setItem(LOCALSTORAGE.PHONE, response.data.data.phone);
+          AsyncStorage.setItem(
+            LOCALSTORAGE.ROLE,
+            response.data.data.role.toString(),
+          );
+          navigate.reset({
+            index: 0,
+            routes: [{name: ROUTES.homeScreen as never}],
+          });
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: 'Login Failed',
+            text2: 'Something went wrong',
+          });
+          setIsLoading(false);
+          resetField();
+          return;
+        }
+      } catch (error: any) {
+        Toast.show({
+          type: 'error',
+          text1: 'Login Failed',
+          text2: 'Something went wrong',
+        });
+        setIsLoading(false);
+        resetField();
+      }
+    }
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar backgroundColor={gulluColor} />
-      <View style={[height100, { backgroundColor: gulluColor }]}>
-        <View style={[{}, height100]}>
-          <View style={[{}]}>
-            <View
-              style={[
-                { width: "100%" },
-                paddingVertical30,
-                height40,
-                justifyContentCenter,
-              ]}
-            >
-              <ImageBackground
-                source={require("../assets/images/309862855_480614804112971_3833940785598410888_n.jpeg")}
-                resizeMode="contain"
-                style={{
-                  flex: 1,
-                  justifyContent: "center",
-                  width: "100%",
-                  borderColor: gulluColor,
-                  borderWidth: 2,
-                }}
-              ></ImageBackground>
-            </View>
-            <View style={[{}, height60]}>
-              <View>
-                <InputConponents
-                  placeholder="Email or Mobile"
-                  inputValue={(value: any) => {
-                    setEmail(value);
-                  }}
-                  style={inputLoginStyle}
-                />
-                <InputConponents
-                  placeholder="Password"
-                  inputValue={(value: any) => {
-                    setPassword(value);
-                  }}
-                  style={inputLoginStyle}
-                />
-              </View>
-              <View style={[{ textAlign: "center" }, paddingHorizontal20]}>
-                <Text style={{ color: "red", fontSize: 16 }}>
-                  {validationError != "" ? validationError : ""}
-                </Text>
-              </View>
-              {/* <View style={[{alignItems: 'flex-end'},paddingHorizontal20]}>
-							<Text style={[{color: primaryColor},fontWeightBold,marginBottom10]}>Forgot Password</Text>
-						</View> */}
-              <View style={{ alignItems: "center" }}>
-                {activityIndicator ? (
-                  <TouchableOpacity
-                    onPress={() => {
-                      tryLogin();
-                    }}
-                    style={[
-                      {
-                        width: 150,
-                        backgroundColor: primaryColor,
-                        borderRadius: 10,
-                      },
-                      padding15,
-                      justifyContentCenter,
-                    ]}
-                  >
-                    <ActivityIndicator color="white"></ActivityIndicator>
-                  </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity
-                    onPress={() => {
-                      tryLogin();
-                    }}
-                    style={[
-                      {
-                        width: 150,
-                        backgroundColor: goldenColor,
-                        borderRadius: 10,
-                      },
-                      padding15,
-                      justifyContentCenter,
-                    ]}
-                  >
-                    <Text style={[h3, { color: gulluColor }, textAlignCenter]}>
-                      Login
-                    </Text>
-                  </TouchableOpacity>
-                )}
-                {hasError ? (
-                  <Text style={{ color: "#fff" }}>{errorMessage}</Text>
-                ) : null}
-              </View>
-            </View>
-          </View>
+    <SafeAreaView style={styles.loginBaseContainer}>
+      <View style={styles.loginBaseLogoBaseContainer}>
+        <Image source={ASSETS.gulluLogo} style={styles.loginLogoImage} />
+        <View style={styles.loginLogoUpperBaseContainer}>
+          <LinearGradient
+            colors={[`${COLOR.whiteColor}22`, COLOR.transparentColor]}
+            style={styles.loginLogoUpperContainer}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}
+          />
+          <LinearGradient
+            colors={[COLOR.transparentColor, `${COLOR.whiteColor}22`]}
+            style={styles.loginLogoUpperContainer}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}
+          />
+        </View>
+      </View>
+      <View style={styles.loginBaseContentBaseContainer}>
+        <View style={styles.loginBaseContentInputBaseContainer}>
+          <InputComponents
+            title="Email Address"
+            placeholder="Email or Mobile"
+            value={email}
+            onChangeText={(value: any) => {
+              setEmail(value);
+            }}
+            Icon={
+              <MaterialDesignIcons
+                name="mail-outline"
+                color={COLOR.blackColor}
+                size={DIMENSIONS.width / 20}
+              />
+            }
+            disable={isLoading}
+          />
+          <InputComponents
+            title="Password"
+            placeholder="Password"
+            value={password}
+            onChangeText={(value: any) => {
+              setPassword(value);
+            }}
+            Icon={
+              <MaterialDesignIcons
+                name="lock-outline"
+                color={COLOR.blackColor}
+                size={DIMENSIONS.width / 20}
+              />
+            }
+            isSecureEntry={true}
+            disable={isLoading}
+          />
+        </View>
+        <View style={styles.loginBaseContentButtonBaseContainer}>
+          <CustomButton
+            title={'Login'}
+            backgroundColor={COLOR.baseColor}
+            color={COLOR.whiteColor}
+            isLoading={isLoading}
+            onClick={tryLogin}
+          />
         </View>
       </View>
     </SafeAreaView>
@@ -243,22 +177,41 @@ function Login({ navigation }): JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  loginBaseContainer: {
+    flex: 1,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: "600",
+  loginBaseLogoBaseContainer: {
+    position: 'relative',
+    flex: 1,
+    backgroundColor: `${COLOR.baseColor}DD`,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: "400",
+  loginLogoUpperBaseContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    flexDirection: 'row',
   },
-  highlight: {
-    fontWeight: "700",
+  loginLogoUpperContainer: {
+    flex: 1,
   },
+  loginLogoImage: {
+    width: DIMENSIONS.width / 2.5,
+    height: DIMENSIONS.width / 2.5,
+    resizeMode: 'contain',
+  },
+  loginBaseContentBaseContainer: {
+    flex: 1.5,
+    padding: 40,
+    gap: 40,
+  },
+  loginBaseContentInputBaseContainer: {
+    gap: 20,
+  },
+  loginBaseContentButtonBaseContainer: {},
 });
 
 export default memo(Login);

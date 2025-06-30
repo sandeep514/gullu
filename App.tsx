@@ -17,80 +17,84 @@ import SalesmanEdit from './Views/pages/SalesmanEdit';
 import Gallery from './Views/pages/Gallery';
 import ROUTES from './Views/config/routes';
 import SplashScreen from './Views/pages/SplashScreen';
+import Toast from 'react-native-toast-message';
 
 const Stack = createNativeStackNavigator();
 
 function App(): JSX.Element {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName={ROUTES.splashScreen}>
-        <Stack.Screen
-          name={ROUTES.splashScreen}
-          component={SplashScreen}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name={ROUTES.loginScreen}
-          component={Login}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name={ROUTES.homeScreen}
-          component={Dashboard}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name={ROUTES.orderCreateScreen}
-          component={OrderCreate}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name={ROUTES.orderListScreen}
-          component={OrderList}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name={ROUTES.salesmanlistScreen}
-          component={SalesmanList}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name={ROUTES.salesmanEditScreen}
-          component={SalesmanEdit}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name={ROUTES.vendorcreateScreen}
-          component={VendorCreate}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name={ROUTES.vendorlistScreen}
-          component={VendorList}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name={ROUTES.salesmanCreateScreen}
-          component={SalesmanCreate}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name={ROUTES.vendorEditScreen}
-          component={VendorEdit}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name={ROUTES.orderEditScreen}
-          component={OrderEdit}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name={ROUTES.galleryScreen}
-          component={Gallery}
-          options={{headerShown: false}}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName={ROUTES.splashScreen}>
+          <Stack.Screen
+            name={ROUTES.splashScreen}
+            component={SplashScreen}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name={ROUTES.loginScreen}
+            component={Login}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name={ROUTES.homeScreen}
+            component={Dashboard}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name={ROUTES.orderCreateScreen}
+            component={OrderCreate}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name={ROUTES.orderListScreen}
+            component={OrderList}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name={ROUTES.salesmanlistScreen}
+            component={SalesmanList}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name={ROUTES.salesmanEditScreen}
+            component={SalesmanEdit}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name={ROUTES.vendorcreateScreen}
+            component={VendorCreate}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name={ROUTES.vendorlistScreen}
+            component={VendorList}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name={ROUTES.salesmanCreateScreen}
+            component={SalesmanCreate}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name={ROUTES.vendorEditScreen}
+            component={VendorEdit}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name={ROUTES.orderEditScreen}
+            component={OrderEdit}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name={ROUTES.galleryScreen}
+            component={Gallery}
+            options={{headerShown: false}}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+      <Toast />
+    </>
   );
 }
 export default App;
