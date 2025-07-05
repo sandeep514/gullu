@@ -44,14 +44,14 @@ import {
 import FooterComponent from '../components/FooterComponent';
 import HeaderComponent from '../components/HeaderComponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {get} from '../services/services';
+import {get, pendingOrders} from '../services/services';
 import {imagePath} from '../services/Client';
 import {useIsFocused} from '@react-navigation/native';
 import NetInfo from '@react-native-community/netinfo';
 import InputComponents from '../components/InputComponents';
 import {memo} from 'react';
 
-function Dashboard({navigation}): JSX.Element {
+function Dashboard({navigation}: any) {
   const [loader, setLoader] = useState(false);
   const [role, setRole] = useState();
   const [selectedOrderData, SetSelectedOrderData] = useState('');
@@ -138,29 +138,20 @@ function Dashboard({navigation}): JSX.Element {
     getData();
   }, [isFocused]);
 
-  const getData = () => {
+  const getData = async () => {
+    console.log('getData');
     setLoader(true);
-    AsyncStorage.getItem('id')
-      .then(token => {
-        let postedData = {api_token: token};
-        get('/orders/list/pending', postedData)
-          .then(res => {
-            console.log('res');
-            console.log(res);
-
-            let pending = res.data.data.data;
-
-            setPending(pending);
-            setOriginalPending(pending);
-            setLoader(false);
-          })
-          .catch(err => {
-            setLoader(false);
-          });
-      })
-      .catch(err => {
-        setLoader(false);
-      });
+    try {
+      await pendingOrders()
+        .then(res => {
+          console.log(`PENDING ORDERS ${JSON.stringify(res)}`);
+        })
+        .catch(err => {
+          console.log(JSON.stringify(err));
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
   const searchOrder = searchableText => {
     if (searchableText.length > 0) {
@@ -432,7 +423,7 @@ function Dashboard({navigation}): JSX.Element {
             <HeaderComponent navigation={navigation} title="Pending Orders" />
           </View>
 
-          <View style={[{}, height83]}>
+          {/* <View style={[{}, height83]}>
             <View>
               <View style={[{}, height10]}>
                 <InputComponents
@@ -508,10 +499,7 @@ function Dashboard({navigation}): JSX.Element {
                 </Text>
               </Pressable>
             ) : null}
-          </View>
-          <View style={[{}, height9]}>
-            <FooterComponent navigation={navigation} />
-          </View>
+          </View> */}
         </View>
       </View>
     </SafeAreaView>
@@ -558,4 +546,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(Dashboard);
+export default Dashboard;

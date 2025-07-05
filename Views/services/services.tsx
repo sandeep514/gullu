@@ -53,3 +53,8 @@ export const login = async (email: string, password: string) => {
   const response = await apiClient.post(API_URLS.login, {email, password});
   return response.data;
 };
+
+export const pendingOrders = async () => {
+  const response = await apiClient.get(API_URLS.pendingOrders);
+  return response.data;
+};

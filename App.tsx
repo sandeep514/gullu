@@ -18,6 +18,7 @@ import Gallery from './Views/pages/Gallery';
 import ROUTES from './Views/config/routes';
 import SplashScreen from './Views/pages/SplashScreen';
 import Toast from 'react-native-toast-message';
+import LandingPage from './Views/pages/LandingPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -34,6 +35,11 @@ function App(): JSX.Element {
           <Stack.Screen
             name={ROUTES.loginScreen}
             component={Login}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name={ROUTES.landingPage}
+            component={LandingPage}
             options={{headerShown: false}}
           />
           <Stack.Screen

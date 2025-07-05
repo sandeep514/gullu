@@ -1,6 +1,7 @@
 const ROUTES = {
   splashScreen: 'splash',
   loginScreen: 'login',
+  landingPage: 'landing',
   homeScreen: 'Home',
   orderCreateScreen: 'ordercreate',
   orderListScreen: 'orderlist',

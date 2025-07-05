@@ -1,5 +1,5 @@
 import React, {memo, useEffect, useState} from 'react';
-import {Image, SafeAreaView, StyleSheet, View} from 'react-native';
+import {Image, SafeAreaView, ScrollView, StyleSheet, View} from 'react-native';
 import InputComponents from '../components/InputComponents';
 import {login} from '../services/services';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -7,7 +7,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import COLOR from '../config/color';
 import ASSETS from '../assets';
 import DIMENSIONS from '../config/dimensions';
-import MaterialDesignIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import CustomButton from '../components/CustomButton';
 import Toast from 'react-native-toast-message';
 import LOCALSTORAGE from '../config/localStorage';
@@ -19,6 +19,7 @@ function Login({navigation}: any): JSX.Element {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigation();
+  const Icon = MaterialIcons as unknown as any;
 
   function ValidateEmail(input: any) {
     var validRegex =
@@ -83,7 +84,7 @@ function Login({navigation}: any): JSX.Element {
           );
           navigate.reset({
             index: 0,
-            routes: [{name: ROUTES.homeScreen as never}],
+            routes: [{name: ROUTES.landingPage as never}],
           });
         } else {
           Toast.show({
@@ -136,7 +137,7 @@ function Login({navigation}: any): JSX.Element {
               setEmail(value);
             }}
             Icon={
-              <MaterialDesignIcons
+              <Icon
                 name="mail-outline"
                 color={COLOR.blackColor}
                 size={DIMENSIONS.width / 20}
@@ -152,7 +153,7 @@ function Login({navigation}: any): JSX.Element {
               setPassword(value);
             }}
             Icon={
-              <MaterialDesignIcons
+              <Icon
                 name="lock-outline"
                 color={COLOR.blackColor}
                 size={DIMENSIONS.width / 20}

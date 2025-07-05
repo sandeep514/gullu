@@ -31,7 +31,7 @@ const SplashScreen = () => {
           if (res != null) {
             navigate.reset({
               index: 0,
-              routes: [{name: ROUTES.homeScreen as never}],
+              routes: [{name: ROUTES.landingPage as never}],
             });
           } else {
             navigate.reset({
