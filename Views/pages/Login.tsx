@@ -65,7 +65,6 @@ function Login({navigation}: any): JSX.Element {
     } else {
       try {
         const response = await login(email, password);
-        // console.log(JSON.stringify(response));
         if (response.data.status) {
           AsyncStorage.setItem(
             LOCALSTORAGE.APITOKEN,

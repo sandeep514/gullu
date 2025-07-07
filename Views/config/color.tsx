@@ -6,7 +6,9 @@ const COLOR = {
   whiteColor: '#FFFFFF',
   blackColor: '#000000',
   placeholderColor: '#A4A4A4',
+  lightGreyColor: '#f5f5f5',
   transparentColor: 'transparent',
+  redColor: '#FF1C1C',
 };
 
 export default COLOR;

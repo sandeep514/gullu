@@ -9,15 +9,25 @@ import React from 'react';
 import COLOR from '../config/color';
 
 const CustomButton = ({
+  iconName,
+  IconComponent,
+  iconColor,
+  iconSize,
+  iconPadding,
   title,
   backgroundColor,
   color,
   isLoading,
   onClick,
 }: {
-  title: string;
+  iconName?: string;
+  IconComponent?: any;
+  iconColor?: string;
+  iconSize?: number;
+  iconPadding?: number;
+  title?: string;
   backgroundColor?: string;
-  color: string;
+  color?: string;
   isLoading?: boolean;
   onClick?: () => void;
 }) => {
@@ -29,13 +39,25 @@ const CustomButton = ({
         styles.customButtonBaseContainer,
         {
           backgroundColor,
+          padding: iconName ? iconPadding || 10 : 18,
+          borderRadius: iconName ? 12 : 50,
         },
       ]}
       onPress={onClick}>
       {isLoading ? (
         <ActivityIndicator color={color} size={'small'} />
       ) : (
-        <Text style={[styles.customButtonText, {color}]}>{title}</Text>
+        <>
+          {IconComponent ? (
+            <IconComponent
+              name={iconName}
+              color={iconColor}
+              size={iconSize || 15}
+            />
+          ) : (
+            <Text style={[styles.customButtonText, {color}]}>{title}</Text>
+          )}
+        </>
       )}
     </TouchableOpacity>
   );

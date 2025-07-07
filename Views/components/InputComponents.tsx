@@ -17,6 +17,8 @@ function InputComponents({
   Icon,
   isSecureEntry = false,
   disable = false,
+  backgroundColor,
+  borderInclude = true,
 }: any): JSX.Element {
   const [isFocused, setIsFocused] = useState(false);
 
@@ -28,11 +30,14 @@ function InputComponents({
           styles.inputContainer,
           {
             borderColor: isFocused ? COLOR.baseColor : COLOR.placeholderColor,
+            backgroundColor,
+            borderWidth: borderInclude ? 1 : 0,
+            elevation: borderInclude ? 10 : 0,
           },
         ]}>
         {Icon && Icon}
         <TextInput
-          style={styles.inputField}
+          style={[styles.inputField]}
           onChangeText={onChangeText}
           placeholder={placeholder}
           keyboardType={type}

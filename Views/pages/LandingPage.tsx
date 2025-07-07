@@ -50,6 +50,7 @@ const LandingPage = () => {
         tabBarInactiveTintColor: COLOR.placeholderColor,
         tabBarLabelStyle: {fontSize: 12, padding: 4},
         tabBarStyle: {
+          position: 'absolute',
           backgroundColor: COLOR.whiteColor,
           borderRadius: 20,
           height: 60,

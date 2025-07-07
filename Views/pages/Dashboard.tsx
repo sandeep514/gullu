@@ -50,6 +50,7 @@ import {useIsFocused} from '@react-navigation/native';
 import NetInfo from '@react-native-community/netinfo';
 import InputComponents from '../components/InputComponents';
 import {memo} from 'react';
+import LOCALSTORAGE from '../config/localStorage';
 
 function Dashboard({navigation}: any) {
   const [loader, setLoader] = useState(false);
@@ -142,17 +143,20 @@ function Dashboard({navigation}: any) {
     console.log('getData');
     setLoader(true);
     try {
-      await pendingOrders()
-        .then(res => {
-          console.log(`PENDING ORDERS ${JSON.stringify(res)}`);
-        })
-        .catch(err => {
-          console.log(JSON.stringify(err));
-        });
+      AsyncStorage.getItem(LOCALSTORAGE.ID).then(async id => {
+        await pendingOrders(id)
+          .then(res => {
+            console.log(`PENDING ORDERS ${JSON.stringify(res)}`);
+          })
+          .catch(err => {
+            console.log(JSON.stringify(err));
+          });
+      });
     } catch (error) {
       console.log(error);
     }
   };
+
   const searchOrder = searchableText => {
     if (searchableText.length > 0) {
       let newSearchableArray = [];
@@ -213,6 +217,7 @@ function Dashboard({navigation}: any) {
       setPending(OriginalPending);
     }
   };
+
   const shortnerURL = async url => {
     return url;
 
@@ -415,135 +420,153 @@ function Dashboard({navigation}: any) {
     </Pressable>
   );
   return (
-    <SafeAreaView style={{backgroundColor: '#ededed'}}>
-      <StatusBar backgroundColor={gulluColor} />
-      <View style={[height100, primaryGulluLightBackgroundColor]}>
-        <View style={[{}, height100]}>
-          <View style={[{}, height8]}>
-            <HeaderComponent navigation={navigation} title="Pending Orders" />
-          </View>
-
-          {/* <View style={[{}, height83]}>
-            <View>
-              <View style={[{}, height10]}>
-                <InputComponents
-                  placeholder="Search Order , Vendor , Salesman"
-                  style={[{}, inputStyleBlack]}
-                  inputValue={(value: any) => {
-                    searchOrder(value);
-                  }}
-                />
-              </View>
-              <View style={[{}, height90]}>
-                {loader ? (
-                  <ActivityIndicator size={20} color={gulluColor} />
-                ) : pending != undefined && pending != '' ? (
-                  Object.values(pending)?.length > 0 ? (
-                    <View>
-                      <View>
-                        <FlatList
-                          refreshing={isRefreshing} // Added pull to refesh state
-                          onRefresh={onRefresh} // Added pull to refresh control
-                          data={Object.values(pending)}
-                          renderItem={({item}) => <Item item={item} />}
-                          keyExtractor={item => item?.id}
-                          showsVerticalScrollIndicator={false}
-                        />
-                      </View>
-                    </View>
-                  ) : (
-                    <View style={{justifyContent: 'center'}}>
-                      <Text
-                        style={[
-                          h4,
-                          {color: gulluColor, textAlign: 'center'},
-                          marginTop30,
-                        ]}>
-                        No pending orders available
-                      </Text>
-                    </View>
-                  )
-                ) : null}
-              </View>
-            </View>
-            {role != undefined && role == 1 ? (
-              <Pressable
-                onPress={() => {
-                  navigation.push('ordercreate');
-                }}
-                style={[
-                  {
-                    backgroundColor: gulluColor,
-                    height: 70,
-                    width: 70,
-                    padding: 0,
-                    margin: 0,
-                    borderRadius: 100,
-                    right: 10,
-                    position: 'absolute',
-                    bottom: 0,
-                  },
-                ]}>
-                <Text
-                  style={[
-                    {
-                      fontSize: 50,
-                      padding: 0,
-                      margin: 0,
-                      top: -5,
-                      color: goldenColor,
-                    },
-                    textAlignCenter,
-                  ]}>
-                  +
-                </Text>
-              </Pressable>
-            ) : null}
-          </View> */}
-        </View>
+    <SafeAreaView style={styles.dashboardBaseContainer}>
+      <View style={styles.dashboardHeaderBaseContainer}>
+        <HeaderComponent navigation={navigation} isHomeScreen={true} />
       </View>
+      <View style={styles.dashboardContentBaseContainer}></View>
     </SafeAreaView>
+    // <SafeAreaView style={{backgroundColor: '#ededed'}}>
+    //   <StatusBar backgroundColor={gulluColor} />
+    //   <View style={[height100, primaryGulluLightBackgroundColor]}>
+    //     <View style={[{}, height100]}>
+    //       <View style={[{}, height8]}>
+    //         <HeaderComponent navigation={navigation} title="Pending Orders" />
+    //       </View>
+
+    //       {/* <View style={[{}, height83]}>
+    //         <View>
+    //           <View style={[{}, height10]}>
+    //             <InputComponents
+    //               placeholder="Search Order , Vendor , Salesman"
+    //               style={[{}, inputStyleBlack]}
+    //               inputValue={(value: any) => {
+    //                 searchOrder(value);
+    //               }}
+    //             />
+    //           </View>
+    //           <View style={[{}, height90]}>
+    //             {loader ? (
+    //               <ActivityIndicator size={20} color={gulluColor} />
+    //             ) : pending != undefined && pending != '' ? (
+    //               Object.values(pending)?.length > 0 ? (
+    //                 <View>
+    //                   <View>
+    //                     <FlatList
+    //                       refreshing={isRefreshing} // Added pull to refesh state
+    //                       onRefresh={onRefresh} // Added pull to refresh control
+    //                       data={Object.values(pending)}
+    //                       renderItem={({item}) => <Item item={item} />}
+    //                       keyExtractor={item => item?.id}
+    //                       showsVerticalScrollIndicator={false}
+    //                     />
+    //                   </View>
+    //                 </View>
+    //               ) : (
+    //                 <View style={{justifyContent: 'center'}}>
+    //                   <Text
+    //                     style={[
+    //                       h4,
+    //                       {color: gulluColor, textAlign: 'center'},
+    //                       marginTop30,
+    //                     ]}>
+    //                     No pending orders available
+    //                   </Text>
+    //                 </View>
+    //               )
+    //             ) : null}
+    //           </View>
+    //         </View>
+    //         {role != undefined && role == 1 ? (
+    //           <Pressable
+    //             onPress={() => {
+    //               navigation.push('ordercreate');
+    //             }}
+    //             style={[
+    //               {
+    //                 backgroundColor: gulluColor,
+    //                 height: 70,
+    //                 width: 70,
+    //                 padding: 0,
+    //                 margin: 0,
+    //                 borderRadius: 100,
+    //                 right: 10,
+    //                 position: 'absolute',
+    //                 bottom: 0,
+    //               },
+    //             ]}>
+    //             <Text
+    //               style={[
+    //                 {
+    //                   fontSize: 50,
+    //                   padding: 0,
+    //                   margin: 0,
+    //                   top: -5,
+    //                   color: goldenColor,
+    //                 },
+    //                 textAlignCenter,
+    //               ]}>
+    //               +
+    //             </Text>
+    //           </Pressable>
+    //         ) : null}
+    //       </View> */}
+    //     </View>
+    //   </View>
+    // </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  dashboardBaseContainer: {
+    flex: 1,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  dashboardHeaderBaseContainer: {
+    flex: 0.2,
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  itemRed: {
-    backgroundColor: 'red',
-    padding: 15,
-    marginVertical: 8,
-    marginHorizontal: 16,
-    borderRadius: 10,
-  },
-  itemYellow: {
-    backgroundColor: 'yellow',
-    padding: 15,
-    marginVertical: 8,
-    marginHorizontal: 16,
-    borderRadius: 10,
-  },
-  itemGreen: {
-    backgroundColor: 'lightgreen',
-    padding: 15,
-    marginVertical: 8,
-    marginHorizontal: 16,
-    borderRadius: 10,
+  dashboardContentBaseContainer: {
+    flex: 1,
   },
 });
+
+// const styles = StyleSheet.create({
+//   sectionContainer: {
+//     marginTop: 32,
+//     paddingHorizontal: 24,
+//   },
+//   sectionTitle: {
+//     fontSize: 24,
+//     fontWeight: '600',
+//   },
+//   sectionDescription: {
+//     marginTop: 8,
+//     fontSize: 18,
+//     fontWeight: '400',
+//   },
+//   highlight: {
+//     fontWeight: '700',
+//   },
+//   itemRed: {
+//     backgroundColor: 'red',
+//     padding: 15,
+//     marginVertical: 8,
+//     marginHorizontal: 16,
+//     borderRadius: 10,
+//   },
+//   itemYellow: {
+//     backgroundColor: 'yellow',
+//     padding: 15,
+//     marginVertical: 8,
+//     marginHorizontal: 16,
+//     borderRadius: 10,
+//   },
+//   itemGreen: {
+//     backgroundColor: 'lightgreen',
+//     padding: 15,
+//     marginVertical: 8,
+//     marginHorizontal: 16,
+//     borderRadius: 10,
+//   },
+// });
 
 export default Dashboard;

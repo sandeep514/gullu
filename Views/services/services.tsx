@@ -54,7 +54,23 @@ export const login = async (email: string, password: string) => {
   return response.data;
 };
 
-export const pendingOrders = async () => {
-  const response = await apiClient.get(API_URLS.pendingOrders);
+export const pendingOrders = async (id: any) => {
+  const response = await apiClient.get(
+    `${API_URLS.pendingOrders}?api_token=${id}`,
+  );
+  return response.data;
+};
+
+export const getGalleryList = async (id: any) => {
+  const response = await apiClient.get(
+    `${API_URLS.galleryList}?api_token=${id}`,
+  );
+  return response.data;
+};
+
+export const getVendorList = async (role: any, id: any) => {
+  const response = await apiClient.get(
+    `${API_URLS.vendorList}?role=${role}&api_token=${id}`,
+  );
   return response.data;
 };
