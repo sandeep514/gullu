@@ -19,6 +19,8 @@ const CustomButton = ({
   color,
   isLoading,
   onClick,
+  elevation,
+  radius,
 }: {
   iconName?: string;
   IconComponent?: any;
@@ -30,6 +32,8 @@ const CustomButton = ({
   color?: string;
   isLoading?: boolean;
   onClick?: () => void;
+  elevation?: boolean;
+  radius?: number;
 }) => {
   return (
     <TouchableOpacity
@@ -40,7 +44,8 @@ const CustomButton = ({
         {
           backgroundColor,
           padding: iconName ? iconPadding || 10 : 18,
-          borderRadius: iconName ? 12 : 50,
+          borderRadius: iconName ? radius ?? 12 : 50,
+          elevation: elevation ? 15 : 0,
         },
       ]}
       onPress={onClick}>

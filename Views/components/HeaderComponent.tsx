@@ -35,6 +35,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import CustomButton from './CustomButton';
 import ROUTES from '../config/routes';
 import LOCALSTORAGE from '../config/localStorage';
+import DIMENSIONS from '../config/dimensions';
 
 function HeaderComponent({navigation, isHomeScreen}: any): JSX.Element {
   const [currentUploadingSpeed, setCurrentUploadingSpeed] = useState();
@@ -115,7 +116,11 @@ function HeaderComponent({navigation, isHomeScreen}: any): JSX.Element {
                 color={COLOR.whiteColor}
               />
             ) : (
-              <IoniconsIcon name="wifi" size={20} color={COLOR.whiteColor} />
+              <IoniconsIcon
+                name="wifi"
+                size={DIMENSIONS.width / 25}
+                color={COLOR.whiteColor}
+              />
             )}
           </View>
         </View>
@@ -259,7 +264,7 @@ const styles = StyleSheet.create({
   },
   headerContentNetworkText: {
     color: COLOR.whiteColor,
-    fontSize: 14,
+    fontSize: DIMENSIONS.width / 35,
   },
   headerContentNetworkIconContainer: {
     alignItems: 'center',

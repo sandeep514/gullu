@@ -37,42 +37,55 @@ import {
   inputStyleBlack,
 } from '../assets/styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {post, showToast} from '../services/services';
+import {createVendor, post, showToast} from '../services/services';
+import NavBarComponent from '../components/NavBarComponent';
+import COLOR from '../config/color';
+import CustomButton from '../components/CustomButton';
+import Toast from 'react-native-toast-message';
+import LOCALSTORAGE from '../config/localStorage';
+import ROUTES from '../config/routes';
 
-function VendorCreate({navigation}): JSX.Element {
-  const [loader, setLoader] = useState(false);
+function VendorCreate({navigation}: any): JSX.Element {
+  const [isLoading, setIsLoading] = useState(false);
 
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [code, setCode] = useState();
   const [password, setPassword] = useState();
-  const [phone, setPhone] = useState();
+  const [phone, setPhone] = useState<String>();
   const [role, setRole] = useState(2);
 
-  const isDarkMode = useColorScheme() === 'dark';
-  useEffect(() => {}, []);
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
   const submitVendor = () => {
-    setLoader(true);
-    console.log('uhnjik');
+    setIsLoading(true);
     if (
-      name != undefined &&
-      name != '' &&
-      code != undefined &&
-      code != '' &&
-      password != undefined &&
-      password != '' &&
-      phone != undefined &&
-      phone != ''
+      name == undefined ||
+      name == '' ||
+      email == undefined ||
+      email == '' ||
+      code == undefined ||
+      code == '' ||
+      password == undefined ||
+      password == '' ||
+      phone == undefined ||
+      phone == ''
     ) {
-      AsyncStorage.getItem('id')
-        .then(token => {
-          if (phone.length == 10) {
-            console.log('phone');
-
-            console.log('in');
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Required field is missing.',
+      });
+      setIsLoading(false);
+    } else if (phone && phone.length != 10) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Mobile number should be 10 digit.',
+      });
+      setIsLoading(false);
+    } else {
+      try {
+        AsyncStorage.getItem(LOCALSTORAGE.ID)
+          .then(async (id: any) => {
             let postedData = {
               name: name,
               email: email,
@@ -80,137 +93,147 @@ function VendorCreate({navigation}): JSX.Element {
               password: password,
               phone: phone,
               role: role,
-              api_token: token,
+              api_token: id,
             };
-            post('/users/create', postedData)
-              .then(res => {
-                console.log(res);
-                showToast(res.message);
-                setLoader(false);
-                navigation.push('vendorlist');
+            await createVendor(postedData)
+              .then((res: any) => {
+                if (res.data.status) {
+                  setIsLoading(false);
+                  Toast.show({
+                    type: 'success',
+                    text1: 'Success',
+                    text2: res.data.message,
+                  });
+                  navigation.reset({
+                    index: 0,
+                    routes: [{name: ROUTES.vendorlistScreen as never}],
+                  });
+                } else {
+                  setIsLoading(false);
+                  Toast.show({
+                    type: 'error',
+                    text1: 'Error',
+                    text2: res.data.message,
+                  });
+                }
               })
               .catch(err => {
-                // console.log(err);
-                setLoader(false);
-                showToast(err.message);
+                setIsLoading(false);
+                Toast.show({
+                  type: 'error',
+                  text1: 'Error',
+                  text2: 'Something went wrong',
+                });
               });
-          } else {
-            showToast('Mobile number should be 10 digit.');
-            setLoader(false);
-          }
-        })
-        .catch(err => {
-          console.log(err);
-          setLoader(false);
+          })
+          .catch(err => {
+            setIsLoading(false);
+            Toast.show({
+              type: 'error',
+              text1: 'Error',
+              text2: 'Something went wrong',
+            });
+          });
+      } catch (error) {
+        setIsLoading(false);
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Something went wrong',
         });
-    } else {
-      showToast('Required field is missing.');
-      setLoader(false);
+      }
     }
   };
 
   return (
-    <SafeAreaView style={{backgroundColor: '#ededed'}}>
-      <StatusBar backgroundColor={gulluColor} />
-      <View style={[height100, primaryGulluLightBackgroundColor]}>
-        <View style={[{}, height100]}>
-          <View style={[{}, height8]}>
-            <HeaderComponent navigation={navigation} title="Create Vendor" />
-          </View>
-          <View style={[{}, height83]}>
-            <InputComponents
-              placeholder="Name"
-              inputValue={(value: any) => {
-                setName(value);
-              }}
-              style={inputStyleBlack}
-            />
-            <InputComponents
-              placeholder="Email"
-              inputValue={(value: any) => {
-                setEmail(value);
-              }}
-              style={inputStyleBlack}
-            />
-            <InputComponents
-              placeholder="Code"
-              inputValue={(value: any) => {
-                setCode(value);
-              }}
-              style={inputStyleBlack}
-            />
-            <InputComponents
-              placeholder="Password"
-              inputValue={(value: any) => {
-                setPassword(value);
-              }}
-              style={inputStyleBlack}
-            />
-            <InputComponents
-              placeholder="Phone"
-              inputValue={(value: any) => {
-                setPhone(value);
-              }}
-              style={inputStyleBlack}
-            />
-
-            {!loader ? (
-              <View style={{alignItems: 'center'}}>
-                <TouchableOpacity
-                  onPress={() => {
-                    submitVendor();
-                  }}
-                  style={[
-                    {
-                      width: 'auto',
-                      backgroundColor: gulluColor,
-                      borderRadius: 10,
-                    },
-                    padding15,
-                    justifyContentCenter,
-                  ]}>
-                  <Text style={[{color: '#fff'}, h3, textAlignCenter]}>
-                    Create New Vendor
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <View style={{alignItems: 'center'}}>
-                <View
-                  style={[
-                    {
-                      width: 'auto',
-                      backgroundColor: gulluColor,
-                      borderRadius: 10,
-                    },
-                    padding15,
-                    justifyContentCenter,
-                  ]}>
-                  <ActivityIndicator color="white"></ActivityIndicator>
-                </View>
-              </View>
-            )}
-          </View>
-          <View style={[{}, height9]}>
-            <FooterComponent navigation={navigation} />
-          </View>
-        </View>
+    <SafeAreaView style={styles.createVendorBaseContainer}>
+      <View style={styles.createVendorHeaderBaseContainer}>
+        <HeaderComponent />
+      </View>
+      <View style={styles.createVendorNavbarBaseContainer}>
+        <NavBarComponent
+          title="Create Vendor"
+          titleColor={COLOR.baseColor}
+          navigation={navigation}
+        />
+      </View>
+      <View style={styles.createVendorContentBaseContainer}>
+        <ScrollView contentContainerStyle={styles.createVendorContentContainer}>
+          <InputComponents
+            value={name}
+            placeholder="Name"
+            onChangeText={(value: any) => {
+              setName(value);
+            }}
+            backgroundColor={COLOR.whiteColor}
+            disable={isLoading}
+          />
+          <InputComponents
+            value={email}
+            placeholder="Email"
+            onChangeText={(value: any) => {
+              setEmail(value);
+            }}
+            backgroundColor={COLOR.whiteColor}
+            disable={isLoading}
+          />
+          <InputComponents
+            value={code}
+            placeholder="Code"
+            onChangeText={(value: any) => {
+              setCode(value);
+            }}
+            backgroundColor={COLOR.whiteColor}
+            disable={isLoading}
+          />
+          <InputComponents
+            value={password}
+            placeholder="Password"
+            onChangeText={(value: any) => {
+              setPassword(value);
+            }}
+            backgroundColor={COLOR.whiteColor}
+            disable={isLoading}
+          />
+          <InputComponents
+            value={phone}
+            placeholder="Phone"
+            onChangeText={(value: any) => {
+              setPhone(value);
+            }}
+            backgroundColor={COLOR.whiteColor}
+            disable={isLoading}
+          />
+          <CustomButton
+            title="Create New Vendor"
+            backgroundColor={COLOR.baseColor}
+            color={COLOR.whiteColor}
+            onClick={submitVendor}
+            isLoading={isLoading}
+          />
+        </ScrollView>
       </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  createVendorBaseContainer: {
     flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
   },
-  item: {
-    backgroundColor: secondaryBackgroundColor,
-    padding: 15,
-    marginVertical: 8,
-    marginHorizontal: 16,
-    borderRadius: 10,
+  createVendorHeaderBaseContainer: {
+    flex: 0.09,
+  },
+  createVendorNavbarBaseContainer: {
+    flex: 0.1,
+  },
+  createVendorContentBaseContainer: {
+    flex: 0.82,
+  },
+  createVendorContentContainer: {
+    flex: 1,
+    padding: 20,
+    gap: 20,
   },
 });
 

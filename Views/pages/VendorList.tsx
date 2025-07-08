@@ -1,4 +1,4 @@
-import React, {memo, useEffect, useState} from 'react';
+import React, {memo, useCallback, useEffect, useState} from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   FlatList,
@@ -12,6 +12,7 @@ import {
   View,
   ActivityIndicator,
   TouchableOpacity,
+  RefreshControl,
 } from 'react-native';
 
 import {
@@ -56,6 +57,10 @@ import {get, getVendorList} from '../services/services';
 import COLOR from '../config/color';
 import Toast from 'react-native-toast-message';
 import LOCALSTORAGE from '../config/localStorage';
+import ROUTES from '../config/routes';
+import DIMENSIONS from '../config/dimensions';
+import CustomButton from '../components/CustomButton';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -65,9 +70,11 @@ function VendorList({navigation}: any): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   // const [DATA, SetData] = useState();
   const [search, setSearch] = useState('');
-  const [vendorData, setVendorData] = useState([]);
+  const [vendorData, setVendorData] = useState<any[]>([]);
   const [searchableData, setSearchableData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const MaterialIconsIcon = Ionicons as unknown as React.ComponentType<any>;
 
   useEffect(() => {
     getVendorListData();
@@ -121,6 +128,12 @@ function VendorList({navigation}: any): JSX.Element {
     }
   };
 
+  const onRefresh = useCallback(() => {
+    setIsRefreshing(true);
+    getVendorListData();
+    setIsRefreshing(false);
+  }, []);
+
   const searchOrder = (search: string) => {
     let newSearchableArray: any = [];
     vendorData.filter(list => {
@@ -133,7 +146,6 @@ function VendorList({navigation}: any): JSX.Element {
         }
       }
     });
-
     setSearchableData(newSearchableArray);
   };
 
@@ -141,7 +153,7 @@ function VendorList({navigation}: any): JSX.Element {
     <TouchableOpacity
       activeOpacity={0.9}
       onPress={() => {
-        navigation.push('vendorEdit', {vendorId: item.id});
+        navigation.push(ROUTES.vendorEditScreen, {vendorId: item.id});
       }}
       style={styles.vendorListItemBaseContainer}>
       <View style={styles.vendorListItemHeaderBaseContainer}>
@@ -176,6 +188,20 @@ function VendorList({navigation}: any): JSX.Element {
             }}
           />
         </View>
+        <View style={styles.vendorContentNewVendorButtonBaseContainer}>
+          <CustomButton
+            IconComponent={MaterialIconsIcon}
+            iconName="add-outline"
+            iconColor={COLOR.baseColor}
+            radius={60}
+            backgroundColor={`${COLOR.whiteColor}`}
+            iconSize={30}
+            elevation={true}
+            onClick={() => {
+              navigation.push(ROUTES.vendorcreateScreen);
+            }}
+          />
+        </View>
         <View style={styles.vendorContentListBaseContainer}>
           {isLoading ? (
             <View style={styles.vendorContentLoaderBaseContainer}>
@@ -189,6 +215,15 @@ function VendorList({navigation}: any): JSX.Element {
                   renderItem={Item}
                   keyExtractor={item => item.id}
                   contentContainerStyle={styles.vendorContentList}
+                  showsVerticalScrollIndicator={false}
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={isRefreshing}
+                      onRefresh={onRefresh}
+                      colors={[COLOR.baseColor]}
+                      tintColor={COLOR.baseColor}
+                    />
+                  }
                 />
               ) : (
                 <View style={styles.vendorContentLoaderBaseContainer}>
@@ -202,69 +237,6 @@ function VendorList({navigation}: any): JSX.Element {
         </View>
       </View>
     </SafeAreaView>
-    // <SafeAreaView style={{backgroundColor: '#ededed'}}>
-    //   <StatusBar backgroundColor={gulluColor} />
-    //   <View style={[height100, primaryGulluLightBackgroundColor]}>
-    //     <View style={[{}, height100]}>
-    //       <View style={[{}, height8]}>
-    //         <HeaderComponent navigation={navigation} title="Vendor List" />
-    //       </View>
-    //       <View style={[{}, height83]}>
-    //         <View style={[{}, height15]}>
-    //           <InputComponents
-    //             placeholder="Search Vendor"
-    //             style={[{}, inputStyleBlack]}
-    //             inputValue={(value: any) => {
-    //               searchOrder(value);
-    //             }}
-    //           />
-    //         </View>
-    //         {activityIndicator ? (
-    //           <ActivityIndicator
-    //             color={gulluColor}
-    //             size={20}></ActivityIndicator>
-    //         ) : (
-    //           <FlatList
-    //             data={DATA}
-    //             renderItem={({item}) => <Item item={item} />}
-    //             keyExtractor={item => item.id}
-    //             showsVerticalScrollIndicator={false}
-    //           />
-    //         )}
-    //         <Pressable
-    //           onPress={() => {
-    //             navigation.push('vendorcreate');
-    //           }}
-    //           style={[
-    //             {
-    //               backgroundColor: secondaryBackgroundColor,
-    //               height: 70,
-    //               width: 70,
-    //               padding: 0,
-    //               margin: 0,
-    //               borderRadius: 100,
-    //               right: 10,
-    //               position: 'absolute',
-    //               bottom: 0,
-    //               borderColor: primaryColor,
-    //               borderWidth: 5,
-    //             },
-    //           ]}>
-    //           <Text
-    //             style={[
-    //               {fontSize: 50, padding: 0, margin: 0, top: -5},
-    //               textAlignCenter,
-    //             ]}>
-    //             +
-    //           </Text>
-    //         </Pressable>
-    //       </View>
-    //       <View style={[{}, height9]}>
-    //         <FooterComponent navigation={navigation} />
-    //       </View>
-    //     </View>
-    //   </View>
-    // </SafeAreaView>
   );
 }
 
@@ -286,13 +258,19 @@ const styles = StyleSheet.create({
     padding: 20,
     zIndex: 10,
   },
+  vendorContentNewVendorButtonBaseContainer: {
+    position: 'absolute',
+    bottom: DIMENSIONS.height / 9,
+    right: 20,
+    zIndex: 10,
+  },
   vendorContentListBaseContainer: {
     flex: 1,
   },
   vendorContentList: {
     paddingTop: 40,
     paddingHorizontal: 20,
-    paddingBottom: 50,
+    paddingBottom: 80,
     gap: 10,
   },
   vendorContentLoaderBaseContainer: {

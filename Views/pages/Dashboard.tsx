@@ -146,7 +146,7 @@ function Dashboard({navigation}: any) {
       AsyncStorage.getItem(LOCALSTORAGE.ID).then(async id => {
         await pendingOrders(id)
           .then(res => {
-            console.log(`PENDING ORDERS ${JSON.stringify(res)}`);
+            // console.log(`PENDING ORDERS ${JSON.stringify(res)}`);
           })
           .catch(err => {
             console.log(JSON.stringify(err));

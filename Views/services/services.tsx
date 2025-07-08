@@ -74,3 +74,44 @@ export const getVendorList = async (role: any, id: any) => {
   );
   return response.data;
 };
+
+export const getVendorById = async (role: any, vendorId: any, id: any) => {
+  const response = await apiClient.get(
+    `${API_URLS.getVendorById}?role=${role}&id=${vendorId}&api_token=${id}`,
+  );
+  return response.data;
+};
+
+export const updateVendor = async (data: any) => {
+  const response = await apiClient.post(API_URLS.editVender, data);
+  return response.data;
+};
+
+export const createVendor = async (data: any) => {
+  const response = await apiClient.post(API_URLS.createVendor, data);
+  return response.data;
+};
+
+export const getSalesmanList = async (role: any, id: any) => {
+  const response = await apiClient.get(
+    `${API_URLS.salesmanList}?role=${role}&api_token=${id}`,
+  );
+  return response.data;
+};
+
+export const getSalesmanById = async (role: any, salesmanId: any, id: any) => {
+  const response = await apiClient.get(
+    `${API_URLS.getSalesmanById}?role=${role}&id=${salesmanId}&api_token=${id}`,
+  );
+  return response.data;
+};
+
+export const createSalesman = async (data: any) => {
+  const response = await apiClient.post(API_URLS.createSalesman, data);
+  return response.data;
+};
+
+export const updateSalesman = async (data: any) => {
+  const response = await apiClient.post(API_URLS.editSalesman, data);
+  return response.data;
+};

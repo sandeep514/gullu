@@ -11,168 +11,189 @@ import {
   useColorScheme,
   Pressable,
   View,
+  Touchable,
+  TouchableOpacity,
+  RefreshControl,
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-import {
-  h3,
-  height100,
-  height6,
-  height85,
-  height9,
-  primaryBackgroundColor,
-  primaryColor,
-  secondaryBackgroundColor,
-  textAlignCenter,
-  gulluColor,
-  primaryGulluLightBackgroundColor,
-  height8,
-  height83,
-  inputStyleBlack,
-} from '../assets/styles';
 import HeaderComponent from '../components/HeaderComponent';
-import FooterComponent from '../components/FooterComponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {get} from '../services/services';
+import {getSalesmanList} from '../services/services';
 import InputComponents from '../components/InputComponents';
+import COLOR from '../config/color';
+import CustomButton from '../components/CustomButton';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import ROUTES from '../config/routes';
+import DIMENSIONS from '../config/dimensions';
+import LOCALSTORAGE from '../config/localStorage';
+import Toast from 'react-native-toast-message';
 
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
-function SalesmanList({navigation}): JSX.Element {
-  const [activityIndicator, setActivityIndicator] = useState(false);
+function SalesmanList({navigation}: any): JSX.Element {
+  const [isLoading, setIsLoading] = useState(true);
   const [searchableData, setSearchableData] = useState([]);
+  const [search, setSearch] = useState('');
+  const [data, setData] = useState<any[]>([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const MaterialIconsIcon = Ionicons as unknown as React.ComponentType<any>;
 
-  const isDarkMode = useColorScheme() === 'dark';
-  const [DATA, SetData] = useState();
-  const [origianlData, SetOrigianlData] = useState([]);
-  useEffect(() => {}, []);
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
   useEffect(() => {
-    getSalesmanList();
-    console.log('ujk');
+    getSalesmanListData();
   }, []);
-  const getSalesmanList = () => {
-    setActivityIndicator(true);
 
-    AsyncStorage.getItem('id')
-      .then(token => {
-        let postedData = {role: 'salesman', api_token: token};
-        get('users/get', postedData)
-          .then(res => {
-            setActivityIndicator(false);
-
-            SetData(res.data.data.data);
-            SetOrigianlData(res.data.data.data);
-          })
-          .catch(err => {
-            setActivityIndicator(false);
-
-            // console.log(err)
+  useEffect(() => {
+    searchOrder(search);
+  }, [search]);
+  const getSalesmanListData = () => {
+    setIsLoading(true);
+    try {
+      AsyncStorage.getItem(LOCALSTORAGE.ID)
+        .then(async id => {
+          await getSalesmanList('salesman', id)
+            .then(res => {
+              if (res.data.status) {
+                setIsLoading(false);
+                setData(res.data.data);
+                setSearchableData(res.data.data);
+              } else {
+                Toast.show({
+                  type: 'error',
+                  text1: 'Error',
+                  text2: res.data.message,
+                });
+                setIsLoading(false);
+                setData([]);
+                setSearchableData([]);
+              }
+            })
+            .catch(err => {
+              setIsLoading(false);
+              Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'Something went wrong',
+              });
+            });
+        })
+        .catch(err => {
+          setIsLoading(false);
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: 'Something went wrong',
           });
-      })
-      .catch(err => {});
-  };
-  const searchOrder = searchableText => {
-    let newSearchableArray = [];
-    if (origianlData.length > 0) {
-      origianlData.filter(list => {
-        let searchableLowercase: any;
-
-        //search Vendor
-        let vendor = list?.name;
-        if (vendor != undefined) {
-          searchableLowercase = vendor.toLowerCase();
-          if (searchableLowercase.includes(searchableText.toLowerCase())) {
-            newSearchableArray.push(list);
-          }
-        }
+        });
+    } catch (error) {
+      setIsLoading(false);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Something went wrong',
       });
-      setSearchableData(newSearchableArray);
-      SetData(newSearchableArray);
     }
   };
+
+  const searchOrder = (search: any) => {
+    let newSearchableArray: any = [];
+    data.filter(list => {
+      let searchableLowercase: any;
+      let salesman: any = list?.name;
+      if (salesman != undefined) {
+        searchableLowercase = salesman.toLowerCase();
+        if (searchableLowercase.includes(search.toLowerCase())) {
+          newSearchableArray.push(list);
+        }
+      }
+    });
+    setSearchableData(newSearchableArray);
+  };
+
+  const onRefresh = () => {
+    setIsRefreshing(true);
+    getSalesmanListData();
+    setIsRefreshing(false);
+  };
+
   const Item = ({item}: any) => (
-    <Pressable
+    <TouchableOpacity
+      activeOpacity={0.9}
       onPress={() => {
-        navigation.push('salesmanEdit', {salesmanId: item.id});
+        navigation.push(ROUTES.salesmanEditScreen, {salesmanId: item.id});
       }}
-      style={styles.item}>
-      <Text style={[{fontSize: 14}, {color: gulluColor}]}>{item.name}</Text>
-      <Text style={[{fontSize: 14}, {color: gulluColor}]}>{item.phone}</Text>
-    </Pressable>
+      style={styles.salesmanListItemBaseContainer}>
+      <View style={styles.vendorListItemHeaderBaseContainer}>
+        <Text style={styles.vendorListItemHeaderText}>Name</Text>
+        <Text style={styles.vendorListItemContentText}>
+          {item.name || 'NA'}
+        </Text>
+      </View>
+      <View style={styles.vendorListItemContentBaseContainer}>
+        <Text style={styles.vendorListItemHeaderText}>Mobile</Text>
+        <Text style={styles.vendorListItemContentText}>
+          {item.phone || 'NA'}
+        </Text>
+      </View>
+    </TouchableOpacity>
   );
+
   return (
-    <SafeAreaView style={{backgroundColor: '#ededed'}}>
-      <StatusBar backgroundColor={gulluColor} />
-      <View style={[height100, primaryGulluLightBackgroundColor]}>
-        <View style={[{}, height100]}>
-          <View style={[{}, height8]}>
-            <HeaderComponent navigation={navigation} title="Salesman List" />
-          </View>
-          <View style={[{}, height83]}>
-            <View>
-              <InputComponents
-                placeholder="Search Order , Vendor , Salesman"
-                style={[{}, inputStyleBlack]}
-                inputValue={(value: any) => {
-                  searchOrder(value);
-                }}
-              />
+    <SafeAreaView style={styles.salesmanListBaseContainer}>
+      <View style={styles.salesmanListHeaderBaseContainer}>
+        <HeaderComponent />
+      </View>
+      <View style={styles.salesmanListContentBaseContainer}>
+        <View style={styles.salesmanListContentSearchContainer}>
+          <InputComponents
+            placeholder={'Search Salesman'}
+            backgroundColor={COLOR.whiteColor}
+            borderInclude={false}
+            value={search}
+            onChangeText={(text: any) => {
+              setSearch(text);
+            }}
+          />
+        </View>
+        <View style={styles.salesmanListContentButtonContainer}>
+          <CustomButton
+            IconComponent={MaterialIconsIcon}
+            iconName="add-outline"
+            iconColor={COLOR.baseColor}
+            radius={60}
+            backgroundColor={`${COLOR.whiteColor}`}
+            iconSize={30}
+            elevation={true}
+            onClick={() => {
+              navigation.push(ROUTES.salesmanCreateScreen);
+            }}
+          />
+        </View>
+        <View style={styles.salesmanListContentContainer}>
+          {isLoading ? (
+            <View style={styles.salesmanListLoaderContainer}>
+              <ActivityIndicator color={COLOR.baseColor} size={30} />
             </View>
-            {activityIndicator ? (
-              <ActivityIndicator
-                color={gulluColor}
-                size={20}></ActivityIndicator>
-            ) : (
-              <FlatList
-                data={DATA}
+          ) : (
+            <View style={styles.salesmanListContentContainer}>
+              <FlatList<{id: any}>
+                contentContainerStyle={styles.salesmanListContainer}
+                data={search ? searchableData : data}
                 renderItem={({item}) => <Item item={item} />}
                 keyExtractor={item => item.id}
                 showsVerticalScrollIndicator={false}
+                refreshControl={
+                  <RefreshControl
+                    onRefresh={onRefresh}
+                    refreshing={isRefreshing}
+                    colors={[COLOR.baseColor]}
+                    tintColor={COLOR.baseColor}
+                  />
+                }
               />
-            )}
-            <Pressable
-              onPress={() => {
-                navigation.push('SalesmanCreate');
-              }}
-              style={[
-                {
-                  backgroundColor: secondaryBackgroundColor,
-                  height: 70,
-                  width: 70,
-                  padding: 0,
-                  margin: 0,
-                  borderRadius: 100,
-                  right: 10,
-                  position: 'absolute',
-                  bottom: 0,
-                  borderColor: primaryColor,
-                  borderWidth: 5,
-                },
-              ]}>
-              <Text
-                style={[
-                  {fontSize: 50, padding: 0, margin: 0, top: -5},
-                  textAlignCenter,
-                ]}>
-                +
-              </Text>
-            </Pressable>
-          </View>
-
-          <View style={[{}, height9]}>
-            <FooterComponent navigation={navigation} />
-          </View>
+            </View>
+          )}
         </View>
       </View>
     </SafeAreaView>
@@ -180,16 +201,76 @@ function SalesmanList({navigation}): JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  salesmanListBaseContainer: {
     flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
   },
-  item: {
-    backgroundColor: '#fff',
-    padding: 10,
-    marginVertical: 4,
-    marginHorizontal: 16,
-    borderRadius: 10,
+  salesmanListHeaderBaseContainer: {
+    flex: 0.15,
+  },
+  salesmanListContentBaseContainer: {
+    flex: 1,
+  },
+  salesmanListContentSearchContainer: {
+    position: 'absolute',
+    padding: 20,
+    left: 0,
+    right: 0,
+    top: -50,
+    zIndex: 10,
+  },
+  salesmanListContentButtonContainer: {
+    position: 'absolute',
+    right: 20,
+    bottom: DIMENSIONS.height / 9,
+    zIndex: 10,
+  },
+  salesmanListContentContainer: {
+    flex: 1,
+  },
+  salesmanListContainer: {
+    paddingTop: 40,
+    paddingHorizontal: 20,
+    paddingBottom: 80,
+    gap: 10,
+  },
+  salesmanListLoaderContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  salesmanListItemBaseContainer: {
+    backgroundColor: COLOR.whiteColor,
+    padding: 15,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: `${COLOR.placeholderColor}44`,
+    elevation: 10,
+    shadowColor: COLOR.placeholderColor,
+    gap: 8,
+  },
+  vendorListItemHeaderBaseContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 8,
+  },
+  vendorListItemHeaderText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: COLOR.placeholderColor,
+    textTransform: 'capitalize',
+  },
+  vendorListItemContentBaseContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 8,
+  },
+  vendorListItemContentText: {
+    fontSize: 12,
+    color: COLOR.blackColor,
   },
 });
 

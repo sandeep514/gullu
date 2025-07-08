@@ -32,7 +32,7 @@ function InputComponents({
             borderColor: isFocused ? COLOR.baseColor : COLOR.placeholderColor,
             backgroundColor,
             borderWidth: borderInclude ? 1 : 0,
-            elevation: borderInclude ? 10 : 0,
+            elevation: borderInclude ? 0 : 10,
           },
         ]}>
         {Icon && Icon}
