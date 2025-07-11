@@ -14,6 +14,7 @@ import {
   Touchable,
   TouchableOpacity,
   RefreshControl,
+  KeyboardAvoidingView,
 } from 'react-native';
 
 import HeaderComponent from '../components/HeaderComponent';
@@ -38,7 +39,7 @@ function SalesmanList({navigation}: any): JSX.Element {
   const [search, setSearch] = useState('');
   const [data, setData] = useState<any[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const MaterialIconsIcon = Ionicons as unknown as React.ComponentType<any>;
+  const IoniconsIcon = Ionicons as unknown as React.ComponentType<any>;
 
   useEffect(() => {
     getSalesmanListData();
@@ -154,11 +155,18 @@ function SalesmanList({navigation}: any): JSX.Element {
             onChangeText={(text: any) => {
               setSearch(text);
             }}
+            Icon={
+              <IoniconsIcon
+                name={'search'}
+                size={20}
+                color={COLOR.placeholderColor}
+              />
+            }
           />
         </View>
         <View style={styles.salesmanListContentButtonContainer}>
           <CustomButton
-            IconComponent={MaterialIconsIcon}
+            IconComponent={IoniconsIcon}
             iconName="add-outline"
             iconColor={COLOR.baseColor}
             radius={60}

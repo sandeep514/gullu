@@ -36,7 +36,7 @@ import {
 import InputComponents from '../components/InputComponents';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
-import {get} from '../services/services';
+import {get, getOrderList} from '../services/services';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {imagePath} from '../services/Client';
 import {ActivityIndicator} from 'react-native';
@@ -219,14 +219,17 @@ function OrderList({navigation}): JSX.Element {
   useEffect(() => {
     SetSelectedOrderStatus('pending');
     AsyncStorage.getItem('id')
-      .then(token => {
+      .then(async token => {
         setLoader(true);
         let postedData = {role: 'salesman', api_token: token};
-        get('/orders/list', postedData)
+        console.log(postedData);
+        // get('/orders/list', postedData)
+        await getOrderList('salesman', token)
           .then(res => {
-            let pending = res.data.data.data['pending'];
-            let ready = res.data.data.data['ready'];
-            let delivered = res.data.data.data['delivered'];
+            console.log(JSON.stringify(res));
+            let pending = res.data.data['pending'];
+            let ready = res.data.data['ready'];
+            let delivered = res.data.data['delivered'];
 
             setPending(pending);
             setReady(ready);
@@ -246,7 +249,7 @@ function OrderList({navigation}): JSX.Element {
           })
           .catch(err => {
             setLoader(false);
-            // console.log(err)
+            console.log(JSON.stringify(err));
           });
       })
       .catch(err => {
@@ -435,7 +438,7 @@ function OrderList({navigation}): JSX.Element {
               <ActivityIndicator size={30} color={gulluColor} />
             ) : (
               <View>
-                <View style={[{}, height15]}>
+                <View style={[{padding: 20}]}>
                   {/* pending
 									ready
 										delivered */}
@@ -607,9 +610,9 @@ function OrderList({navigation}): JSX.Element {
               </View>
             )}
           </View>
-          <View style={[{}, height9]}>
+          {/* <View style={[{}, height9]}>
             <FooterComponent navigation={navigation} />
-          </View>
+          </View> */}
         </View>
       </View>
     </SafeAreaView>

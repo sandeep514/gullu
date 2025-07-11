@@ -115,3 +115,10 @@ export const updateSalesman = async (data: any) => {
   const response = await apiClient.post(API_URLS.editSalesman, data);
   return response.data;
 };
+
+export const getOrderList = async (role: any, id: any) => {
+  const response = await apiClient.get(
+    `${API_URLS.getOrderList}?role=${role}&api_token=${id}`,
+  );
+  return response.data;
+};

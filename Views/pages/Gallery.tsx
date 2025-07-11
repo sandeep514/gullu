@@ -168,7 +168,7 @@ function Gallery({navigation}: any): JSX.Element {
         }}
         style={styles.galleryCardItemBaseContainer}>
         <View style={styles.galleryCardItemImageContainer}>
-          {!imageLink ? (
+          {imageLink ? (
             <Image
               source={{uri: imageLink}}
               resizeMode="center"

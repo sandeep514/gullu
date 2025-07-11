@@ -9,6 +9,8 @@ const COLOR = {
   lightGreyColor: '#f5f5f5',
   transparentColor: 'transparent',
   redColor: '#FF1C1C',
+  yellowColor: '#FFAE00',
+  greenColor: '#00B55A',
 };
 
 export default COLOR;

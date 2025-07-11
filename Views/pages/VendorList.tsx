@@ -74,7 +74,7 @@ function VendorList({navigation}: any): JSX.Element {
   const [searchableData, setSearchableData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const MaterialIconsIcon = Ionicons as unknown as React.ComponentType<any>;
+  const IoniconsIcon = Ionicons as unknown as React.ComponentType<any>;
 
   useEffect(() => {
     getVendorListData();
@@ -186,11 +186,18 @@ function VendorList({navigation}: any): JSX.Element {
             onChangeText={(text: any) => {
               setSearch(text);
             }}
+            Icon={
+              <IoniconsIcon
+                name={'search'}
+                size={20}
+                color={COLOR.placeholderColor}
+              />
+            }
           />
         </View>
         <View style={styles.vendorContentNewVendorButtonBaseContainer}>
           <CustomButton
-            IconComponent={MaterialIconsIcon}
+            IconComponent={IoniconsIcon}
             iconName="add-outline"
             iconColor={COLOR.baseColor}
             radius={60}

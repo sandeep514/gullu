@@ -10,4 +10,5 @@ export const API_URLS = {
   getSalesmanById: '/users/get',
   createSalesman: '/users/create',
   editSalesman: '/users/edit',
+  getOrderList: '/orders/list',
 };

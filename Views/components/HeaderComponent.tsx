@@ -112,7 +112,7 @@ function HeaderComponent({navigation, isHomeScreen}: any): JSX.Element {
             {networkConnection === 'cellular' ? (
               <MaterialIconsIcon
                 name="signal-cellular-connected-no-internet-4-bar"
-                size={20}
+                size={DIMENSIONS.width / 25}
                 color={COLOR.whiteColor}
               />
             ) : (
@@ -157,68 +157,6 @@ function HeaderComponent({navigation, isHomeScreen}: any): JSX.Element {
         )}
       </View>
     </View>
-    // <View style={{}}>
-    //   <View
-    //     style={[
-    //       {
-    //         backgroundColor:
-    //           networkConnection == 'cellular' ? 'red' : 'lightgreen',
-    //         width: '100%',
-    //       },
-    //       justifyContentCenter,
-    //       flexDirectionRow,
-    //     ]}>
-    //     {/* <Text style={[{color: '#fff'},paddingVertical1]}>{(networkConnection == 'cellular')? "Mobile Data: " : 'Wifi: '} </Text> */}
-    //     <Text
-    //       style={[
-    //         {color: networkConnection == 'cellular' ? '#fff' : gulluColor},
-    //         paddingVertical1,
-    //         fontWeightBold,
-    //       ]}>
-    //       {networkConnection == 'cellular'
-    //         ? 'Low internet quality'
-    //         : 'Good internet quality'}{' '}
-    //       - {networkConnection == 'cellular' ? 'Mobile Data' : 'Wifi'}
-    //     </Text>
-    //   </View>
-
-    //   <View style={[{}, paddingHorizontal20, paddingVertical10]}>
-    //     <View style={[{flexDirection: 'row', justifyContent: 'space-between'}]}>
-    //       <Pressable
-    //         style={{paddingHorizontal: 10}}
-    //         onPress={() => {
-    //           navigation.goBack();
-    //         }}>
-    //         <Image
-    //           source={require('../assets/images/back-arrow-1767523-1502427.png')}
-    //           style={{height: 20, width: 15}}
-    //         />
-    //       </Pressable>
-    //       <Text
-    //         style={{
-    //           color: gulluColor,
-    //           fontSize: 17,
-    //           textTransform: 'capitalize',
-    //         }}>
-    //         {title}
-    //       </Text>
-    //       {role != undefined && role == '1' ? (
-    //         <Pressable
-    //           style={{}}
-    //           onPress={() => {
-    //             navigation.push('Gallery');
-    //           }}>
-    //           <Image
-    //             source={require('../assets/images/gallery.png')}
-    //             style={{height: 35, width: 35}}
-    //           />
-    //         </Pressable>
-    //       ) : (
-    //         <View></View>
-    //       )}
-    //     </View>
-    //   </View>
-    // </View>
   );
 }
 
@@ -273,6 +211,7 @@ const styles = StyleSheet.create({
   headerContentUserBaseContainer: {
     flex: 1,
     flexDirection: 'row',
+    marginBottom: 20,
   },
   headerContentUserDetailsBaseContainer: {
     flex: 1,
