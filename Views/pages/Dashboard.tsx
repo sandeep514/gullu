@@ -60,6 +60,8 @@ import CustomTab from '../components/CustomTab';
 import Toast from 'react-native-toast-message';
 import CustomButton from '../components/CustomButton';
 import SmallButton from '../components/SmallButton';
+import DIMENSIONS from '../config/dimensions';
+import ROUTES from '../config/routes';
 
 function Dashboard({navigation}: any) {
   const [loader, setLoader] = useState(false);
@@ -117,8 +119,7 @@ function Dashboard({navigation}: any) {
   }, []);
 
   const wait = (timeout: any) => {
-    // Defined the timeout function for testing purpose
-    return new Promise(resolve => setTimeout(resolve, timeout));
+    return new Promise<void>(resolve => setTimeout(resolve, timeout));
   };
 
   const shareOnWhatsapp = (item: any) => {
@@ -182,25 +183,17 @@ function Dashboard({navigation}: any) {
 
   useEffect(() => {
     if (selectedTab == 1) {
-      setIsLoading(true);
       setFilterPendingOrders(pending);
-      setIsLoading(false);
     } else if (selectedTab == 2) {
-      setIsLoading(true);
       setFilterPendingOrders(pending.filter(item => item.pending_days < 10));
-      setIsLoading(false);
     } else if (selectedTab == 3) {
-      setIsLoading(true);
       setFilterPendingOrders(
         pending.filter(
           item => item?.pending_days <= 15 && item.pending_days >= 10,
         ),
       );
-      setIsLoading(false);
     } else if (selectedTab == 4) {
-      setIsLoading(true);
       setFilterPendingOrders(pending.filter(item => item?.pending_days > 15));
-      setIsLoading(false);
     }
   }, [selectedTab]);
 
@@ -317,10 +310,17 @@ function Dashboard({navigation}: any) {
     return data.result.full_short_link;
   };
 
+  const sliceString = (value: string) => {
+    return value.length > 15 ? `${value.slice(0, 16)}...` : value;
+  };
+
   const Item = ({item}: any) => {
     return (
       <TouchableOpacity
         style={styles.dashboardListItemBaseContainer}
+        onPress={() => {
+          navigation.push(ROUTES.orderEditScreen, {orderData: item});
+        }}
         activeOpacity={0.9}>
         <View style={styles.dashboardListItemContentBaseContainer}>
           <View style={styles.dashboardListItemContentImageBaseContainer}>
@@ -424,7 +424,7 @@ function Dashboard({navigation}: any) {
                     styles.dashboardListItemContentImageDetailContentText,
                     {color: COLOR.blackColor},
                   ]}>
-                  {item.vendor.name ?? 'NA'}
+                  {sliceString(item.vendor.name) ?? 'NA'}
                 </Text>
               </View>
             </View>
@@ -510,6 +510,7 @@ function Dashboard({navigation}: any) {
       </TouchableOpacity>
     );
   };
+
   return (
     <SafeAreaView style={styles.dashboardBaseContainer}>
       <View style={styles.dashboardHeaderBaseContainer}>
@@ -534,27 +535,31 @@ function Dashboard({navigation}: any) {
             }}
           />
         </View>
-        <View style={styles.dashboardContentSelectTabBaseContainer}>
-          <CustomTab
-            data={tabData}
-            selected={selectedTab}
-            onPress={(index: number) => {
-              setSelectedTab(index);
-            }}
-          />
-        </View>
-        <View style={styles.dashboardContentTitleHeaderBaseContainer}>
-          <View style={styles.dashboardContentTitleHeaderContainer}>
-            <Text style={styles.dashboardContentTitleText}>{`${
-              tabData.filter(item => item.value === selectedTab)[0].title
-            } Pending Orders`}</Text>
-          </View>
-          <View style={styles.dashboardContentTitleCountContainer}>
-            <Text style={styles.dashboardContentTitleCountText}>{`(${
-              search ? searchableData.length : filterPendingOrders.length
-            })`}</Text>
-          </View>
-        </View>
+        {search == '' && (
+          <>
+            <View style={styles.dashboardContentSelectTabBaseContainer}>
+              <CustomTab
+                data={tabData}
+                selected={selectedTab}
+                onPress={(index: number) => {
+                  setSelectedTab(index);
+                }}
+              />
+            </View>
+            <View style={styles.dashboardContentTitleHeaderBaseContainer}>
+              <View style={styles.dashboardContentTitleHeaderContainer}>
+                <Text style={styles.dashboardContentTitleText}>{`${
+                  tabData.filter(item => item.value === selectedTab)[0].title
+                } Pending Orders`}</Text>
+              </View>
+              <View style={styles.dashboardContentTitleCountContainer}>
+                <Text style={styles.dashboardContentTitleCountText}>{`(${
+                  search ? searchableData.length : filterPendingOrders.length
+                })`}</Text>
+              </View>
+            </View>
+          </>
+        )}
         <View style={styles.dashboardContentListContainer}>
           {isLoading ? (
             <View style={styles.dashboardContentLoaderContainer}>
@@ -579,6 +584,20 @@ function Dashboard({navigation}: any) {
           )}
         </View>
       </View>
+      <View style={styles.dashboardListContentButtonContainer}>
+        <CustomButton
+          IconComponent={IoniconsIcon}
+          iconName="add-outline"
+          iconColor={COLOR.baseColor}
+          radius={60}
+          backgroundColor={`${COLOR.whiteColor}`}
+          iconSize={30}
+          elevation={true}
+          onClick={() => {
+            navigation.push(ROUTES.orderCreateScreen);
+          }}
+        />
+      </View>
     </SafeAreaView>
   );
 }
@@ -594,6 +613,12 @@ const styles = StyleSheet.create({
   dashboardContentBaseContainer: {
     flex: 1,
     gap: 20,
+  },
+  dashboardListContentButtonContainer: {
+    position: 'absolute',
+    right: 20,
+    bottom: DIMENSIONS.height / 9,
+    zIndex: 10,
   },
   dashboardContentSearchBaseContainer: {
     position: 'absolute',

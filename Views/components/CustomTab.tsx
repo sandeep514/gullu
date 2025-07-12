@@ -23,10 +23,7 @@ const CustomTab = ({
   onPress?: any;
 }) => {
   return (
-    <ScrollView
-      horizontal={true}
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={styles.customTabBaseContainer}>
+    <View style={styles.customTabBaseContainer}>
       {data &&
         data.map((item, index) => {
           return (
@@ -59,7 +56,7 @@ const CustomTab = ({
             </TouchableOpacity>
           );
         })}
-    </ScrollView>
+    </View>
   );
 };
 
@@ -68,7 +65,7 @@ export default CustomTab;
 const styles = StyleSheet.create({
   customTabBaseContainer: {
     flexDirection: 'row',
-    // justifyContent: 'space-between',
+    justifyContent: 'space-between',
     gap: 20,
   },
   customTabItemBaseContainer: {

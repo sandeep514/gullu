@@ -1,4 +1,4 @@
-import React, {memo, useEffect, useState} from 'react';
+import React, {memo, useEffect, useMemo, useState} from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -46,18 +46,27 @@ import FooterComponent from '../components/FooterComponent';
 import {readFile} from 'react-native-fs';
 import Video from 'react-native-video';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {get, showToast} from '../services/services';
+import {
+  get,
+  getSalesmanList,
+  getVendorList,
+  showToast,
+} from '../services/services';
 import DatePicker from '@react-native-community/datetimepicker';
 import NetInfo from '@react-native-community/netinfo';
 import {S3} from 'aws-sdk';
 import {RNS3} from 'react-native-s3-upload';
 
 import {launchImageLibrary} from 'react-native-image-picker';
+import NavBarComponent from '../components/NavBarComponent';
+import COLOR from '../config/color';
+import RadioGroup, {RadioGroupProps} from 'react-native-radio-buttons-group';
 
 function OrderCreate({navigation}): JSX.Element {
   let salesmanData = {};
   const [activityIndicator, setActivityIndicator] = useState(false);
   const [order_number, setOrderNumber] = useState('');
+  const [barcode, setBarcode] = useState('');
   const [vendor, setVendor] = useState('');
   const [salesman, setSalesman] = useState('');
   const [color, setColor] = useState('');
@@ -77,6 +86,10 @@ function OrderCreate({navigation}): JSX.Element {
   const [productPhotoData, setPrductPhotoData] = useState({});
   const [productMeasurementData, setPrductMeasurementData] = useState({});
   const [productVideoData, setProductVideoData] = useState({});
+  const [productOriginalMeasurement, setProductOriginalMeasurement] = useState(
+    {},
+  );
+  const [productSlipPhoto, setProductSlipPhoto] = useState({});
 
   const [vdCode, setVDcode] = useState('');
   const [designNumber, setDesignNumber] = useState('');
@@ -97,6 +110,7 @@ function OrderCreate({navigation}): JSX.Element {
   const [showReadyDate, setshowReadyDate] = useState(false);
   const [showBufferReadyDate, setShowBufferReadyDate] = useState(false);
   const [showDeliveryDate, setShowDeliveryDate] = useState(false);
+  const [showVendorDate, setShowVendorDate] = useState(false);
   const [generatingMessage, setGeneratingMessage] = useState(
     'Generating new order',
   );
@@ -110,6 +124,7 @@ function OrderCreate({navigation}): JSX.Element {
 
   const [readyDate, SetReadyDate] = useState();
   const [deliveryDate, SetDeliveryDate] = useState();
+  const [vendorDate, SetVendorDate] = useState();
   const [bufferReadyDate, SetBufferReadyDate] = useState();
 
   const [percentage, setPercentage] = useState(0);
@@ -120,9 +135,67 @@ function OrderCreate({navigation}): JSX.Element {
   const [S3ProductImageUpload, setS3ProductImageUpload] = useState(false);
   const [S3ProductMeasurementUpload, setS3ProductMeasurementUpload] =
     useState(false);
+  const [
+    S3ProductOriginalMeasurementUpload,
+    setS3ProductOriginalMeasurementUpload,
+  ] = useState(false);
+  const [S3ProductSlipUpload, setS3ProductSlipUpload] = useState(false);
   const [S3ProductVideoUpload, setS3ProductVideoUpload] = useState(false);
   const [allAttachmentUpload, setAllAttachmentUpload] = useState(false);
   const [uploadingAttachment, setuploadingAttachment] = useState(false);
+
+  const [sampleCholi, setSampleCholi] = useState<String | undefined>();
+  const [pickup, setPickup] = useState<String | undefined>('');
+  const [customerName, setCustomerName] = useState('');
+  const [mobile, setMobile] = useState('');
+  const [address, setAddress] = useState('');
+  const [city, setCity] = useState('');
+
+  const [orderSheetToVendor, setOrderSheetToVendor] = useState<
+    String | undefined
+  >();
+
+  const radioButtonsSampleCholi = useMemo(
+    () => [
+      {
+        id: 'Yes',
+        label: 'Yes',
+      },
+      {
+        id: 'No',
+        label: 'No',
+      },
+    ],
+    [],
+  );
+
+  const radioButtonsPickup = useMemo(
+    () => [
+      {
+        id: 'Self Pickup',
+        label: 'Self Pickup',
+      },
+      {
+        id: 'No Trial + Shipping',
+        label: 'No Trial + Shipping',
+      },
+    ],
+    [],
+  );
+
+  const radioButtonsOrderSheetToVendor = useMemo(
+    () => [
+      {
+        id: 'Yes',
+        label: 'Yes',
+      },
+      {
+        id: 'No',
+        label: 'No',
+      },
+    ],
+    [],
+  );
 
   const videoPlayer = React.useRef();
   useEffect(() => {
@@ -178,14 +251,14 @@ function OrderCreate({navigation}): JSX.Element {
       // });
     });
   };
-  async function getUriToBase64(uri) {
+  async function getUriToBase64(uri: any) {
     const base64String = await readFile(uri, 'base64');
     return base64String;
   }
   useEffect(() => {
     getItemList();
-    getVendorList();
-    getSalesmanList();
+    getVendorListData();
+    getSalesmanListData();
     setshowReadyDate(false);
     setShowDeliveryDate(false);
 
@@ -215,6 +288,8 @@ function OrderCreate({navigation}): JSX.Element {
     let size1 = 0;
     let size2 = 0;
     let size3 = 0;
+    let size4 = 0;
+    let size5 = 0;
     if (productPhotoData.length > 0) {
       size1 = productPhotoData[0].size;
     }
@@ -224,8 +299,14 @@ function OrderCreate({navigation}): JSX.Element {
     if (productVideoData.length > 0) {
       size3 = productVideoData[0].fileSize;
     }
+    if (productOriginalMeasurement.length > 0) {
+      size4 = productOriginalMeasurement[0].size;
+    }
+    if (productSlipPhoto.length > 0) {
+      size5 = productSlipPhoto[0].size;
+    }
 
-    let totalAttachmentSize = (size1 + size2 + size3) / 1000000;
+    let totalAttachmentSize = (size1 + size2 + size3 + size4 + size5) / 1000000;
     setTotalAttachmentSize(totalAttachmentSize);
     let mobileDataSize = 1;
     let wifiDataSize = 6;
@@ -279,6 +360,14 @@ function OrderCreate({navigation}): JSX.Element {
           '-' +
           new Date(deliveryDate).getDate()
         : undefined;
+    var dataVendorDate =
+      vendorDate != undefined
+        ? new Date(vendorDate).getFullYear() +
+          '-' +
+          (new Date(vendorDate).getMonth() + 1) +
+          '-' +
+          new Date(vendorDate).getDate()
+        : undefined;
 
     var dataProductPhotoData =
       Object.values(productPhotoData[0].name).length > 0
@@ -287,6 +376,14 @@ function OrderCreate({navigation}): JSX.Element {
     var dataProductMeasurementData =
       Object.values(productMeasurementData[0].name).length > 0
         ? productMeasurementData[0].name
+        : '';
+    var dataProductOriginalMeasurement =
+      Object.values(productOriginalMeasurement[0].name).length > 0
+        ? productOriginalMeasurement[0].name
+        : '';
+    var dataProductUploadSlip =
+      Object.values(productSlipPhoto[0].name).length > 0
+        ? productSlipPhoto[0].name
         : '';
     var dataProductVideoData =
       Object.values(productVideoData).length > 0
@@ -328,10 +425,26 @@ function OrderCreate({navigation}): JSX.Element {
       data.append('buffered_ready_date', dataBufferReadyDate);
       data.append('delivery_date', dataDeliveryDate);
       data.append('orderedBy', apitoken);
+      data.append('barcode', barcode);
+      data.append('vendor_date', dataVendorDate);
+      data.append('pickup_shipping', pickup);
+      data.append('order_sheet_to_vendor', orderSheetToVendor == 'Yes' ? 1 : 0);
+      data.append('sample_choli', sampleCholi == 'Yes' ? 1 : 0);
+      data.append('customer_name', customerName);
+      data.append('customer_mobile', mobile);
+      data.append('customer_address', address);
+      data.append('customer_city', city);
       // Attach file
       data.append('product_photo', dataProductPhotoData);
       data.append('product_measurement', dataProductMeasurementData);
-      data.append('product_video', dataProductVideoData);
+      if (dataProductVideoData != '') {
+        data.append('product_video', dataProductVideoData);
+      }
+      data.append(
+        'product_original_measurement',
+        dataProductOriginalMeasurement,
+      );
+      data.append('product_slip_number', dataProductUploadSlip);
 
       let ress = await fetch('http://3.143.116.199/public/api/orders/create', {
         method: 'POST',
@@ -340,11 +453,15 @@ function OrderCreate({navigation}): JSX.Element {
           'Content-Type': 'multipart/form-data; ',
         },
       });
-      console.log('i am here');
-      let response = await ress.json();
+      console.log('i am here ', JSON.stringify(ress));
+      let response = await ress
+        .json()
+        .then(res => console.log(JSON.stringify(res)))
+        .catch(err => console.log(JSON.stringify(err)));
       console.log('response');
       console.log(response);
       if (response.data.status == true || response.data.status == 'true') {
+        console.log('------> order created');
         defaultTimeInterval = 5;
         interval = setInterval(function () {
           if (current < 98) {
@@ -520,14 +637,15 @@ function OrderCreate({navigation}): JSX.Element {
       })
       .catch(err => {});
   };
-  const getVendorList = () => {
+  const getVendorListData = () => {
     AsyncStorage.getItem('id')
-      .then(token => {
+      .then(async token => {
         let postedData = {role: 'vendor', api_token: token};
-        get('users/get', postedData)
+        // get('users/get', postedData)
+        await getVendorList('vendor', token)
           .then(res => {
-            SetVendorList(res.data.data.data);
-            SetVendorListAll(res.data.data.data);
+            SetVendorList(res.data.data);
+            SetVendorListAll(res.data.data);
             // console.log(res.data.data.data);
           })
           .catch(err => {
@@ -536,14 +654,15 @@ function OrderCreate({navigation}): JSX.Element {
       })
       .catch(err => {});
   };
-  const getSalesmanList = () => {
+  const getSalesmanListData = () => {
     AsyncStorage.getItem('id')
-      .then(token => {
+      .then(async token => {
         let postedData = {role: 'salesman', api_token: token};
-        get('users/get', postedData)
+        // get('users/get', postedData)
+        await getSalesmanList('salesman', token)
           .then(res => {
-            SetSalesmanList(res.data.data.data);
-            SetSalesmanListAll(res.data.data.data);
+            SetSalesmanList(res.data.data);
+            SetSalesmanListAll(res.data.data);
           })
           .catch(err => {
             // console.log(err)
@@ -564,6 +683,7 @@ function OrderCreate({navigation}): JSX.Element {
       throw err;
     }
   };
+
   const isDarkMode = useColorScheme() === 'dark';
   useEffect(() => {}, []);
   const backgroundStyle = {
@@ -642,15 +762,25 @@ function OrderCreate({navigation}): JSX.Element {
     setshowReadyDate(true);
     setShowDeliveryDate(false);
     setShowBufferReadyDate(false);
+    setShowVendorDate(false);
   };
   const openBufferReadyDate = () => {
     setshowReadyDate(false);
     setShowDeliveryDate(false);
     setShowBufferReadyDate(true);
+    setShowVendorDate(false);
   };
   const openDeliveryDate = () => {
     setshowReadyDate(false);
     setShowDeliveryDate(true);
+    setShowBufferReadyDate(false);
+    setShowVendorDate(false);
+  };
+
+  const openVendorData = () => {
+    setShowVendorDate(true);
+    setshowReadyDate(false);
+    setShowDeliveryDate(false);
     setShowBufferReadyDate(false);
   };
   const searchItem = searchedValue => {
@@ -752,7 +882,6 @@ function OrderCreate({navigation}): JSX.Element {
         throw new Error('Failed to upload image to S3');
       } else {
         setuploadingAttachment(false);
-
         if (variant == 'productImage') {
           setS3ProductImageUpload(true);
         }
@@ -761,6 +890,12 @@ function OrderCreate({navigation}): JSX.Element {
         }
         if (variant == 'productVideo') {
           setS3ProductVideoUpload(true);
+        }
+        if (variant == 'Product Original Measurement') {
+          setS3ProductOriginalMeasurementUpload(true);
+        }
+        if (variant == 'Product Slip Number') {
+          setS3ProductSlipUpload(true);
         }
       }
 
@@ -857,787 +992,1041 @@ function OrderCreate({navigation}): JSX.Element {
   };
 
   return (
-    <SafeAreaView style={{backgroundColor: '#ededed'}}>
-      <StatusBar backgroundColor={gulluColor} />
-      <View style={[height100, primaryGulluLightBackgroundColor]}>
-        <View style={[{}, height100]}>
-          {activityIndicator ? (
-            <View style={{zIndex: 99999}}>
-              <View
-                style={[
-                  {
-                    position: 'absolute',
-                    top: 0,
-                    backgroundColor: gulluColor,
-                    left: 0,
-                    width: '100%',
-                    zIndex: 9999999,
-                    opacity: 0.8,
-                  },
-                  screenheight,
-                  justifyContentCenter,
-                ]}>
-                <Text style={[h4, {textAlign: 'center', color: '#fff'}]}>
-                  You are on {networkType}
-                </Text>
-                <Text style={[h4, {textAlign: 'center', color: '#fff'}]}>
-                  Order attachment size is {totalAttachmentSize.toFixed(2)} MB
-                </Text>
-                {/* <Text>Uploading speed {currentUploadingSpeed}</Text> */}
-                <View style={{paddingVertical: 10}}></View>
-                <ActivityIndicator color="#fff" size={40}></ActivityIndicator>
-                <Text style={[h4, {textAlign: 'center', color: '#fff'}]}>
-                  {generatingMessage}...
-                </Text>
+    <SafeAreaView style={styles.orderCreateBaseContainer}>
+      <View style={styles.orderCreateHeaderBaseContainer}>
+        <HeaderComponent />
+      </View>
+      <View style={styles.orderCreateNavbarContainer}>
+        <NavBarComponent
+          title="Create Order"
+          titleColor={COLOR.baseColor}
+          navigation={navigation}
+        />
+      </View>
+      <View style={styles.orderCreateContentContainer}>
+        <ScrollView
+          contentContainerStyle={styles.orderCreateContentListContainer}>
+          <InputComponents
+            placeholder="Order Number"
+            onChangeText={(value: any) => {
+              setOrderNumber(value);
+            }}
+            style={inputStyleBlack}
+          />
+          <InputComponents
+            placeholder="Barcode"
+            value={barcode}
+            onChangeText={(value: any) => {
+              setBarcode(value);
+            }}
+            style={inputStyleBlack}
+          />
+
+          {/* <InputComponents placeholder="Select Vendor" onChangeText={(value:any) => { setVendor(value) }} style={inputStyleBlack} />
+    					<InputComponents placeholder="Select Salesman" onChangeText={(value:any) => { setSalesman(value) }} style={inputStyleBlack} /> */}
+          <InputComponents
+            placeholder="VD Code"
+            onChangeText={(value: any) => {
+              setVDcode(value);
+            }}
+            style={inputStyleBlack}
+          />
+          <InputComponents
+            placeholder="Color"
+            onChangeText={(value: any) => {
+              setColor(value);
+            }}
+            style={inputStyleBlack}
+          />
+
+          <InputComponents
+            placeholder="Design Number"
+            onChangeText={(value: any) => {
+              setDesignNumber(value);
+            }}
+            style={inputStyleBlack}
+          />
+
+          {/* <InputComponents placeholder="Item" onChangeText={(value:any) => { setItem(value) }} style={inputStyleBlack} /> */}
+
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisibleItem}
+            onRequestClose={() => {
+              // Alert.alert('Modal has been closed.');
+              setModalVisibleItem(!modalVisibleItem);
+            }}>
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <View style={{paddingBottom: 10}}>
+                  <Text style={{color: COLOR.whiteColor}}>Select Item</Text>
+                </View>
+                <View style={{width: '100%'}}>
+                  <InputComponents
+                    placeholder="Search Item"
+                    onChangeText={(value: any) => {
+                      searchItem(value);
+                    }}
+                    style={inputStyleBlack}
+                  />
+                </View>
+                <FlatList
+                  data={ItemList}
+                  renderItem={({item}) => {
+                    return (
+                      <View>
+                        <Item item={item} />
+                      </View>
+                    );
+                  }}
+                  keyExtractor={item => item.id}
+                  showsVerticalScrollIndicator={false}
+                />
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => setModalVisibleItem(!modalVisibleItem)}>
+                  <Text style={styles.textStyle}>Close</Text>
+                </Pressable>
               </View>
             </View>
-          ) : null}
-          {uploadingAttachment ? (
-            <View style={{zIndex: 99999}}>
-              <View
-                style={[
-                  {
-                    position: 'absolute',
-                    top: 0,
-                    backgroundColor: gulluColor,
-                    left: 0,
-                    width: '100%',
-                    zIndex: 9999999,
-                    opacity: 0.8,
-                  },
-                  screenheight,
-                  justifyContentCenter,
-                ]}>
-                <Text style={[h4, {textAlign: 'center', color: '#fff'}]}>
-                  You are on {networkType}
-                </Text>
-                <Text style={[h4, {textAlign: 'center', color: '#fff'}]}>
-                  Uploading attachment to server...
-                </Text>
-                {/* <Text>Uploading speed {currentUploadingSpeed}</Text> */}
-                <View style={{paddingVertical: 10}}></View>
-                <ActivityIndicator color="#fff" size={40}></ActivityIndicator>
-                {/* <Text style={[h4,{textAlign: 'center',color: '#fff'}]}>{generatingMessage}...</Text> */}
+          </Modal>
+
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisibleVendor}
+            onRequestClose={() => {
+              // Alert.alert('Modal has been closed.');
+              setModalVisibleVendor(!modalVisibleVendor);
+            }}>
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <View style={{paddingBottom: 10}}>
+                  <Text>Select Vendor</Text>
+                </View>
+                <View style={{width: '100%'}}>
+                  <InputComponents
+                    placeholder="Search Vendor"
+                    onChangeText={(value: any) => {
+                      searchVendor(value);
+                    }}
+                    style={inputStyleBlack}
+                  />
+                </View>
+                <FlatList
+                  data={vendorList}
+                  renderItem={({item}) => {
+                    return (
+                      <View>
+                        <VendorItem item={item} />
+                      </View>
+                    );
+                  }}
+                  keyExtractor={item => item.id}
+                  showsVerticalScrollIndicator={false}
+                />
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => setModalVisibleVendor(!modalVisibleVendor)}>
+                  <Text style={styles.textStyle}>Close</Text>
+                </Pressable>
               </View>
+            </View>
+          </Modal>
+
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisibleSalesman}
+            onRequestClose={() => {
+              // Alert.alert('Modal has been closed.');
+              setModalVisibleSalesman(!modalVisibleSalesman);
+            }}>
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <View style={{paddingBottom: 10}}>
+                  <Text>Select Salesman</Text>
+                </View>
+                <View style={{width: '100%'}}>
+                  <InputComponents
+                    placeholder="Search Vendor"
+                    onChangeText={(value: any) => {
+                      searchSalesman(value);
+                    }}
+                    style={inputStyleBlack}
+                  />
+                </View>
+                <FlatList
+                  data={salesmanList}
+                  renderItem={({item}) => <SalesmanListItem item={item} />}
+                  keyExtractor={item => item.id}
+                  showsVerticalScrollIndicator={false}
+                />
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() =>
+                    setModalVisibleSalesman(!modalVisibleSalesman)
+                  }>
+                  <Text style={styles.textStyle}>Close</Text>
+                </Pressable>
+              </View>
+            </View>
+          </Modal>
+          <View style={{paddingHorizontal: 20, paddingVertical: 10}}>
+            <View style={{flexDirection: 'row'}}>
+              <Pressable
+                style={{
+                  backgroundColor: gulluColor,
+                  padding: 20,
+                  borderRadius: 10,
+                  width: '50%',
+                  marginBottom: 10,
+                }}
+                onPress={() => setModalVisibleItem(true)}>
+                <Text style={{color: COLOR.whiteColor, textAlign: 'center'}}>
+                  Select Item
+                </Text>
+              </Pressable>
+
+              <Text
+                style={[
+                  {paddingVertical: 16, textTransform: 'capitalize'},
+                  h4,
+                  marginLeft10,
+                  {color: gulluColor},
+                ]}>
+                {selectedItemName}
+              </Text>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <Pressable
+                style={{
+                  backgroundColor: gulluColor,
+                  padding: 20,
+                  borderRadius: 10,
+                  width: '50%',
+                  marginBottom: 10,
+                }}
+                onPress={() => setModalVisibleVendor(true)}>
+                <Text style={{color: COLOR.whiteColor, textAlign: 'center'}}>
+                  Select Vendor
+                </Text>
+              </Pressable>
+
+              <Text
+                style={[
+                  {paddingVertical: 16, textTransform: 'capitalize'},
+                  h4,
+                  marginLeft10,
+                  {color: gulluColor},
+                ]}>
+                {selectedVendorName}
+              </Text>
+            </View>
+
+            <View style={{flexDirection: 'row'}}>
+              <Pressable
+                style={{
+                  backgroundColor: gulluColor,
+                  padding: 20,
+                  borderRadius: 10,
+                  width: '50%',
+                }}
+                onPress={() => setModalVisibleSalesman(true)}>
+                <Text style={{color: COLOR.whiteColor, textAlign: 'center'}}>
+                  Select Salesman
+                </Text>
+              </Pressable>
+              <Text
+                style={[
+                  {paddingVertical: 16, textTransform: 'capitalize'},
+                  h4,
+                  marginLeft10,
+                  {color: gulluColor},
+                ]}>
+                {selectedSalesmanName}
+              </Text>
+            </View>
+          </View>
+
+          {showReadyDate ? (
+            <View>
+              <DatePicker
+                style={{width: 200}}
+                date={getAddedDate(3)}
+                value={getAddedDate(3)}
+                mode="date"
+                placeholder="select date"
+                format="YYYY-MM-DD"
+                minDate={new Date()}
+                maxDate="2050-06-01"
+                confirmBtnText="Confirm"
+                cancelBtnText="Cancel"
+                customStyles={{
+                  dateIcon: {
+                    position: 'absolute',
+                    left: 0,
+                    top: 4,
+                    marginLeft: 0,
+                  },
+                  dateInput: {
+                    marginLeft: 36,
+                  },
+                }}
+                onChange={date => {
+                  setshowReadyDate(false),
+                    SetReadyDate(new Date(date.nativeEvent.timestamp));
+                }}
+                onDateChange={date => {
+                  console.log(date);
+                }}
+              />
             </View>
           ) : null}
 
-          <View style={[{}, height8]}>
-            <HeaderComponent navigation={navigation} title="order create" />
+          <View style={{paddingHorizontal: 20, paddingVertical: 10}}>
+            <View style={{flexDirection: 'row'}}>
+              <Pressable
+                onPress={() => openReadyDate()}
+                style={{
+                  backgroundColor: gulluColor,
+                  padding: 20,
+                  borderRadius: 10,
+                  width: '50%',
+                  marginBottom: 10,
+                }}>
+                <Text style={{color: COLOR.whiteColor, textAlign: 'center'}}>
+                  Select Ready Date{' '}
+                </Text>
+              </Pressable>
+              {readyDate != undefined ? (
+                <View>
+                  <Text
+                    style={[
+                      {paddingVertical: 16, textTransform: 'capitalize'},
+                      h4,
+                      marginLeft10,
+                      {color: gulluColor},
+                    ]}>
+                    {readyDate.toString().substring(4, 15)}
+                  </Text>
+                </View>
+              ) : null}
+            </View>
+
+            <View style={{flexDirection: 'row'}}>
+              <Pressable
+                onPress={() => openBufferReadyDate()}
+                style={{
+                  backgroundColor: gulluColor,
+                  padding: 20,
+                  borderRadius: 10,
+                  width: '50%',
+                  marginBottom: 10,
+                }}>
+                <Text style={{color: COLOR.whiteColor, textAlign: 'center'}}>
+                  Buffer Ready Date{' '}
+                </Text>
+              </Pressable>
+              {bufferReadyDate != undefined ? (
+                <View>
+                  <Text
+                    style={[
+                      {paddingVertical: 16, textTransform: 'capitalize'},
+                      h4,
+                      marginLeft10,
+                      {color: gulluColor},
+                    ]}>
+                    {bufferReadyDate.toString().substring(4, 15)}
+                  </Text>
+                </View>
+              ) : null}
+            </View>
+
+            <View style={{flexDirection: 'row'}}>
+              <Pressable
+                onPress={() => openDeliveryDate()}
+                style={{
+                  backgroundColor: gulluColor,
+                  padding: 20,
+                  borderRadius: 10,
+                  width: '50%',
+                }}>
+                <Text style={{color: COLOR.whiteColor, textAlign: 'center'}}>
+                  Select Delivery Date
+                </Text>
+              </Pressable>
+              {deliveryDate != undefined ? (
+                <View>
+                  <Text
+                    style={[
+                      {paddingVertical: 16, textTransform: 'capitalize'},
+                      h4,
+                      marginLeft10,
+                      {color: gulluColor},
+                    ]}>
+                    {deliveryDate.toString().substring(4, 15)}
+                  </Text>
+                </View>
+              ) : null}
+            </View>
+            <View style={{flexDirection: 'row', marginTop: 10}}>
+              <Pressable
+                onPress={() => openVendorData()}
+                style={{
+                  backgroundColor: gulluColor,
+                  padding: 20,
+                  borderRadius: 10,
+                  width: '50%',
+                }}>
+                <Text style={{color: COLOR.whiteColor, textAlign: 'center'}}>
+                  Select Vendor Date
+                </Text>
+              </Pressable>
+              {vendorDate != undefined ? (
+                <View>
+                  <Text
+                    style={[
+                      {paddingVertical: 16, textTransform: 'capitalize'},
+                      h4,
+                      marginLeft10,
+                      {color: gulluColor},
+                    ]}>
+                    {vendorDate.toString().substring(4, 15)}
+                  </Text>
+                </View>
+              ) : null}
+            </View>
           </View>
-          <ScrollView horizontal={false} style={{flex: 1}}>
-            <ScrollView>
-              <View style={[{}, height83]}>
-                <InputComponents
-                  placeholder="Order Number"
-                  inputValue={(value: any) => {
-                    setOrderNumber(value);
-                  }}
-                  style={inputStyleBlack}
-                />
+          {showDeliveryDate ? (
+            <DatePicker
+              style={{width: 200}}
+              date={getAddedDate(6)}
+              value={getAddedDate(6)}
+              mode="date"
+              placeholder="select date"
+              format="YYYY-MM-DD"
+              minDate={new Date()}
+              maxDate="2050-06-01"
+              confirmBtnText="Confirm"
+              cancelBtnText="Cancel"
+              customStyles={{
+                dateIcon: {
+                  position: 'absolute',
+                  left: 0,
+                  top: 4,
+                  marginLeft: 0,
+                },
+                dateInput: {
+                  marginLeft: 36,
+                },
+              }}
+              onChange={date => {
+                setShowDeliveryDate(false),
+                  SetDeliveryDate(new Date(date.nativeEvent.timestamp));
+              }}
+              onDateChange={date => {
+                console.log(date);
+              }}
+            />
+          ) : null}
+          {showVendorDate ? (
+            <DatePicker
+              style={{width: 200}}
+              date={getAddedDate(6)}
+              value={getAddedDate(6)}
+              mode="date"
+              placeholder="select date"
+              format="YYYY-MM-DD"
+              minDate={new Date()}
+              maxDate="2050-06-01"
+              confirmBtnText="Confirm"
+              cancelBtnText="Cancel"
+              customStyles={{
+                dateIcon: {
+                  position: 'absolute',
+                  left: 0,
+                  top: 4,
+                  marginLeft: 0,
+                },
+                dateInput: {
+                  marginLeft: 36,
+                },
+              }}
+              onChange={date => {
+                setShowVendorDate(false),
+                  SetVendorDate(new Date(date.nativeEvent.timestamp));
+              }}
+              onDateChange={date => {
+                console.log(date);
+              }}
+            />
+          ) : null}
+          {showBufferReadyDate ? (
+            <DatePicker
+              style={{width: 200}}
+              date={getAddedDate(6)}
+              value={getAddedDate(6)}
+              mode="date"
+              placeholder="select date"
+              format="YYYY-MM-DD"
+              minDate={new Date()}
+              maxDate="2050-06-01"
+              confirmBtnText="Confirm"
+              cancelBtnText="Cancel"
+              customStyles={{
+                dateIcon: {
+                  position: 'absolute',
+                  left: 0,
+                  top: 4,
+                  marginLeft: 0,
+                },
+                dateInput: {
+                  marginLeft: 36,
+                },
+              }}
+              onChange={date => {
+                setShowBufferReadyDate(false),
+                  SetBufferReadyDate(new Date(date.nativeEvent.timestamp));
+              }}
+              onDateChange={date => {
+                console.log(date);
+              }}
+            />
+          ) : null}
 
-                {/* <InputComponents placeholder="Select Vendor" inputValue={(value:any) => { setVendor(value) }} style={inputStyleBlack} />
-							<InputComponents placeholder="Select Salesman" inputValue={(value:any) => { setSalesman(value) }} style={inputStyleBlack} /> */}
-                <InputComponents
-                  placeholder="Color"
-                  inputValue={(value: any) => {
-                    setColor(value);
-                  }}
-                  style={inputStyleBlack}
-                />
+          <View>
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: 'bold',
+                color: COLOR.blackColor,
+              }}>
+              Sample Choli
+            </Text>
+            <View style={{flexDirection: 'row', marginTop: 10}}>
+              <RadioGroup
+                radioButtons={radioButtonsSampleCholi}
+                selectedId={sampleCholi}
+                onPress={e => {
+                  setSampleCholi(e);
+                }}
+                containerStyle={{flexDirection: 'row'}}
+              />
+            </View>
+          </View>
 
-                <InputComponents
-                  placeholder="VD Code"
-                  inputValue={(value: any) => {
-                    setVDcode(value);
-                  }}
-                  style={inputStyleBlack}
-                />
-                <InputComponents
-                  placeholder="Design Number"
-                  inputValue={(value: any) => {
-                    setDesignNumber(value);
-                  }}
-                  style={inputStyleBlack}
-                />
+          <View>
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: 'bold',
+                color: COLOR.blackColor,
+              }}>
+              Pickup / Shipping
+            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'flex-start',
+                marginTop: 10,
+              }}>
+              <RadioGroup
+                radioButtons={radioButtonsPickup}
+                selectedId={pickup}
+                onPress={e => {
+                  setPickup(e);
+                }}
+                containerStyle={{
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                  gap: 10,
+                }}
+              />
+            </View>
+          </View>
 
-                {/* <InputComponents placeholder="Item" inputValue={(value:any) => { setItem(value) }} style={inputStyleBlack} /> */}
+          <View style={{gap: 20}}>
+            <InputComponents
+              placeholder="Customer Name"
+              value={customerName}
+              onChangeText={(text: string) => setCustomerName(text)}
+            />
+            <InputComponents
+              placeholder="Mobile Number"
+              value={mobile}
+              onChangeText={(text: string) => setMobile(text)}
+            />
+            <InputComponents
+              placeholder="Address"
+              value={address}
+              onChangeText={(text: string) => setAddress(text)}
+            />
+            <InputComponents
+              placeholder="City"
+              value={city}
+              onChangeText={(text: string) => setCity(text)}
+            />
+          </View>
 
-                <Modal
-                  animationType="slide"
-                  transparent={true}
-                  visible={modalVisibleItem}
-                  onRequestClose={() => {
-                    // Alert.alert('Modal has been closed.');
-                    setModalVisibleItem(!modalVisibleItem);
-                  }}>
-                  <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                      <View style={{paddingBottom: 10}}>
-                        <Text>Select Item</Text>
-                      </View>
-                      <View style={{width: '100%'}}>
-                        <InputComponents
-                          placeholder="Search Item"
-                          inputValue={(value: any) => {
-                            searchItem(value);
-                          }}
-                          style={inputStyleBlack}
-                        />
-                      </View>
-                      <FlatList
-                        data={ItemList}
-                        renderItem={({item}) => {
-                          return (
-                            <View>
-                              <Item item={item} />
-                            </View>
-                          );
-                        }}
-                        keyExtractor={item => item.id}
-                        showsVerticalScrollIndicator={false}
-                      />
-                      <Pressable
-                        style={[styles.button, styles.buttonClose]}
-                        onPress={() => setModalVisibleItem(!modalVisibleItem)}>
-                        <Text style={styles.textStyle}>Close</Text>
-                      </Pressable>
-                    </View>
-                  </View>
-                </Modal>
+          <View style={{paddingHorizontal: 20}}>
+            <TouchableOpacity
+              onPress={async () => {
+                try {
+                  const pickerResult = await DocumentPicker.pick({
+                    presentationStyle: 'fullScreen',
+                    copyTo: 'cachesDirectory',
+                    type: [types.images],
+                  });
 
-                <Modal
-                  animationType="slide"
-                  transparent={true}
-                  visible={modalVisibleVendor}
-                  onRequestClose={() => {
-                    // Alert.alert('Modal has been closed.');
-                    setModalVisibleVendor(!modalVisibleVendor);
-                  }}>
-                  <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                      <View style={{paddingBottom: 10}}>
-                        <Text>Select Vendor</Text>
-                      </View>
-                      <View style={{width: '100%'}}>
-                        <InputComponents
-                          placeholder="Search Vendor"
-                          inputValue={(value: any) => {
-                            searchVendor(value);
-                          }}
-                          style={inputStyleBlack}
-                        />
-                      </View>
-                      <FlatList
-                        data={vendorList}
-                        renderItem={({item}) => {
-                          return (
-                            <View>
-                              <VendorItem item={item} />
-                            </View>
-                          );
-                        }}
-                        keyExtractor={item => item.id}
-                        showsVerticalScrollIndicator={false}
-                      />
-                      <Pressable
-                        style={[styles.button, styles.buttonClose]}
-                        onPress={() =>
-                          setModalVisibleVendor(!modalVisibleVendor)
-                        }>
-                        <Text style={styles.textStyle}>Close</Text>
-                      </Pressable>
-                    </View>
-                  </View>
-                </Modal>
+                  let sourceUri = pickerResult[0].fileCopyUri;
+                  uploadFileToS3(
+                    sourceUri,
+                    pickerResult[0]['name'],
+                    pickerResult[0].size,
+                    pickerResult[0].type,
+                    'productImage',
+                  );
 
-                <Modal
-                  animationType="slide"
-                  transparent={true}
-                  visible={modalVisibleSalesman}
-                  onRequestClose={() => {
-                    // Alert.alert('Modal has been closed.');
-                    setModalVisibleSalesman(!modalVisibleSalesman);
-                  }}>
-                  <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                      <View style={{paddingBottom: 10}}>
-                        <Text>Select Salesman</Text>
-                      </View>
-                      <View style={{width: '100%'}}>
-                        <InputComponents
-                          placeholder="Search Vendor"
-                          inputValue={(value: any) => {
-                            searchSalesman(value);
-                          }}
-                          style={inputStyleBlack}
-                        />
-                      </View>
-                      <FlatList
-                        data={salesmanList}
-                        renderItem={({item}) => (
-                          <SalesmanListItem item={item} />
-                        )}
-                        keyExtractor={item => item.id}
-                        showsVerticalScrollIndicator={false}
-                      />
-                      <Pressable
-                        style={[styles.button, styles.buttonClose]}
-                        onPress={() =>
-                          setModalVisibleSalesman(!modalVisibleSalesman)
-                        }>
-                        <Text style={styles.textStyle}>Close</Text>
-                      </Pressable>
-                    </View>
-                  </View>
-                </Modal>
-                <View style={{paddingHorizontal: 20, paddingVertical: 10}}>
-                  <View style={{flexDirection: 'row'}}>
-                    <Pressable
-                      style={{
-                        backgroundColor: gulluColor,
-                        padding: 20,
-                        borderRadius: 10,
-                        width: '50%',
-                        marginBottom: 10,
-                      }}
-                      onPress={() => setModalVisibleItem(true)}>
-                      <Text style={{color: goldenColor, textAlign: 'center'}}>
-                        Select Item
-                      </Text>
-                    </Pressable>
+                  setPrductPhotoType(pickerResult[0].type);
+                  setPrductPhotoData(pickerResult);
+                  // if(pickerResult[0].size <= 2000000){
+                  // 	setPrductPhotoType(pickerResult[0].type);
+                  // 	setPrductPhotoData(pickerResult)
+                  // }else{
+                  // 	showToast('Image should be less than 2MB');
+                  // }
+                } catch (e) {
+                  handleError(e);
+                }
+              }}
+              style={[
+                {
+                  width: 'auto',
+                  backgroundColor: gulluColor,
+                  borderRadius: 10,
+                  marginBottom: 10,
+                },
+                padding15,
+                justifyContentCenter,
+              ]}>
+              <Text style={{color: COLOR.whiteColor, textAlign: 'center'}}>
+                Upload Product Image
+              </Text>
+            </TouchableOpacity>
 
-                    <Text
-                      style={[
-                        {paddingVertical: 16, textTransform: 'capitalize'},
-                        h4,
-                        marginLeft10,
-                        {color: gulluColor},
-                      ]}>
-                      {selectedItemName}
-                    </Text>
-                  </View>
-                  <View style={{flexDirection: 'row'}}>
-                    <Pressable
-                      style={{
-                        backgroundColor: gulluColor,
-                        padding: 20,
-                        borderRadius: 10,
-                        width: '50%',
-                        marginBottom: 10,
-                      }}
-                      onPress={() => setModalVisibleVendor(true)}>
-                      <Text style={{color: goldenColor, textAlign: 'center'}}>
-                        Select Vendor
-                      </Text>
-                    </Pressable>
-
-                    <Text
-                      style={[
-                        {paddingVertical: 16, textTransform: 'capitalize'},
-                        h4,
-                        marginLeft10,
-                        {color: gulluColor},
-                      ]}>
-                      {selectedVendorName}
-                    </Text>
-                  </View>
-
-                  <View style={{flexDirection: 'row'}}>
-                    <Pressable
-                      style={{
-                        backgroundColor: gulluColor,
-                        padding: 20,
-                        borderRadius: 10,
-                        width: '50%',
-                      }}
-                      onPress={() => setModalVisibleSalesman(true)}>
-                      <Text style={{color: goldenColor, textAlign: 'center'}}>
-                        Select Salesman
-                      </Text>
-                    </Pressable>
-                    <Text
-                      style={[
-                        {paddingVertical: 16, textTransform: 'capitalize'},
-                        h4,
-                        marginLeft10,
-                        {color: gulluColor},
-                      ]}>
-                      {selectedSalesmanName}
-                    </Text>
-                  </View>
-                </View>
-
-                {showReadyDate ? (
-                  <View>
-                    <DatePicker
-                      style={{width: 200}}
-                      date={getAddedDate(3)}
-                      value={getAddedDate(3)}
-                      mode="date"
-                      placeholder="select date"
-                      format="YYYY-MM-DD"
-                      minDate={new Date()}
-                      maxDate="2050-06-01"
-                      confirmBtnText="Confirm"
-                      cancelBtnText="Cancel"
-                      customStyles={{
-                        dateIcon: {
-                          position: 'absolute',
-                          left: 0,
-                          top: 4,
-                          marginLeft: 0,
-                        },
-                        dateInput: {
-                          marginLeft: 36,
-                        },
-                      }}
-                      onChange={date => {
-                        setshowReadyDate(false),
-                          SetReadyDate(new Date(date.nativeEvent.timestamp));
-                      }}
-                      onDateChange={date => {
-                        console.log(date);
-                      }}
-                    />
-                  </View>
-                ) : null}
-
-                <View style={{paddingHorizontal: 20, paddingVertical: 10}}>
-                  <View style={{flexDirection: 'row'}}>
-                    <Pressable
-                      onPress={() => openReadyDate()}
-                      style={{
-                        backgroundColor: gulluColor,
-                        padding: 20,
-                        borderRadius: 10,
-                        width: '50%',
-                        marginBottom: 10,
-                      }}>
-                      <Text style={{color: goldenColor, textAlign: 'center'}}>
-                        Select Ready Date{' '}
-                      </Text>
-                    </Pressable>
-                    {readyDate != undefined ? (
-                      <View>
-                        <Text
-                          style={[
-                            {paddingVertical: 16, textTransform: 'capitalize'},
-                            h4,
-                            marginLeft10,
-                            {color: gulluColor},
-                          ]}>
-                          {readyDate.toString().substring(4, 15)}
-                        </Text>
-                      </View>
-                    ) : null}
-                  </View>
-
-                  <View style={{flexDirection: 'row'}}>
-                    <Pressable
-                      onPress={() => openBufferReadyDate()}
-                      style={{
-                        backgroundColor: gulluColor,
-                        padding: 20,
-                        borderRadius: 10,
-                        width: '50%',
-                        marginBottom: 10,
-                      }}>
-                      <Text style={{color: goldenColor, textAlign: 'center'}}>
-                        Buffer Ready Date{' '}
-                      </Text>
-                    </Pressable>
-                    {bufferReadyDate != undefined ? (
-                      <View>
-                        <Text
-                          style={[
-                            {paddingVertical: 16, textTransform: 'capitalize'},
-                            h4,
-                            marginLeft10,
-                            {color: gulluColor},
-                          ]}>
-                          {bufferReadyDate.toString().substring(4, 15)}
-                        </Text>
-                      </View>
-                    ) : null}
-                  </View>
-
-                  <View style={{flexDirection: 'row'}}>
-                    <Pressable
-                      onPress={() => openDeliveryDate()}
-                      style={{
-                        backgroundColor: gulluColor,
-                        padding: 20,
-                        borderRadius: 10,
-                        width: '50%',
-                      }}>
-                      <Text style={{color: goldenColor, textAlign: 'center'}}>
-                        Select Delivery Date
-                      </Text>
-                    </Pressable>
-                    {deliveryDate != undefined ? (
-                      <View>
-                        <Text
-                          style={[
-                            {paddingVertical: 16, textTransform: 'capitalize'},
-                            h4,
-                            marginLeft10,
-                            {color: gulluColor},
-                          ]}>
-                          {deliveryDate.toString().substring(4, 15)}
-                        </Text>
-                      </View>
-                    ) : null}
-                  </View>
-                </View>
-                {showDeliveryDate ? (
-                  <DatePicker
-                    style={{width: 200}}
-                    date={getAddedDate(6)}
-                    value={getAddedDate(6)}
-                    mode="date"
-                    placeholder="select date"
-                    format="YYYY-MM-DD"
-                    minDate={new Date()}
-                    maxDate="2050-06-01"
-                    confirmBtnText="Confirm"
-                    cancelBtnText="Cancel"
-                    customStyles={{
-                      dateIcon: {
-                        position: 'absolute',
-                        left: 0,
-                        top: 4,
-                        marginLeft: 0,
-                      },
-                      dateInput: {
-                        marginLeft: 36,
-                      },
-                    }}
-                    onChange={date => {
-                      setShowDeliveryDate(false),
-                        SetDeliveryDate(new Date(date.nativeEvent.timestamp));
-                    }}
-                    onDateChange={date => {
-                      console.log(date);
-                    }}
-                  />
-                ) : null}
-                {showBufferReadyDate ? (
-                  <DatePicker
-                    style={{width: 200}}
-                    date={getAddedDate(6)}
-                    value={getAddedDate(6)}
-                    mode="date"
-                    placeholder="select date"
-                    format="YYYY-MM-DD"
-                    minDate={new Date()}
-                    maxDate="2050-06-01"
-                    confirmBtnText="Confirm"
-                    cancelBtnText="Cancel"
-                    customStyles={{
-                      dateIcon: {
-                        position: 'absolute',
-                        left: 0,
-                        top: 4,
-                        marginLeft: 0,
-                      },
-                      dateInput: {
-                        marginLeft: 36,
-                      },
-                    }}
-                    onChange={date => {
-                      setShowBufferReadyDate(false),
-                        SetBufferReadyDate(
-                          new Date(date.nativeEvent.timestamp),
-                        );
-                    }}
-                    onDateChange={date => {
-                      console.log(date);
-                    }}
-                  />
-                ) : null}
-
-                <View style={{paddingHorizontal: 20}}>
-                  <TouchableOpacity
-                    onPress={async () => {
-                      try {
-                        const pickerResult = await DocumentPicker.pick({
-                          presentationStyle: 'fullScreen',
-                          copyTo: 'cachesDirectory',
-                          type: [types.images],
-                        });
-
-                        let sourceUri = pickerResult[0].fileCopyUri;
-                        uploadFileToS3(
-                          sourceUri,
-                          pickerResult[0]['name'],
-                          pickerResult[0].size,
-                          pickerResult[0].type,
-                          'productImage',
-                        );
-
-                        setPrductPhotoType(pickerResult[0].type);
-                        setPrductPhotoData(pickerResult);
-                        // if(pickerResult[0].size <= 2000000){
-                        // 	setPrductPhotoType(pickerResult[0].type);
-                        // 	setPrductPhotoData(pickerResult)
-                        // }else{
-                        // 	showToast('Image should be less than 2MB');
-                        // }
-                      } catch (e) {
-                        handleError(e);
-                      }
-                    }}
-                    style={[
-                      {
-                        width: 'auto',
-                        backgroundColor: gulluColor,
-                        borderRadius: 10,
-                        marginBottom: 10,
-                      },
-                      padding15,
-                      justifyContentCenter,
-                    ]}>
-                    <Text style={{color: goldenColor, textAlign: 'center'}}>
-                      Upload Product Image
-                    </Text>
-                  </TouchableOpacity>
-
-                  {productPhotoData != undefined &&
-                  productPhotoData.length > 0 ? (
-                    <View style={{height: 200, width: 200}}>
-                      <ImageBackground
-                        source={{uri: productPhotoData[0].fileCopyUri}}
-                        style={{height: '100%', width: '100%'}}
-                        resizeMode="center"></ImageBackground>
-                    </View>
-                  ) : // <Image source={{uri:productPhotoData[0].fileCopyUri}} style={{ height: 200,width: 200 }}/>
-                  null}
-                  <TouchableOpacity
-                    onPress={async () => {
-                      try {
-                        const pickerResult = await DocumentPicker.pick({
-                          presentationStyle: 'fullScreen',
-                          copyTo: 'cachesDirectory',
-                          type: [types.images],
-                        });
-                        setPrductMeasureType(pickerResult[0].type);
-                        setPrductMeasurementData(pickerResult);
-
-                        console.log('i am here');
-                        console.log(pickerResult[0]);
-                        let sourceUri = pickerResult[0].fileCopyUri;
-
-                        // const fileData = {
-                        // 	uri: sourceUri,
-                        // 	name: pickerResult[0]['name'],
-                        // 	type: pickerResult[0].type,
-                        // }
-                        // const options = {
-                        // 	bucket : 'uploadbygulluapp',
-                        // 	region: 'us-east-2',
-                        // 	accessKey: 'AKIA2OM62YUJYMJ6PT2E',
-                        // 	secretKey: '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',
-                        // 	successActionStatus : 201
-                        // }
-                        uploadFileToS3(
-                          sourceUri,
-                          pickerResult[0]['name'],
-                          pickerResult[0].size,
-                          pickerResult[0].type,
-                          'productMeasurement',
-                        );
-
-                        // if(pickerResult[0].size <= 2000000){
-                        // 	setPrductMeasureType(pickerResult[0].type);
-                        // 	setPrductMeasurementData(pickerResult)
-                        // }else{
-                        // 	showToast('Image should be less than 2MB');
-                        // }
-                      } catch (e) {
-                        handleError(e);
-                      }
-                    }}
-                    style={[
-                      {
-                        width: 'auto',
-                        backgroundColor: gulluColor,
-                        borderRadius: 10,
-                        marginBottom: 10,
-                      },
-                      padding15,
-                      justifyContentCenter,
-                    ]}>
-                    <Text style={{color: goldenColor, textAlign: 'center'}}>
-                      Upload Product Measurement
-                    </Text>
-                  </TouchableOpacity>
-
-                  {productMeasurementData != undefined &&
-                  productMeasurementData.length > 0 ? (
-                    <View style={{height: 200, width: 200}}>
-                      <ImageBackground
-                        source={{uri: productMeasurementData[0].fileCopyUri}}
-                        style={{height: '100%', width: '100%'}}
-                        resizeMode="center"></ImageBackground>
-                    </View>
-                  ) : null}
-
-                  {/* <TouchableOpacity
-									onPress={async () => {
-									try {
-										const pickerResult = await DocumentPicker.pick({
-											presentationStyle: 'fullScreen',
-											copyTo: 'cachesDirectory',
-
-											type: [types.video],
-
-										});
-										console.log("i am here");
-										console.log(pickerResult[0]);
-										let sourceUri = pickerResult[0].fileCopyUri;
-
-
-										// const fileData = {
-										// 	uri: sourceUri,
-										// 	name: pickerResult[0]['name'],
-										// 	type: pickerResult[0].type,
-										// }
-										// const options = {
-										// 	bucket : 'uploadbygulluapp',
-										// 	region: 'us-east-2',
-										// 	accessKey: 'AKIA2OM62YUJYMJ6PT2E',
-										// 	secretKey: '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',
-										// 	successActionStatus : 201
-										// }
-										uploadFileToS3(sourceUri , pickerResult[0]['name'] , pickerResult[0].size , pickerResult[0].type , 'productVideo');
-										// RNS3.put(fileData , options).progress((progress) =>{
-										// 	console.log(progress)
-										// }).then((successResponse) => {
-										// 	console.log(successResponse)
-										// }).catch((err) => {
-										// 	console.log(err)
-										// });
-
-										// RNVideoHelper.compress(sourceUri, {
-										// 	startTime: 10, // optional, in seconds, defaults to 0
-										// 	endTime: 100, //  optional, in seconds, defaults to video duration
-										// 	quality: 'low', // default low, can be medium or high
-										// 	defaultOrientation: 0 // By default is 0, some devices not save this property in metadata. Can be between 0 - 360
-										// }).progress(value => {
-										// 	console.warn('progress', value); // Int with progress value from 0 to 1
-										// }).then(compressedUri => {
-										// 	console.warn('compressedUri', 'file:///'+compressedUri); // String with path to temporary compressed video
-										// 	// let fileEXT = getFileInfo('file:///'+compressedUri);
-
-										// 	RNFetchBlob.fs.stat('file:///'+compressedUri)
-
-										// 	.then((stats) => {
-										// 		console.log(stats)
-										// 	})
-										// 	.catch((err) => {
-										// 		console.log(err);
-										// 	})
-
-										// 	// setProductVideoData(pickerResult);
-										// });
-
-										setPrductVideoType(pickerResult[0].type);
-										setProductVideoData(pickerResult);
-
-										// if( pickerResult[0].size <= 5000000 ){
-										// 	setPrductVideoType(pickerResult[0].type);
-										// 	setProductVideoData(pickerResult);
-										// }else{
-										// 	showToast('Max file upload size is 5MB');
-										// }
-									} catch (e) {
-										handleError(e)
-									}
-									}}
-									style={[{width: 'auto',backgroundColor: gulluColor,borderRadius: 10,marginBottom: 10},padding15,justifyContentCenter]}
-								>
-									<Text style={{color: goldenColor,textAlign: 'center'}}>Upload Product Video</Text>
-								</TouchableOpacity> */}
-
-                  <View style={styles.container}>
-                    <View
-                      style={{
-                        flex: 0,
-                        flexDirection: 'row',
-                        justifyContent: 'center',
-                      }}>
-                      {/* <Camera /> */}
-                      {/* <TouchableOpacity onPress={} style={styles.capture}>
-											<Text style={{ fontSize: 14 }}> SNAP </Text>
-										</TouchableOpacity> */}
-                    </View>
-                  </View>
-
-                  <TouchableOpacity
-                    style={[
-                      {
-                        width: 'auto',
-                        backgroundColor: gulluColor,
-                        borderRadius: 10,
-                        marginBottom: 10,
-                      },
-                      padding15,
-                      justifyContentCenter,
-                    ]}
-                    onPress={() => chooseFile('video')}>
-                    <Text style={{color: goldenColor, textAlign: 'center'}}>
-                      Choose Video
-                    </Text>
-                  </TouchableOpacity>
-                  {productVideoData != undefined &&
-                  productVideoData.length > 0 ? (
-                    <View style={{width: '100%', height: 400}}>
-                      <Video
-                        source={{uri: productVideoData[0].uri}}
-                        style={styles.backgroundVideo}
-                        controls={false}
-                        ref={ref => (videoPlayer.current = ref)}
-                        resizeMode={'contain'}
-                        paused={false}
-                        muted={true}
-                      />
-                    </View>
-                  ) : null}
-                </View>
-
-                <View style={{alignItems: 'center'}}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      saveOrder();
-                    }}
-                    style={[
-                      {
-                        width: 'auto',
-                        backgroundColor: gulluColor,
-                        borderRadius: 10,
-                      },
-                      padding15,
-                      justifyContentCenter,
-                    ]}>
-                    <Text style={[h3, {color: goldenColor}, textAlignCenter]}>
-                      Generate New Order
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+            {productPhotoData != undefined && productPhotoData.length > 0 ? (
+              <View style={{height: 200, width: 200}}>
+                <ImageBackground
+                  source={{uri: productPhotoData[0].fileCopyUri}}
+                  style={{height: '100%', width: '100%'}}
+                  resizeMode="center"></ImageBackground>
               </View>
-            </ScrollView>
-          </ScrollView>
-          <View style={[{}, height9]}>
-            <FooterComponent navigation={navigation} />
+            ) : // <Image source={{uri:productPhotoData[0].fileCopyUri}} style={{ height: 200,width: 200 }}/>
+            null}
+            <TouchableOpacity
+              onPress={async () => {
+                try {
+                  const pickerResult = await DocumentPicker.pick({
+                    presentationStyle: 'fullScreen',
+                    copyTo: 'cachesDirectory',
+                    type: [types.images],
+                  });
+                  setPrductMeasureType(pickerResult[0].type);
+                  setPrductMeasurementData(pickerResult);
+
+                  console.log('i am here');
+                  console.log(pickerResult[0]);
+                  let sourceUri = pickerResult[0].fileCopyUri;
+
+                  // const fileData = {
+                  // 	uri: sourceUri,
+                  // 	name: pickerResult[0]['name'],
+                  // 	type: pickerResult[0].type,
+                  // }
+                  // const options = {
+                  // 	bucket : 'uploadbygulluapp',
+                  // 	region: 'us-east-2',
+                  // 	accessKey: 'AKIA2OM62YUJYMJ6PT2E',
+                  // 	secretKey: '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',
+                  // 	successActionStatus : 201
+                  // }
+                  uploadFileToS3(
+                    sourceUri,
+                    pickerResult[0]['name'],
+                    pickerResult[0].size,
+                    pickerResult[0].type,
+                    'productMeasurement',
+                  );
+
+                  // if(pickerResult[0].size <= 2000000){
+                  // 	setPrductMeasureType(pickerResult[0].type);
+                  // 	setPrductMeasurementData(pickerResult)
+                  // }else{
+                  // 	showToast('Image should be less than 2MB');
+                  // }
+                } catch (e) {
+                  handleError(e);
+                }
+              }}
+              style={[
+                {
+                  width: 'auto',
+                  backgroundColor: gulluColor,
+                  borderRadius: 10,
+                  marginBottom: 10,
+                },
+                padding15,
+                justifyContentCenter,
+              ]}>
+              <Text style={{color: COLOR.whiteColor, textAlign: 'center'}}>
+                Upload Product Measurement
+              </Text>
+            </TouchableOpacity>
+
+            {productMeasurementData != undefined &&
+            productMeasurementData.length > 0 ? (
+              <View style={{height: 200, width: 200}}>
+                <ImageBackground
+                  source={{uri: productMeasurementData[0].fileCopyUri}}
+                  style={{height: '100%', width: '100%'}}
+                  resizeMode="center"></ImageBackground>
+              </View>
+            ) : null}
+
+            <TouchableOpacity
+              onPress={async () => {
+                try {
+                  const pickerResult = await DocumentPicker.pick({
+                    presentationStyle: 'fullScreen',
+                    copyTo: 'cachesDirectory',
+                    type: [types.images],
+                  });
+                  setPrductMeasureType(pickerResult[0].type);
+                  setProductOriginalMeasurement(pickerResult);
+
+                  console.log('i am here');
+                  console.log(pickerResult[0]);
+                  let sourceUri = pickerResult[0].fileCopyUri;
+
+                  // const fileData = {
+                  // 	uri: sourceUri,
+                  // 	name: pickerResult[0]['name'],
+                  // 	type: pickerResult[0].type,
+                  // }
+                  // const options = {
+                  // 	bucket : 'uploadbygulluapp',
+                  // 	region: 'us-east-2',
+                  // 	accessKey: 'AKIA2OM62YUJYMJ6PT2E',
+                  // 	secretKey: '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',
+                  // 	successActionStatus : 201
+                  // }
+                  uploadFileToS3(
+                    sourceUri,
+                    pickerResult[0]['name'],
+                    pickerResult[0].size,
+                    pickerResult[0].type,
+                    'Product Original Measurement',
+                  );
+
+                  // if(pickerResult[0].size <= 2000000){
+                  // 	setPrductMeasureType(pickerResult[0].type);
+                  // 	setPrductMeasurementData(pickerResult)
+                  // }else{
+                  // 	showToast('Image should be less than 2MB');
+                  // }
+                } catch (e) {
+                  handleError(e);
+                }
+              }}
+              style={[
+                {
+                  width: 'auto',
+                  backgroundColor: gulluColor,
+                  borderRadius: 10,
+                  marginBottom: 10,
+                },
+                padding15,
+                justifyContentCenter,
+              ]}>
+              <Text style={{color: COLOR.whiteColor, textAlign: 'center'}}>
+                Upload Original Measurement
+              </Text>
+            </TouchableOpacity>
+
+            {productOriginalMeasurement != undefined &&
+            productOriginalMeasurement.length > 0 ? (
+              <View style={{height: 200, width: 200}}>
+                <ImageBackground
+                  source={{uri: productOriginalMeasurement[0].fileCopyUri}}
+                  style={{height: '100%', width: '100%'}}
+                  resizeMode="center"></ImageBackground>
+              </View>
+            ) : null}
+
+            <TouchableOpacity
+              onPress={async () => {
+                try {
+                  const pickerResult = await DocumentPicker.pick({
+                    presentationStyle: 'fullScreen',
+                    copyTo: 'cachesDirectory',
+                    type: [types.images],
+                  });
+                  // setPrductMeasureType(pickerResult[0].type);
+                  setProductSlipPhoto(pickerResult);
+
+                  console.log('i am here');
+                  console.log(pickerResult[0]);
+                  let sourceUri = pickerResult[0].fileCopyUri;
+
+                  // const fileData = {
+                  // 	uri: sourceUri,
+                  // 	name: pickerResult[0]['name'],
+                  // 	type: pickerResult[0].type,
+                  // }
+                  // const options = {
+                  // 	bucket : 'uploadbygulluapp',
+                  // 	region: 'us-east-2',
+                  // 	accessKey: 'AKIA2OM62YUJYMJ6PT2E',
+                  // 	secretKey: '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',
+                  // 	successActionStatus : 201
+                  // }
+                  uploadFileToS3(
+                    sourceUri,
+                    pickerResult[0]['name'],
+                    pickerResult[0].size,
+                    pickerResult[0].type,
+                    'Product Slip Number',
+                  );
+
+                  // if(pickerResult[0].size <= 2000000){
+                  // 	setPrductMeasureType(pickerResult[0].type);
+                  // 	setPrductMeasurementData(pickerResult)
+                  // }else{
+                  // 	showToast('Image should be less than 2MB');
+                  // }
+                } catch (e) {
+                  handleError(e);
+                }
+              }}
+              style={[
+                {
+                  width: 'auto',
+                  backgroundColor: gulluColor,
+                  borderRadius: 10,
+                  marginBottom: 10,
+                },
+                padding15,
+                justifyContentCenter,
+              ]}>
+              <Text style={{color: COLOR.whiteColor, textAlign: 'center'}}>
+                Upload Slip Photo
+              </Text>
+            </TouchableOpacity>
+
+            {productSlipPhoto != undefined && productSlipPhoto.length > 0 ? (
+              <View style={{height: 200, width: 200}}>
+                <ImageBackground
+                  source={{uri: productSlipPhoto[0].fileCopyUri}}
+                  style={{height: '100%', width: '100%'}}
+                  resizeMode="center"></ImageBackground>
+              </View>
+            ) : null}
+
+            {/* <TouchableOpacity
+    							onPress={async () => {
+    							try {
+    								const pickerResult = await DocumentPicker.pick({
+    									presentationStyle: 'fullScreen',
+    									copyTo: 'cachesDirectory',
+
+    									type: [types.video],
+
+    								});
+    								console.log("i am here");
+    								console.log(pickerResult[0]);
+    								let sourceUri = pickerResult[0].fileCopyUri;
+
+    								// const fileData = {
+    								// 	uri: sourceUri,
+    								// 	name: pickerResult[0]['name'],
+    								// 	type: pickerResult[0].type,
+    								// }
+    								// const options = {
+    								// 	bucket : 'uploadbygulluapp',
+    								// 	region: 'us-east-2',
+    								// 	accessKey: 'AKIA2OM62YUJYMJ6PT2E',
+    								// 	secretKey: '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',
+    								// 	successActionStatus : 201
+    								// }
+    								uploadFileToS3(sourceUri , pickerResult[0]['name'] , pickerResult[0].size , pickerResult[0].type , 'productVideo');
+    								// RNS3.put(fileData , options).progress((progress) =>{
+    								// 	console.log(progress)
+    								// }).then((successResponse) => {
+    								// 	console.log(successResponse)
+    								// }).catch((err) => {
+    								// 	console.log(err)
+    								// });
+
+    								// RNVideoHelper.compress(sourceUri, {
+    								// 	startTime: 10, // optional, in seconds, defaults to 0
+    								// 	endTime: 100, //  optional, in seconds, defaults to video duration
+    								// 	quality: 'low', // default low, can be medium or high
+    								// 	defaultOrientation: 0 // By default is 0, some devices not save this property in metadata. Can be between 0 - 360
+    								// }).progress(value => {
+    								// 	console.warn('progress', value); // Int with progress value from 0 to 1
+    								// }).then(compressedUri => {
+    								// 	console.warn('compressedUri', 'file:///'+compressedUri); // String with path to temporary compressed video
+    								// 	// let fileEXT = getFileInfo('file:///'+compressedUri);
+
+    								// 	RNFetchBlob.fs.stat('file:///'+compressedUri)
+
+    								// 	.then((stats) => {
+    								// 		console.log(stats)
+    								// 	})
+    								// 	.catch((err) => {
+    								// 		console.log(err);
+    								// 	})
+
+    								// 	// setProductVideoData(pickerResult);
+    								// });
+
+    								setPrductVideoType(pickerResult[0].type);
+    								setProductVideoData(pickerResult);
+
+    								// if( pickerResult[0].size <= 5000000 ){
+    								// 	setPrductVideoType(pickerResult[0].type);
+    								// 	setProductVideoData(pickerResult);
+    								// }else{
+    								// 	showToast('Max file upload size is 5MB');
+    								// }
+    							} catch (e) {
+    								handleError(e)
+    							}
+    							}}
+    							style={[{width: 'auto',backgroundColor: gulluColor,borderRadius: 10,marginBottom: 10},padding15,justifyContentCenter]}
+    						>
+    							<Text style={{color: goldenColor,textAlign: 'center'}}>Upload Product Video</Text>
+    						</TouchableOpacity> */}
+
+            <View style={styles.container}>
+              <View
+                style={{
+                  flex: 0,
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                }}>
+                {/* <Camera /> */}
+                {/* <TouchableOpacity onPress={} style={styles.capture}>
+    									<Text style={{ fontSize: 14 }}> SNAP </Text>
+    								</TouchableOpacity> */}
+              </View>
+            </View>
+
+            <TouchableOpacity
+              style={[
+                {
+                  width: 'auto',
+                  backgroundColor: gulluColor,
+                  borderRadius: 10,
+                  marginBottom: 10,
+                },
+                padding15,
+                justifyContentCenter,
+              ]}
+              onPress={() => chooseFile('video')}>
+              <Text style={{color: COLOR.whiteColor, textAlign: 'center'}}>
+                Choose Video
+              </Text>
+            </TouchableOpacity>
+            {productVideoData != undefined && productVideoData.length > 0 ? (
+              <View style={{width: '100%', height: 400}}>
+                <Video
+                  source={{uri: productVideoData[0].uri}}
+                  style={styles.backgroundVideo}
+                  controls={false}
+                  ref={ref => (videoPlayer.current = ref)}
+                  resizeMode={'contain'}
+                  paused={false}
+                  muted={true}
+                />
+              </View>
+            ) : null}
           </View>
-        </View>
+
+          <View>
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: 'bold',
+                color: COLOR.blackColor,
+              }}>
+              Order Sheet To Vendor
+            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'flex-start',
+                marginTop: 10,
+              }}>
+              <RadioGroup
+                radioButtons={radioButtonsOrderSheetToVendor}
+                selectedId={orderSheetToVendor}
+                onPress={e => {
+                  setOrderSheetToVendor(e);
+                }}
+                containerStyle={{
+                  flexDirection: 'row',
+                  alignItems: 'flex-start',
+                  gap: 10,
+                }}
+              />
+            </View>
+          </View>
+
+          <View style={{alignItems: 'center'}}>
+            <TouchableOpacity
+              onPress={() => {
+                saveOrder();
+              }}
+              style={[
+                {
+                  width: 'auto',
+                  backgroundColor: gulluColor,
+                  borderRadius: 10,
+                },
+                padding15,
+                justifyContentCenter,
+              ]}>
+              <Text style={[h3, {color: COLOR.whiteColor}, textAlignCenter]}>
+                Generate New Order
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
       </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  orderCreateBaseContainer: {
+    flex: 1,
+  },
+  orderCreateHeaderBaseContainer: {
+    flex: 0.09,
+  },
+  orderCreateNavbarContainer: {
+    flex: 0.1,
+  },
+  orderCreateContentContainer: {
+    flex: 0.85,
+  },
+  orderCreateContentListContainer: {
+    padding: 20,
+    gap: 20,
+  },
   container: {
     flex: 1,
     flexDirection: 'column',
@@ -1745,4 +2134,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
 export default memo(OrderCreate);
