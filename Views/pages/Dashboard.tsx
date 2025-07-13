@@ -198,6 +198,9 @@ function Dashboard({navigation}: any) {
   }, [selectedTab]);
 
   useEffect(() => {
+    if (search == '') {
+      setSelectedTab(1);
+    }
     searchOrder(search);
   }, [search]);
 
@@ -497,11 +500,11 @@ function Dashboard({navigation}: any) {
             styles.dashboardListItemDot,
             {
               backgroundColor:
-                selectedTab == 2
+                selectedTab == 2 && search == ''
                   ? COLOR.redColor
-                  : selectedTab == 3
+                  : selectedTab == 3 && search == ''
                   ? COLOR.yellowColor
-                  : selectedTab == 4
+                  : selectedTab == 4 && search == ''
                   ? COLOR.greenColor
                   : COLOR.placeholderColor,
             },
@@ -579,7 +582,12 @@ function Dashboard({navigation}: any) {
               renderItem={({item}) => <Item item={item} />}
               keyExtractor={item => item?.id}
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.dashboardContentFlatlistContainer}
+              contentContainerStyle={[
+                styles.dashboardContentFlatlistContainer,
+                {
+                  paddingTop: search != '' ? 50 : 0,
+                },
+              ]}
             />
           )}
         </View>
