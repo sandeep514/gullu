@@ -13,6 +13,7 @@ const ROUTES = {
   vendorEditScreen: 'vendorEdit',
   orderEditScreen: 'orderedit',
   galleryScreen: 'gallery',
+  noInternetScreen: 'noInternet',
 };
 
 export default ROUTES;

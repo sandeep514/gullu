@@ -17,6 +17,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 import ROUTES from '../config/routes';
 import LOCALSTORAGE from '../config/localStorage';
+import NetInfo from '@react-native-community/netinfo';
 
 const SplashScreen = () => {
   const gulluLogo = useRef(new Animated.Value(0)).current;
@@ -24,29 +25,41 @@ const SplashScreen = () => {
 
   useEffect(() => {
     startLogoAnimation();
-    setTimeout(() => {
-      AsyncStorage.getItem(LOCALSTORAGE.ID)
-        .then((res: any) => {
-          console.log();
-          if (res != null) {
-            navigate.reset({
-              index: 0,
-              routes: [{name: ROUTES.landingPage as never}],
+    NetInfo.fetch().then(state => {
+      // console.log(`--------> NET INFO ${JSON.stringify(state)}`);
+      if (state.isConnected) {
+        setTimeout(() => {
+          AsyncStorage.getItem(LOCALSTORAGE.ID)
+            .then((res: any) => {
+              // console.log();
+              if (res != null) {
+                navigate.reset({
+                  index: 0,
+                  routes: [{name: ROUTES.landingPage as never}],
+                });
+              } else {
+                navigate.reset({
+                  index: 0,
+                  routes: [{name: ROUTES.loginScreen as never}],
+                });
+              }
+            })
+            .catch(() => {
+              navigate.reset({
+                index: 0,
+                routes: [{name: ROUTES.loginScreen as never}],
+              });
             });
-          } else {
-            navigate.reset({
-              index: 0,
-              routes: [{name: ROUTES.loginScreen as never}],
-            });
-          }
-        })
-        .catch(() => {
+        }, 3000);
+      } else {
+        setTimeout(() => {
           navigate.reset({
             index: 0,
-            routes: [{name: ROUTES.loginScreen as never}],
+            routes: [{name: ROUTES.noInternetScreen as never}],
           });
-        });
-    }, 3000);
+        }, 3000);
+      }
+    });
   }, []);
 
   const startLogoAnimation = () => {

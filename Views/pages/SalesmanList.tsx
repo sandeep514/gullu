@@ -28,6 +28,7 @@ import ROUTES from '../config/routes';
 import DIMENSIONS from '../config/dimensions';
 import LOCALSTORAGE from '../config/localStorage';
 import Toast from 'react-native-toast-message';
+import {useIsFocused} from '@react-navigation/native';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -40,10 +41,13 @@ function SalesmanList({navigation}: any): JSX.Element {
   const [data, setData] = useState<any[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const IoniconsIcon = Ionicons as unknown as React.ComponentType<any>;
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    getSalesmanListData();
-  }, []);
+    if (isFocused) {
+      getSalesmanListData();
+    }
+  }, [isFocused]);
 
   useEffect(() => {
     searchOrder(search);
@@ -217,6 +221,7 @@ const styles = StyleSheet.create({
   },
   salesmanListContentBaseContainer: {
     flex: 1,
+    backgroundColor: COLOR.whiteColor,
   },
   salesmanListContentSearchContainer: {
     position: 'absolute',

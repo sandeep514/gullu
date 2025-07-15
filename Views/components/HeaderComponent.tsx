@@ -37,7 +37,11 @@ import ROUTES from '../config/routes';
 import LOCALSTORAGE from '../config/localStorage';
 import DIMENSIONS from '../config/dimensions';
 
-function HeaderComponent({navigation, isHomeScreen}: any): JSX.Element {
+function HeaderComponent({
+  navigation,
+  isHomeScreen,
+  badNetwork = false,
+}: any): JSX.Element {
   const [currentUploadingSpeed, setCurrentUploadingSpeed] = useState();
   const [networkConnection, setNetworkConnection] =
     useState<NetInfoStateType>();
@@ -101,10 +105,16 @@ function HeaderComponent({navigation, isHomeScreen}: any): JSX.Element {
             },
           ]}>
           <Text style={styles.headerContentNetworkText}>
-            {networkConnection === 'cellular' ? 'Mobile Data: ' : 'Wifi: '}
+            {networkConnection === 'cellular'
+              ? 'Mobile Data: '
+              : badNetwork
+              ? 'No Internet: '
+              : 'Wifi: '}
             <Text style={{fontWeight: 'bold', textTransform: 'capitalize'}}>
               {networkConnection === 'cellular'
                 ? 'Low internet quality'
+                : badNetwork
+                ? 'Bad internet quality'
                 : 'Good internet quality'}
             </Text>
           </Text>
@@ -112,6 +122,12 @@ function HeaderComponent({navigation, isHomeScreen}: any): JSX.Element {
             {networkConnection === 'cellular' ? (
               <MaterialIconsIcon
                 name="signal-cellular-connected-no-internet-4-bar"
+                size={DIMENSIONS.width / 25}
+                color={COLOR.whiteColor}
+              />
+            ) : badNetwork ? (
+              <MaterialIconsIcon
+                name="signal-wifi-off"
                 size={DIMENSIONS.width / 25}
                 color={COLOR.whiteColor}
               />

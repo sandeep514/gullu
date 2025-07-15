@@ -21,6 +21,7 @@ import Toast from 'react-native-toast-message';
 import LandingPage from './Views/pages/LandingPage';
 import COLOR from './Views/config/color';
 import {ImageModalProvider} from './Views/hooks/CustomModal';
+import NoInternet from './Views/pages/NoInternet';
 
 const Stack = createNativeStackNavigator();
 
@@ -163,6 +164,16 @@ function App(): JSX.Element {
             <Stack.Screen
               name={ROUTES.galleryScreen}
               component={Gallery}
+              options={{
+                headerShown: false,
+                contentStyle: {
+                  backgroundColor: COLOR.whiteColor,
+                },
+              }}
+            />
+            <Stack.Screen
+              name={ROUTES.noInternetScreen}
+              component={NoInternet}
               options={{
                 headerShown: false,
                 contentStyle: {

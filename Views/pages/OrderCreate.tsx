@@ -57,12 +57,21 @@ import NetInfo from '@react-native-community/netinfo';
 import {S3} from 'aws-sdk';
 import {RNS3} from 'react-native-s3-upload';
 
-import {launchImageLibrary} from 'react-native-image-picker';
+import {
+  ImageLibraryOptions,
+  launchImageLibrary,
+} from 'react-native-image-picker';
 import NavBarComponent from '../components/NavBarComponent';
 import COLOR from '../config/color';
 import RadioGroup, {RadioGroupProps} from 'react-native-radio-buttons-group';
+import CustomModalSelect from '../components/CustomModalSelect';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import CustomButton from '../components/CustomButton';
+import LOCALSTORAGE from '../config/localStorage';
+import Toast from 'react-native-toast-message';
+import ROUTES from '../config/routes';
 
-function OrderCreate({navigation}): JSX.Element {
+function OrderCreate({navigation}: any): JSX.Element {
   let salesmanData = {};
   const [activityIndicator, setActivityIndicator] = useState(false);
   const [order_number, setOrderNumber] = useState('');
@@ -83,7 +92,7 @@ function OrderCreate({navigation}): JSX.Element {
   const [product_video, setProductVideo] = useState('');
   const [product_video_type, setPrductVideoType] = useState('');
 
-  const [productPhotoData, setPrductPhotoData] = useState({});
+  const [productPhotoData, setPrductPhotoData] = useState();
   const [productMeasurementData, setPrductMeasurementData] = useState({});
   const [productVideoData, setProductVideoData] = useState({});
   const [productOriginalMeasurement, setProductOriginalMeasurement] = useState(
@@ -96,7 +105,7 @@ function OrderCreate({navigation}): JSX.Element {
   const [prductPhotoResult, setPrductPhotoResult] = useState();
   const [productMeasurementResult, setProductMeasurementResult] = useState();
   const [productVideoResult, setProductVideoResult] = useState();
-  const [apitoken, setApiToken] = useState();
+  const [apitoken, setApiToken] = useState<any>();
 
   const [ItemList, SetItemList] = useState();
   const [ItemListAll, SetItemListAll] = useState();
@@ -128,8 +137,8 @@ function OrderCreate({navigation}): JSX.Element {
   const [bufferReadyDate, SetBufferReadyDate] = useState();
 
   const [percentage, setPercentage] = useState(0);
-  const [networkType, setNetworkType] = useState();
-  const [totalAttachmentSize, setTotalAttachmentSize] = useState();
+  const [networkType, setNetworkType] = useState<any>();
+  const [totalAttachmentSize, setTotalAttachmentSize] = useState<any>();
   const [currentUploadingSpeed, setCurrentUploadingSpeed] = useState(0);
 
   const [S3ProductImageUpload, setS3ProductImageUpload] = useState(false);
@@ -144,12 +153,14 @@ function OrderCreate({navigation}): JSX.Element {
   const [allAttachmentUpload, setAllAttachmentUpload] = useState(false);
   const [uploadingAttachment, setuploadingAttachment] = useState(false);
 
-  const [sampleCholi, setSampleCholi] = useState<String | undefined>();
-  const [pickup, setPickup] = useState<String | undefined>('');
+  const [sampleCholi, setSampleCholi] = useState<string | undefined>();
+  const [pickup, setPickup] = useState<string | undefined>('');
   const [customerName, setCustomerName] = useState('');
   const [mobile, setMobile] = useState('');
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
+
+  const IoniconsIcon = Ionicons as unknown as React.ComponentType<any>;
 
   const [orderSheetToVendor, setOrderSheetToVendor] = useState<
     String | undefined
@@ -199,11 +210,11 @@ function OrderCreate({navigation}): JSX.Element {
 
   const videoPlayer = React.useRef();
   useEffect(() => {
-    console.log();
+    // console.log();
     // getFileFromS3();
   }, []);
-  const chooseFile = type => {
-    let options = {
+  const chooseFile = (type: any) => {
+    let options: ImageLibraryOptions = {
       mediaType: type,
       maxWidth: 300,
       maxHeight: 550,
@@ -262,7 +273,7 @@ function OrderCreate({navigation}): JSX.Element {
     setshowReadyDate(false);
     setShowDeliveryDate(false);
 
-    AsyncStorage.getItem('id')
+    AsyncStorage.getItem(LOCALSTORAGE.ID)
       .then(token => {
         setApiToken(token);
       })
@@ -290,6 +301,7 @@ function OrderCreate({navigation}): JSX.Element {
     let size3 = 0;
     let size4 = 0;
     let size5 = 0;
+
     if (productPhotoData.length > 0) {
       size1 = productPhotoData[0].size;
     }
@@ -453,15 +465,12 @@ function OrderCreate({navigation}): JSX.Element {
           'Content-Type': 'multipart/form-data; ',
         },
       });
-      console.log('i am here ', JSON.stringify(ress));
-      let response = await ress
-        .json()
-        .then(res => console.log(JSON.stringify(res)))
-        .catch(err => console.log(JSON.stringify(err)));
-      console.log('response');
-      console.log(response);
+      // console.log('i am here ', JSON.stringify(ress));
+      let response = await ress.json();
+      // console.log('response line 472');
+      // console.log(response);
       if (response.data.status == true || response.data.status == 'true') {
-        console.log('------> order created');
+        // console.log('------> order created line 475');
         defaultTimeInterval = 5;
         interval = setInterval(function () {
           if (current < 98) {
@@ -501,9 +510,29 @@ function OrderCreate({navigation}): JSX.Element {
                   setAllAttachmentUpload(false);
                 }
               }
+              if (
+                dataProductOriginalMeasurement != undefined &&
+                dataProductOriginalMeasurement != ''
+              ) {
+                if (S3ProductOriginalMeasurementUpload == true) {
+                  setAllAttachmentUpload(true);
+                } else {
+                  setAllAttachmentUpload(false);
+                }
+              }
+              if (
+                dataProductUploadSlip != undefined &&
+                dataProductUploadSlip != ''
+              ) {
+                if (S3ProductSlipUpload == true) {
+                  setAllAttachmentUpload(true);
+                } else {
+                  setAllAttachmentUpload(false);
+                }
+              }
 
               if (allAttachmentUpload == true) {
-                console.log('i am here');
+                // console.log('i am here');
                 // showToast('Order generated');
                 // navigation.push('orderlist');
                 // setActivityIndicator(false)
@@ -513,19 +542,36 @@ function OrderCreate({navigation}): JSX.Element {
           if (current > 97) {
             setGeneratingMessage('Almost done...');
             clearInterval(interval);
-            showToast('Order generated');
-            navigation.push('Home');
+            Toast.show({
+              type: 'success',
+              text1: 'Success',
+              text2: 'Order generated',
+            });
+            navigation.reset({
+              index: 0,
+              routes: [{name: ROUTES.landingPage as never}],
+            });
             setActivityIndicator(false);
           }
         }, defaultTimeInterval);
       } else {
+        // console.log('error line 557');
         clearInterval(interval);
-
-        showToast('error');
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Something went wrong',
+        });
         setActivityIndicator(false);
       }
     } else {
-      showToast('Required fields are missing');
+      // console.log('Required field is missing. line 566');
+      setActivityIndicator(false);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Required field is missing.',
+      });
     }
 
     // if( order_number != '' && order_number != undefined && selectedVendorId != '' && selectedVendorId != undefined && selectedSalesmanId != '' && selectedSalesmanId != undefined && color != '' && color != undefined && item != '' && item != undefined && readyDate != '' && readyDate != undefined && deliveryDate != '' && deliveryDate != undefined ){
@@ -876,41 +922,48 @@ function OrderCreate({navigation}): JSX.Element {
       successActionStatus: 201,
     };
 
-    RNS3.put(file, options).then(response => {
-      console.log(response);
-      if (response.status !== 201) {
-        throw new Error('Failed to upload image to S3');
-      } else {
-        setuploadingAttachment(false);
-        if (variant == 'productImage') {
-          setS3ProductImageUpload(true);
+    RNS3.put(file, options)
+      .then(response => {
+        console.log('response in s3');
+        console.log(response);
+        if (response.status !== 201) {
+          setuploadingAttachment(false);
+          throw new Error('Failed to upload image to S3');
+        } else {
+          setuploadingAttachment(false);
+          if (variant == 'productImage') {
+            setS3ProductImageUpload(true);
+          }
+          if (variant == 'productMeasurement') {
+            setS3ProductMeasurementUpload(true);
+          }
+          if (variant == 'productVideo') {
+            setS3ProductVideoUpload(true);
+          }
+          if (variant == 'Product Original Measurement') {
+            setS3ProductOriginalMeasurementUpload(true);
+          }
+          if (variant == 'Product Slip Number') {
+            setS3ProductSlipUpload(true);
+          }
         }
-        if (variant == 'productMeasurement') {
-          setS3ProductMeasurementUpload(true);
-        }
-        if (variant == 'productVideo') {
-          setS3ProductVideoUpload(true);
-        }
-        if (variant == 'Product Original Measurement') {
-          setS3ProductOriginalMeasurementUpload(true);
-        }
-        if (variant == 'Product Slip Number') {
-          setS3ProductSlipUpload(true);
-        }
-      }
 
-      console.log(response.body);
-      /**
-       * {
-       *   postResponse: {
-       *     bucket: "your-bucket",
-       *     etag : "9f620878e06d28774406017480a59fd4",
-       *     key: "uploads/image.png",
-       *     location: "https://your-bucket.s3.amazonaws.com/uploads%2Fimage.png"
-       *   }
-       * }
-       */
-    });
+        console.log(response.body);
+        /**
+         * {
+         *   postResponse: {
+         *     bucket: "your-bucket",
+         *     etag : "9f620878e06d28774406017480a59fd4",
+         *     key: "uploads/image.png",
+         *     location: "https://your-bucket.s3.amazonaws.com/uploads%2Fimage.png"
+         *   }
+         * }
+         */
+      })
+      .catch(error => {
+        console.log(error);
+        setuploadingAttachment(false);
+      });
     return false;
     const uploadParams = {
       Bucket: 'uploadbygulluapp',
@@ -1047,6 +1100,99 @@ function OrderCreate({navigation}): JSX.Element {
             style={inputStyleBlack}
           />
 
+          <CustomModalSelect
+            placeholder="Select Item"
+            value={selectedItemName}
+            Icon={
+              <IoniconsIcon
+                name="caret-down-outline"
+                size={20}
+                color={COLOR.placeholderColor}
+              />
+            }
+            onClick={() => setModalVisibleItem(true)}
+          />
+
+          <CustomModalSelect
+            placeholder="Select Vendor"
+            value={selectedVendorName}
+            Icon={
+              <IoniconsIcon
+                name="caret-down-outline"
+                size={20}
+                color={COLOR.placeholderColor}
+              />
+            }
+            onClick={() => setModalVisibleVendor(true)}
+          />
+
+          <CustomModalSelect
+            placeholder="Select Salesman"
+            value={selectedSalesmanName}
+            Icon={
+              <IoniconsIcon
+                name="caret-down-outline"
+                size={20}
+                color={COLOR.placeholderColor}
+              />
+            }
+            onClick={() => setModalVisibleSalesman(true)}
+          />
+
+          <CustomModalSelect
+            placeholder="Select Ready Date"
+            value={readyDate ? readyDate.toString().substring(4, 15) : ''}
+            Icon={
+              <IoniconsIcon
+                name="calendar-outline"
+                size={20}
+                color={COLOR.placeholderColor}
+              />
+            }
+            onClick={() => openReadyDate()}
+          />
+
+          <CustomModalSelect
+            placeholder="Buffer Ready Date"
+            value={
+              bufferReadyDate ? bufferReadyDate.toString().substring(4, 15) : ''
+            }
+            Icon={
+              <IoniconsIcon
+                name="calendar-outline"
+                size={20}
+                color={COLOR.placeholderColor}
+              />
+            }
+            onClick={() => openBufferReadyDate()}
+          />
+
+          <CustomModalSelect
+            placeholder="Select Delivery Date"
+            value={deliveryDate ? deliveryDate.toString().substring(4, 15) : ''}
+            Icon={
+              <IoniconsIcon
+                name="calendar-outline"
+                size={20}
+                color={COLOR.placeholderColor}
+              />
+            }
+            onClick={() => openDeliveryDate()}
+          />
+
+          <CustomModalSelect
+            placeholder="Select Vendor Date"
+            value={vendorDate ? vendorDate.toString().substring(4, 15) : ''}
+            Icon={
+              <IoniconsIcon
+                name="calendar-outline"
+                size={20}
+                color={COLOR.placeholderColor}
+              />
+            }
+            onClick={() => openVendorData()}
+          />
+
           {/* <InputComponents placeholder="Item" onChangeText={(value:any) => { setItem(value) }} style={inputStyleBlack} /> */}
 
           <Modal
@@ -1173,82 +1319,6 @@ function OrderCreate({navigation}): JSX.Element {
               </View>
             </View>
           </Modal>
-          <View style={{paddingHorizontal: 20, paddingVertical: 10}}>
-            <View style={{flexDirection: 'row'}}>
-              <Pressable
-                style={{
-                  backgroundColor: gulluColor,
-                  padding: 20,
-                  borderRadius: 10,
-                  width: '50%',
-                  marginBottom: 10,
-                }}
-                onPress={() => setModalVisibleItem(true)}>
-                <Text style={{color: COLOR.whiteColor, textAlign: 'center'}}>
-                  Select Item
-                </Text>
-              </Pressable>
-
-              <Text
-                style={[
-                  {paddingVertical: 16, textTransform: 'capitalize'},
-                  h4,
-                  marginLeft10,
-                  {color: gulluColor},
-                ]}>
-                {selectedItemName}
-              </Text>
-            </View>
-            <View style={{flexDirection: 'row'}}>
-              <Pressable
-                style={{
-                  backgroundColor: gulluColor,
-                  padding: 20,
-                  borderRadius: 10,
-                  width: '50%',
-                  marginBottom: 10,
-                }}
-                onPress={() => setModalVisibleVendor(true)}>
-                <Text style={{color: COLOR.whiteColor, textAlign: 'center'}}>
-                  Select Vendor
-                </Text>
-              </Pressable>
-
-              <Text
-                style={[
-                  {paddingVertical: 16, textTransform: 'capitalize'},
-                  h4,
-                  marginLeft10,
-                  {color: gulluColor},
-                ]}>
-                {selectedVendorName}
-              </Text>
-            </View>
-
-            <View style={{flexDirection: 'row'}}>
-              <Pressable
-                style={{
-                  backgroundColor: gulluColor,
-                  padding: 20,
-                  borderRadius: 10,
-                  width: '50%',
-                }}
-                onPress={() => setModalVisibleSalesman(true)}>
-                <Text style={{color: COLOR.whiteColor, textAlign: 'center'}}>
-                  Select Salesman
-                </Text>
-              </Pressable>
-              <Text
-                style={[
-                  {paddingVertical: 16, textTransform: 'capitalize'},
-                  h4,
-                  marginLeft10,
-                  {color: gulluColor},
-                ]}>
-                {selectedSalesmanName}
-              </Text>
-            </View>
-          </View>
 
           {showReadyDate ? (
             <View>
@@ -1284,121 +1354,6 @@ function OrderCreate({navigation}): JSX.Element {
               />
             </View>
           ) : null}
-
-          <View style={{paddingHorizontal: 20, paddingVertical: 10}}>
-            <View style={{flexDirection: 'row'}}>
-              <Pressable
-                onPress={() => openReadyDate()}
-                style={{
-                  backgroundColor: gulluColor,
-                  padding: 20,
-                  borderRadius: 10,
-                  width: '50%',
-                  marginBottom: 10,
-                }}>
-                <Text style={{color: COLOR.whiteColor, textAlign: 'center'}}>
-                  Select Ready Date{' '}
-                </Text>
-              </Pressable>
-              {readyDate != undefined ? (
-                <View>
-                  <Text
-                    style={[
-                      {paddingVertical: 16, textTransform: 'capitalize'},
-                      h4,
-                      marginLeft10,
-                      {color: gulluColor},
-                    ]}>
-                    {readyDate.toString().substring(4, 15)}
-                  </Text>
-                </View>
-              ) : null}
-            </View>
-
-            <View style={{flexDirection: 'row'}}>
-              <Pressable
-                onPress={() => openBufferReadyDate()}
-                style={{
-                  backgroundColor: gulluColor,
-                  padding: 20,
-                  borderRadius: 10,
-                  width: '50%',
-                  marginBottom: 10,
-                }}>
-                <Text style={{color: COLOR.whiteColor, textAlign: 'center'}}>
-                  Buffer Ready Date{' '}
-                </Text>
-              </Pressable>
-              {bufferReadyDate != undefined ? (
-                <View>
-                  <Text
-                    style={[
-                      {paddingVertical: 16, textTransform: 'capitalize'},
-                      h4,
-                      marginLeft10,
-                      {color: gulluColor},
-                    ]}>
-                    {bufferReadyDate.toString().substring(4, 15)}
-                  </Text>
-                </View>
-              ) : null}
-            </View>
-
-            <View style={{flexDirection: 'row'}}>
-              <Pressable
-                onPress={() => openDeliveryDate()}
-                style={{
-                  backgroundColor: gulluColor,
-                  padding: 20,
-                  borderRadius: 10,
-                  width: '50%',
-                }}>
-                <Text style={{color: COLOR.whiteColor, textAlign: 'center'}}>
-                  Select Delivery Date
-                </Text>
-              </Pressable>
-              {deliveryDate != undefined ? (
-                <View>
-                  <Text
-                    style={[
-                      {paddingVertical: 16, textTransform: 'capitalize'},
-                      h4,
-                      marginLeft10,
-                      {color: gulluColor},
-                    ]}>
-                    {deliveryDate.toString().substring(4, 15)}
-                  </Text>
-                </View>
-              ) : null}
-            </View>
-            <View style={{flexDirection: 'row', marginTop: 10}}>
-              <Pressable
-                onPress={() => openVendorData()}
-                style={{
-                  backgroundColor: gulluColor,
-                  padding: 20,
-                  borderRadius: 10,
-                  width: '50%',
-                }}>
-                <Text style={{color: COLOR.whiteColor, textAlign: 'center'}}>
-                  Select Vendor Date
-                </Text>
-              </Pressable>
-              {vendorDate != undefined ? (
-                <View>
-                  <Text
-                    style={[
-                      {paddingVertical: 16, textTransform: 'capitalize'},
-                      h4,
-                      marginLeft10,
-                      {color: gulluColor},
-                    ]}>
-                    {vendorDate.toString().substring(4, 15)}
-                  </Text>
-                </View>
-              ) : null}
-            </View>
-          </View>
           {showDeliveryDate ? (
             <DatePicker
               style={{width: 200}}
@@ -1513,6 +1468,7 @@ function OrderCreate({navigation}): JSX.Element {
                   setSampleCholi(e);
                 }}
                 containerStyle={{flexDirection: 'row'}}
+                labelStyle={{color: COLOR.blackColor}}
               />
             </View>
           </View>
@@ -1543,6 +1499,7 @@ function OrderCreate({navigation}): JSX.Element {
                   alignItems: 'flex-start',
                   gap: 10,
                 }}
+                labelStyle={{color: COLOR.blackColor}}
               />
             </View>
           </View>
@@ -1570,8 +1527,8 @@ function OrderCreate({navigation}): JSX.Element {
             />
           </View>
 
-          <View style={{paddingHorizontal: 20}}>
-            <TouchableOpacity
+          <View style={{gap: 20}}>
+            {/* <TouchableOpacity
               onPress={async () => {
                 try {
                   const pickerResult = await DocumentPicker.pick({
@@ -1614,7 +1571,41 @@ function OrderCreate({navigation}): JSX.Element {
               <Text style={{color: COLOR.whiteColor, textAlign: 'center'}}>
                 Upload Product Image
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+            <CustomButton
+              title="Upload Product Image"
+              backgroundColor={COLOR.blackColor}
+              color={COLOR.whiteColor}
+              onClick={async () => {
+                try {
+                  const pickerResult = await DocumentPicker.pick({
+                    presentationStyle: 'fullScreen',
+                    copyTo: 'cachesDirectory',
+                    type: [types.images],
+                  });
+
+                  let sourceUri = pickerResult[0].fileCopyUri;
+                  uploadFileToS3(
+                    sourceUri,
+                    pickerResult[0]['name'],
+                    pickerResult[0].size,
+                    pickerResult[0].type,
+                    'productImage',
+                  );
+
+                  setPrductPhotoType(pickerResult[0].type);
+                  setPrductPhotoData(pickerResult);
+                  // if(pickerResult[0].size <= 2000000){
+                  // 	setPrductPhotoType(pickerResult[0].type);
+                  // 	setPrductPhotoData(pickerResult)
+                  // }else{
+                  // 	showToast('Image should be less than 2MB');
+                  // }
+                } catch (e) {
+                  handleError(e);
+                }
+              }}
+            />
 
             {productPhotoData != undefined && productPhotoData.length > 0 ? (
               <View style={{height: 200, width: 200}}>
@@ -1625,7 +1616,8 @@ function OrderCreate({navigation}): JSX.Element {
               </View>
             ) : // <Image source={{uri:productPhotoData[0].fileCopyUri}} style={{ height: 200,width: 200 }}/>
             null}
-            <TouchableOpacity
+
+            {/* <TouchableOpacity
               onPress={async () => {
                 try {
                   const pickerResult = await DocumentPicker.pick({
@@ -1683,7 +1675,57 @@ function OrderCreate({navigation}): JSX.Element {
               <Text style={{color: COLOR.whiteColor, textAlign: 'center'}}>
                 Upload Product Measurement
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+
+            <CustomButton
+              title="Upload Product Measurement"
+              backgroundColor={COLOR.blackColor}
+              color={COLOR.whiteColor}
+              onClick={async () => {
+                try {
+                  const pickerResult = await DocumentPicker.pick({
+                    presentationStyle: 'fullScreen',
+                    copyTo: 'cachesDirectory',
+                    type: [types.images],
+                  });
+                  setPrductMeasureType(pickerResult[0].type);
+                  setPrductMeasurementData(pickerResult);
+
+                  console.log('i am here');
+                  console.log(pickerResult[0]);
+                  let sourceUri = pickerResult[0].fileCopyUri;
+
+                  // const fileData = {
+                  // 	uri: sourceUri,
+                  // 	name: pickerResult[0]['name'],
+                  // 	type: pickerResult[0].type,
+                  // }
+                  // const options = {
+                  // 	bucket : 'uploadbygulluapp',
+                  // 	region: 'us-east-2',
+                  // 	accessKey: 'AKIA2OM62YUJYMJ6PT2E',
+                  // 	secretKey: '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',
+                  // 	successActionStatus : 201
+                  // }
+                  uploadFileToS3(
+                    sourceUri,
+                    pickerResult[0]['name'],
+                    pickerResult[0].size,
+                    pickerResult[0].type,
+                    'productMeasurement',
+                  );
+
+                  // if(pickerResult[0].size <= 2000000){
+                  // 	setPrductMeasureType(pickerResult[0].type);
+                  // 	setPrductMeasurementData(pickerResult)
+                  // }else{
+                  // 	showToast('Image should be less than 2MB');
+                  // }
+                } catch (e) {
+                  handleError(e);
+                }
+              }}
+            />
 
             {productMeasurementData != undefined &&
             productMeasurementData.length > 0 ? (
@@ -1695,7 +1737,7 @@ function OrderCreate({navigation}): JSX.Element {
               </View>
             ) : null}
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={async () => {
                 try {
                   const pickerResult = await DocumentPicker.pick({
@@ -1753,7 +1795,57 @@ function OrderCreate({navigation}): JSX.Element {
               <Text style={{color: COLOR.whiteColor, textAlign: 'center'}}>
                 Upload Original Measurement
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+
+            <CustomButton
+              title="Upload Original Measurement"
+              backgroundColor={COLOR.blackColor}
+              color={COLOR.whiteColor}
+              onClick={async () => {
+                try {
+                  const pickerResult = await DocumentPicker.pick({
+                    presentationStyle: 'fullScreen',
+                    copyTo: 'cachesDirectory',
+                    type: [types.images],
+                  });
+                  setPrductMeasureType(pickerResult[0].type);
+                  setProductOriginalMeasurement(pickerResult);
+
+                  console.log('i am here');
+                  console.log(pickerResult[0]);
+                  let sourceUri = pickerResult[0].fileCopyUri;
+
+                  // const fileData = {
+                  // 	uri: sourceUri,
+                  // 	name: pickerResult[0]['name'],
+                  // 	type: pickerResult[0].type,
+                  // }
+                  // const options = {
+                  // 	bucket : 'uploadbygulluapp',
+                  // 	region: 'us-east-2',
+                  // 	accessKey: 'AKIA2OM62YUJYMJ6PT2E',
+                  // 	secretKey: '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',
+                  // 	successActionStatus : 201
+                  // }
+                  uploadFileToS3(
+                    sourceUri,
+                    pickerResult[0]['name'],
+                    pickerResult[0].size,
+                    pickerResult[0].type,
+                    'Product Original Measurement',
+                  );
+
+                  // if(pickerResult[0].size <= 2000000){
+                  // 	setPrductMeasureType(pickerResult[0].type);
+                  // 	setPrductMeasurementData(pickerResult)
+                  // }else{
+                  // 	showToast('Image should be less than 2MB');
+                  // }
+                } catch (e) {
+                  handleError(e);
+                }
+              }}
+            />
 
             {productOriginalMeasurement != undefined &&
             productOriginalMeasurement.length > 0 ? (
@@ -1765,7 +1857,7 @@ function OrderCreate({navigation}): JSX.Element {
               </View>
             ) : null}
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={async () => {
                 try {
                   const pickerResult = await DocumentPicker.pick({
@@ -1823,7 +1915,57 @@ function OrderCreate({navigation}): JSX.Element {
               <Text style={{color: COLOR.whiteColor, textAlign: 'center'}}>
                 Upload Slip Photo
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+
+            <CustomButton
+              title="Upload Slip Photo"
+              backgroundColor={COLOR.blackColor}
+              color={COLOR.whiteColor}
+              onClick={async () => {
+                try {
+                  const pickerResult = await DocumentPicker.pick({
+                    presentationStyle: 'fullScreen',
+                    copyTo: 'cachesDirectory',
+                    type: [types.images],
+                  });
+                  // setPrductMeasureType(pickerResult[0].type);
+                  setProductSlipPhoto(pickerResult);
+
+                  console.log('i am here');
+                  console.log(pickerResult[0]);
+                  let sourceUri = pickerResult[0].fileCopyUri;
+
+                  // const fileData = {
+                  // 	uri: sourceUri,
+                  // 	name: pickerResult[0]['name'],
+                  // 	type: pickerResult[0].type,
+                  // }
+                  // const options = {
+                  // 	bucket : 'uploadbygulluapp',
+                  // 	region: 'us-east-2',
+                  // 	accessKey: 'AKIA2OM62YUJYMJ6PT2E',
+                  // 	secretKey: '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',
+                  // 	successActionStatus : 201
+                  // }
+                  uploadFileToS3(
+                    sourceUri,
+                    pickerResult[0]['name'],
+                    pickerResult[0].size,
+                    pickerResult[0].type,
+                    'Product Slip Number',
+                  );
+
+                  // if(pickerResult[0].size <= 2000000){
+                  // 	setPrductMeasureType(pickerResult[0].type);
+                  // 	setPrductMeasurementData(pickerResult)
+                  // }else{
+                  // 	showToast('Image should be less than 2MB');
+                  // }
+                } catch (e) {
+                  handleError(e);
+                }
+              }}
+            />
 
             {productSlipPhoto != undefined && productSlipPhoto.length > 0 ? (
               <View style={{height: 200, width: 200}}>
@@ -1910,21 +2052,21 @@ function OrderCreate({navigation}): JSX.Element {
     							<Text style={{color: goldenColor,textAlign: 'center'}}>Upload Product Video</Text>
     						</TouchableOpacity> */}
 
-            <View style={styles.container}>
+            {/* <View style={styles.container}>
               <View
                 style={{
                   flex: 0,
                   flexDirection: 'row',
                   justifyContent: 'center',
-                }}>
-                {/* <Camera /> */}
-                {/* <TouchableOpacity onPress={} style={styles.capture}>
+                }}> */}
+            {/* <Camera /> */}
+            {/* <TouchableOpacity onPress={} style={styles.capture}>
     									<Text style={{ fontSize: 14 }}> SNAP </Text>
     								</TouchableOpacity> */}
-              </View>
-            </View>
+            {/* </View>
+            </View> */}
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={[
                 {
                   width: 'auto',
@@ -1939,7 +2081,14 @@ function OrderCreate({navigation}): JSX.Element {
               <Text style={{color: COLOR.whiteColor, textAlign: 'center'}}>
                 Choose Video
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+            <CustomButton
+              title={'Choose Video'}
+              backgroundColor={COLOR.whiteColor}
+              color={COLOR.blackColor}
+              borderColor={COLOR.blackColor}
+              onClick={() => chooseFile('video')}
+            />
             {productVideoData != undefined && productVideoData.length > 0 ? (
               <View style={{width: '100%', height: 400}}>
                 <Video
@@ -1981,11 +2130,12 @@ function OrderCreate({navigation}): JSX.Element {
                   alignItems: 'flex-start',
                   gap: 10,
                 }}
+                labelStyle={{color: COLOR.blackColor}}
               />
             </View>
           </View>
 
-          <View style={{alignItems: 'center'}}>
+          {/* <View style={{alignItems: 'center'}}>
             <TouchableOpacity
               onPress={() => {
                 saveOrder();
@@ -2003,9 +2153,41 @@ function OrderCreate({navigation}): JSX.Element {
                 Generate New Order
               </Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
+          <CustomButton
+            title={'Generate Order'}
+            backgroundColor={COLOR.baseColor}
+            color={COLOR.whiteColor}
+            onClick={() => saveOrder()}
+          />
         </ScrollView>
       </View>
+      {uploadingAttachment && (
+        <View style={styles.orderCreateUploadBaseContainer}>
+          <View style={styles.orderCreatUploadContainer}>
+            <ActivityIndicator color={COLOR.baseColor} size={30} />
+            <Text style={styles.orderCreateUploadText}>
+              Uploading Attachment To Server
+            </Text>
+          </View>
+        </View>
+      )}
+      {activityIndicator && (
+        <View style={styles.orderCreateUploadBaseContainer}>
+          <View style={styles.orderCreatUploadContainer}>
+            <ActivityIndicator color={COLOR.baseColor} size={30} />
+            <Text style={styles.orderCreateUploadText}>
+              You are on {networkType}
+            </Text>
+            <Text style={styles.loaderContentText}>
+              Order attachment size is{' '}
+              {totalAttachmentSize ? totalAttachmentSize.toFixed(2) : 0}
+              MB
+            </Text>
+            <Text style={styles.loaderContentText}>{generatingMessage}...</Text>
+          </View>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -2013,6 +2195,7 @@ function OrderCreate({navigation}): JSX.Element {
 const styles = StyleSheet.create({
   orderCreateBaseContainer: {
     flex: 1,
+    position: 'relative',
   },
   orderCreateHeaderBaseContainer: {
     flex: 0.09,
@@ -2132,6 +2315,36 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 15,
     textAlign: 'center',
+  },
+  orderCreateUploadBaseContainer: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    left: 0,
+    bottom: 0,
+    backgroundColor: `${COLOR.blackColor}88`,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  orderCreatUploadContainer: {
+    backgroundColor: COLOR.whiteColor,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10,
+    gap: 8,
+    elevation: 10,
+    borderWidth: 1,
+    borderColor: COLOR.lightGreyColor,
+  },
+  orderCreateUploadText: {
+    color: COLOR.baseColor,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  loaderContentText: {
+    color: COLOR.placeholderColor,
+    fontSize: 14,
   },
 });
 

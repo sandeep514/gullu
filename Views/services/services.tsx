@@ -21,7 +21,7 @@ export const post = (url: any, params: any) => {
   return new Promise((resolve, reject) => {
     apiClient.post(url, params).then(
       (res: any) => {
-        console.log(res);
+        // console.log(res);
         if (res.data.data.status == 'true' || res.data.data.status == true) {
           resolve(res.data.data);
         } else {
@@ -119,6 +119,29 @@ export const updateSalesman = async (data: any) => {
 export const getOrderList = async (role: any, id: any) => {
   const response = await apiClient.get(
     `${API_URLS.getOrderList}?role=${role}&api_token=${id}`,
+  );
+  return response.data;
+};
+
+export const updateOrderStatus = async (
+  status: any,
+  id: any,
+  applicationId: any,
+) => {
+  const response = await apiClient.get(
+    `${API_URLS.updateOrderStatus}?status=${status}&api_token=${id}&applicationId=${applicationId}`,
+  );
+  return response.data;
+};
+
+export const updateOrderStatusWithImage = async (
+  status: any,
+  id: any,
+  image: any,
+  applicationId: any,
+) => {
+  const response = await apiClient.get(
+    `${API_URLS.updateOrderStatus}?status=${status}&api_token=${id}&image=${image}&applicationId=${applicationId}`,
   );
   return response.data;
 };

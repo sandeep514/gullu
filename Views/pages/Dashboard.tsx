@@ -107,7 +107,7 @@ function Dashboard({navigation}: any) {
 
   useEffect(() => {
     NetInfo.fetch().then(state => {
-      console.log(state);
+      // console.log(state);
       if (state.type == 'cellular') {
         console.log('You are using mobile data to upload 30MB data.');
       } else {
@@ -157,7 +157,7 @@ function Dashboard({navigation}: any) {
           // resolve{ uri : 'data:image/jpeg;base64,'+data.data };
         })
         .catch(error => {
-          console.log(error);
+          // console.log(error);
         });
     });
   };
@@ -178,7 +178,9 @@ function Dashboard({navigation}: any) {
   }, []);
 
   useEffect(() => {
-    getData();
+    if (isFocused) {
+      getData();
+    }
   }, [isFocused]);
 
   useEffect(() => {
@@ -309,12 +311,8 @@ function Dashboard({navigation}: any) {
 
     const response = await fetch(`https://api.shrtco.de/v2/shorten?url=${url}`);
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
     return data.result.full_short_link;
-  };
-
-  const sliceString = (value: string) => {
-    return value.length > 15 ? `${value.slice(0, 16)}...` : value;
   };
 
   const Item = ({item}: any) => {
@@ -735,6 +733,9 @@ const styles = StyleSheet.create({
     top: 10,
   },
 });
+export const sliceString = (value: string) => {
+  return value.length > 15 ? `${value.slice(0, 16)}...` : value;
+};
 
 // const styles = StyleSheet.create({
 //   sectionContainer: {

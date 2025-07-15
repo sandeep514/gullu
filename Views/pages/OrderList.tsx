@@ -12,6 +12,8 @@ import {
   View,
   PermissionsAndroid,
   Alert,
+  TouchableOpacity,
+  RefreshControl,
 } from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
@@ -51,6 +53,12 @@ import NavBarComponent from '../components/NavBarComponent';
 import COLOR from '../config/color';
 import CustomButton from '../components/CustomButton';
 import CustomTab from '../components/CustomTab';
+import ROUTES from '../config/routes';
+import {sliceString} from './Dashboard';
+import DIMENSIONS from '../config/dimensions';
+import LOCALSTORAGE from '../config/localStorage';
+import {refresh} from '@react-native-community/netinfo';
+import {useIsFocused} from '@react-navigation/native';
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
@@ -79,29 +87,37 @@ function OrderList({navigation}: any): JSX.Element {
   ];
 
   const [loader, setLoader] = useState(false);
-  const [pending, setPending] = useState({});
-  const [ready, setReady] = useState({});
-  const [delivered, setDelivered] = useState({});
+  const [pending, setPending] = useState();
+  const [ready, setReady] = useState();
+  const [delivered, setDelivered] = useState();
   const [pendingAll, setPendingAll] = useState({});
   const [readyAll, setReadyAll] = useState({});
   const [deliveredAll, setDeliveredAll] = useState({});
-  const [selectedOrderStatus, SetSelectedOrderStatus] = useState('');
+  const [selectedOrderStatus, SetSelectedOrderStatus] = useState(1);
 
   const [allOrdersList, setAllOrdersList] = useState([]);
 
-  const [searchableData, setSearchableData] = useState([]);
-  const [defaultSearchValue, setDefaultSearchValue] = useState();
+  const [searchableData, setSearchableData] = useState<any>([]);
+  const [defaultSearchValue, setDefaultSearchValue] = useState<any>();
 
-  const [selectedOrderData, SetSelectedOrderData] = useState('');
+  const isFocused = useIsFocused();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [selectedOrderData, setSelectedOrderData] = useState<any>();
   const IoniconsIcon = Ionicons as unknown as React.ComponentType<any>;
 
   useEffect(() => {
-    console.log('selectedOrderData');
-    console.log(selectedOrderData[0]);
     AsyncStorage.getItem('role').then(userRole => {
       console.log(userRole);
     });
   }, []);
+
+  useEffect(() => {
+    checkOrderStatus(selectedTab);
+  }, [selectedTab]);
+
+  useEffect(() => {
+    searchOrder(search);
+  }, [search]);
 
   const handleClick = async () => {
     try {
@@ -148,20 +164,22 @@ function OrderList({navigation}: any): JSX.Element {
     //   { id: "2", name: "Second User" },
     // ];
     let processingData = [];
-
-    for (let i = 0; i < selectedOrderData.length; i++) {
-      processingData.push({
-        id: selectedOrderData[i].id,
-        'Entry Number': selectedOrderData[i].entry_number,
-        'Order Number': selectedOrderData[i].order_number,
-        vendor: selectedOrderData[i].vendor.name,
-        salesman: selectedOrderData[i].salesman.name,
-        color: selectedOrderData[i].color,
-        'Created Date': selectedOrderData[i].date,
-        'Buffer Date': selectedOrderData[i].buffered_ready_date,
-        'Ready Date': selectedOrderData[i].ready_date,
-      });
+    if (selectedOrderData) {
+      for (let i = 0; i < selectedOrderData.length; i++) {
+        processingData.push({
+          id: selectedOrderData[i].id,
+          'Entry Number': selectedOrderData[i].entry_number,
+          'Order Number': selectedOrderData[i].order_number,
+          vendor: selectedOrderData[i].vendor.name,
+          salesman: selectedOrderData[i].salesman.name,
+          color: selectedOrderData[i].color,
+          'Created Date': selectedOrderData[i].date,
+          'Buffer Date': selectedOrderData[i].buffered_ready_date,
+          'Ready Date': selectedOrderData[i].ready_date,
+        });
+      }
     }
+
     let getDate = new Date().getDate();
     let getMonth = new Date().getMonth() + 1;
     let getFullYear = new Date().getFullYear();
@@ -187,7 +205,7 @@ function OrderList({navigation}: any): JSX.Element {
       '.xlsx';
     console.log(path);
     RNFS.writeFile(path, wbout, 'ascii')
-      .then(success => {
+      .then((success: any) => {
         console.log('FILE WRITTEN!');
 
         Alert.alert('Success', 'File Downloaded...', [
@@ -235,24 +253,25 @@ function OrderList({navigation}: any): JSX.Element {
         //       console.log("Attachment open error: ", error);
         //     });
       })
-      .catch(err => {
+      .catch((err: any) => {
         console.log(err.message);
       });
   };
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+
   useEffect(() => {
-    SetSelectedOrderStatus('pending');
-    AsyncStorage.getItem('id')
+    if (isFocused) {
+      getData();
+    }
+  }, [isFocused]);
+
+  const getData = async () => {
+    SetSelectedOrderStatus(1);
+    AsyncStorage.getItem(LOCALSTORAGE.ID)
       .then(async token => {
         setLoader(true);
-        let postedData = {role: 'salesman', api_token: token};
-        console.log(postedData);
-        // get('/orders/list', postedData)
         await getOrderList('salesman', token)
           .then(res => {
-            console.log(JSON.stringify(res));
+            // console.log(JSON.stringify(res));
             let pending = res.data.data['pending'];
             let ready = res.data.data['ready'];
             let delivered = res.data.data['delivered'];
@@ -268,33 +287,37 @@ function OrderList({navigation}: any): JSX.Element {
             let mergedArray1 = pending.concat(ready);
             let mergedArray2 = mergedArray1.concat(delivered);
             setAllOrdersList(mergedArray2);
-            // console.log(mergedArray2);
-            SetSelectedOrderData(res.data.data.data['pending']);
-            // SetData(res.data.data.data);
+            if (selectedTab == 1) {
+              setSelectedOrderData(res.data.data['pending']);
+            } else if (selectedTab == 2) {
+              setSelectedOrderData(res.data.data['ready']);
+            } else if (selectedTab == 3) {
+              setSelectedOrderData(res.data.data['delivered']);
+            }
             setLoader(false);
           })
           .catch(err => {
             setLoader(false);
-            console.log(JSON.stringify(err));
+            // console.log(JSON.stringify(err));
           });
       })
       .catch(err => {
         setLoader(false);
       });
-  }, []);
+  };
 
-  const searchOrder = searchableText => {
+  const searchOrder = (searchableText: any) => {
     let searchFrom = pendingAll;
 
     if (searchableText.length > 0) {
-      let newSearchableArray = [];
-      let alreadyAvailableProductId = [];
+      let newSearchableArray: any[] = [];
+      let alreadyAvailableProductId: any[] = [];
 
-      if (selectedOrderStatus == 'delivered') {
+      if (selectedOrderStatus == 3) {
         searchFrom = deliveredAll;
       }
 
-      if (selectedOrderStatus == 'ready') {
+      if (selectedOrderStatus == 2) {
         searchFrom = readyAll;
       }
 
@@ -344,305 +367,82 @@ function OrderList({navigation}: any): JSX.Element {
           }
         });
         setSearchableData(newSearchableArray);
-        SetSelectedOrderData(newSearchableArray);
+        setSelectedOrderData(newSearchableArray);
       }
     } else {
-      SetSelectedOrderData(searchFrom);
+      setSelectedOrderData(searchFrom);
     }
   };
 
   const Item = ({item}: any) => (
-    <Pressable
+    <TouchableOpacity
+      activeOpacity={0.9}
       onPress={() => {
-        navigation.push('orderEdit', {orderData: item});
+        navigation.push(ROUTES.orderEditScreen, {orderData: item});
       }}
-      style={styles.item}>
-      <View style={[{}, flexDirectionRow]}>
-        <View style={[marginRight10, {width: '60%', overflow: 'hidden'}]}>
-          <View style={[{}, flexDirectionRow]}>
-            <Text
-              style={[
-                {fontWeight: 'bold', width: '50%'},
-                h5,
-                marginRight10,
-                gulluFont,
-              ]}>
-              Order Number
-            </Text>
-            <Text style={[{marginTop: 0}, h5, gulluFont]}>
-              {item?.order_number}
-            </Text>
-          </View>
-          <View style={[{}, flexDirectionRow]}>
-            <Text
-              style={[
-                {fontWeight: 'bold', width: '50%'},
-                h5,
-                marginRight10,
-                gulluFont,
-              ]}>
-              Item{' '}
-            </Text>
-            <Text style={[{marginTop: 0}, h5, gulluFont]}>{item?.item} </Text>
-          </View>
-          <View style={[{}, flexDirectionRow]}>
-            <Text
-              style={[
-                {fontWeight: 'bold', width: '50%'},
-                h5,
-                marginRight10,
-                gulluFont,
-              ]}>
-              Color
-            </Text>
-            <Text style={[{marginTop: 0}, h5, gulluFont]}>{item?.color}</Text>
-          </View>
-          <View style={[{}, flexDirectionRow]}>
-            <Text
-              style={[
-                {fontWeight: 'bold', width: '50%'},
-                h5,
-                marginRight10,
-                gulluFont,
-              ]}>
-              Salesman
-            </Text>
-            <Text style={[{marginTop: 0}, h5, gulluFont]}>
-              {item?.salesman?.name}
-            </Text>
-          </View>
-          <View style={[{}, flexDirectionRow]}>
-            <Text
-              style={[
-                {fontWeight: 'bold', width: '50%'},
-                h5,
-                marginRight10,
-                gulluFont,
-              ]}>
-              Vendor
-            </Text>
-            <Text style={[{marginTop: 0}, h5, gulluFont]}>
-              {item?.vendor?.name}
-            </Text>
-          </View>
+      style={styles.orderListItemBaseContainer}>
+      <View style={styles.orderListItemDetailsBaseContainer}>
+        <View style={styles.orderListItemDetailsContainer}>
+          <Text style={styles.orderListItemHeaderText}>Order Number</Text>
+          <Text style={styles.orderListItemContentText}>
+            {`#${item?.order_number}`}
+          </Text>
         </View>
-        <View style={{width: '40%'}}>
-          {item?.attachments.length > 0 ? (
-            <ImageBackground
-              source={{uri: imagePath + '' + item?.attachments[0].attachment}}
-              resizeMode="contain"
-              style={{height: 100, width: '100%'}}
-            />
-          ) : (
-            ''
-          )}
+        <View style={styles.orderListItemDetailsContainer}>
+          <Text style={styles.orderListItemHeaderText}>Item</Text>
+          <Text style={styles.orderListItemContentText}>{`${item?.item}`}</Text>
+        </View>
+        <View style={styles.orderListItemDetailsContainer}>
+          <Text style={styles.orderListItemHeaderText}>Color</Text>
+          <Text style={styles.orderListItemContentText}>
+            {sliceString(item?.color)}
+          </Text>
+        </View>
+        <View style={styles.orderListItemDetailsContainer}>
+          <Text style={styles.orderListItemHeaderText}>Consultant</Text>
+          <Text style={styles.orderListItemContentText}>
+            {sliceString(item?.salesman?.name)}
+          </Text>
+        </View>
+        <View style={styles.orderListItemDetailsContainer}>
+          <Text style={styles.orderListItemHeaderText}>Vendor</Text>
+          <Text style={styles.orderListItemContentText}>
+            {sliceString(item?.vendor?.name)}
+          </Text>
         </View>
       </View>
-    </Pressable>
+      <View style={styles.orderListItemImageBaseContainer}>
+        {item?.attachments.length > 0 ? (
+          <ImageBackground
+            source={{uri: imagePath + '' + item?.attachments[0].attachment}}
+            resizeMode="contain"
+            style={{height: 100, width: '100%'}}
+          />
+        ) : (
+          ''
+        )}
+      </View>
+    </TouchableOpacity>
   );
-  const checkOrderStatus = changedOrderStatus => {
+  const checkOrderStatus = (changedOrderStatus: any) => {
     setDefaultSearchValue('');
     SetSelectedOrderStatus(changedOrderStatus);
-    if (changedOrderStatus == 'pending') {
-      SetSelectedOrderData(pending);
-    } else if (changedOrderStatus == 'ready') {
-      SetSelectedOrderData(ready);
-    } else if (changedOrderStatus == 'delivered') {
-      SetSelectedOrderData(delivered);
+    if (changedOrderStatus == 1) {
+      setSelectedOrderData(pending);
+    } else if (changedOrderStatus == 2) {
+      setSelectedOrderData(ready);
+    } else if (changedOrderStatus == 3) {
+      setSelectedOrderData(delivered);
     }
   };
 
-  return (
-    // <SafeAreaView style={{backgroundColor: '#ededed'}}>
-    //   <StatusBar backgroundColor={gulluColor} />
-    //   <View style={[height100, primaryGulluLightBackgroundColor]}>
-    //     <View style={[{}, height100]}>
-    //       <View style={[{}, height6]}>
-    //         <HeaderComponent navigation={navigation} title="List Orders" />
-    //       </View>
-    //       <View style={[{}, height85]}>
-    //         {loader ? (
-    //           <ActivityIndicator size={30} color={gulluColor} />
-    //         ) : (
-    //           <View>
-    //             <View style={[{padding: 20}]}>
-    //               {/* pending
-    // 							ready
-    // 								delivered */}
-    //               {selectedOrderStatus == 'pending' ? (
-    //                 <InputComponents
-    //                   placeholder="search Order, Salesman , Vendor"
-    //                   style={[{}, inputStyleBlack]}
-    //                   inputValue={(value: any) => {
-    //                     searchOrder(value);
-    //                   }}
-    //                 />
-    //               ) : selectedOrderStatus == 'ready' ? (
-    //                 <InputComponents
-    //                   placeholder="search Order, Salesman , Vendor"
-    //                   style={[{}, inputStyleBlack]}
-    //                   inputValue={(value: any) => {
-    //                     searchOrder(value);
-    //                   }}
-    //                 />
-    //               ) : (
-    //                 <InputComponents
-    //                   placeholder="search Order, Salesman , Vendor"
-    //                   style={[{}, inputStyleBlack]}
-    //                   inputValue={(value: any) => {
-    //                     searchOrder(value);
-    //                   }}
-    //                 />
-    //               )}
-    //             </View>
+  const onRefresh = () => {
+    setIsRefreshing(true);
+    getData();
+    setIsRefreshing(false);
+  };
 
-    //             <View style={[{}, height85]}>
-    //               <Pressable
-    //                 style={[
-    //                   {backgroundColor: 'lightgreen'},
-    //                   padding10,
-    //                   marginBottom10,
-    //                 ]}
-    //                 onPress={() => {
-    //                   handleClick();
-    //                 }}>
-    //                 <Text
-    //                   style={{
-    //                     textAlign: 'center',
-    //                     color: '#fff',
-    //                     fontWeight: 'bold',
-    //                   }}>
-    //                   Download {selectedOrderStatus} report{' '}
-    //                 </Text>
-    //               </Pressable>
-    //               <View
-    //                 style={{
-    //                   justifyContent: 'space-around',
-    //                   flexDirection: 'row',
-    //                 }}>
-    //                 <Pressable
-    //                   onPress={() => {
-    //                     checkOrderStatus('pending');
-    //                   }}
-    //                   style={[
-    //                     {width: '30%', borderRadius: 10},
-    //                     padding10,
-    //                     justifyContentCenter,
-    //                     selectedOrderStatus == 'pending'
-    //                       ? {backgroundColor: goldenColor}
-    //                       : {borderColor: goldenColor, borderWidth: 2},
-    //                   ]}>
-    //                   <Text
-    //                     style={[
-    //                       {textAlign: 'center', fontSize: 18},
-    //                       selectedOrderStatus == 'pending'
-    //                         ? {}
-    //                         : {color: secondaryBackgroundColor},
-    //                     ]}>
-    //                     Pending
-    //                   </Text>
-    //                 </Pressable>
-    //                 <Pressable
-    //                   onPress={() => {
-    //                     checkOrderStatus('ready');
-    //                   }}
-    //                   style={[
-    //                     {width: '30%', borderRadius: 10},
-    //                     padding10,
-    //                     justifyContentCenter,
-    //                     selectedOrderStatus == 'ready'
-    //                       ? {backgroundColor: goldenColor}
-    //                       : {borderColor: goldenColor, borderWidth: 2},
-    //                   ]}>
-    //                   <Text
-    //                     style={[
-    //                       {textAlign: 'center', fontSize: 18},
-    //                       selectedOrderStatus == 'ready'
-    //                         ? {}
-    //                         : {color: secondaryBackgroundColor},
-    //                     ]}>
-    //                     Ready
-    //                   </Text>
-    //                 </Pressable>
-    //                 <Pressable
-    //                   onPress={() => {
-    //                     checkOrderStatus('delivered');
-    //                   }}
-    //                   style={[
-    //                     {width: '30%', borderRadius: 10},
-    //                     padding10,
-    //                     justifyContentCenter,
-    //                     selectedOrderStatus == 'delivered'
-    //                       ? {backgroundColor: goldenColor}
-    //                       : {borderColor: goldenColor, borderWidth: 2},
-    //                   ]}>
-    //                   <Text
-    //                     style={[
-    //                       {textAlign: 'center', fontSize: 18},
-    //                       selectedOrderStatus == 'delivered'
-    //                         ? {}
-    //                         : {color: secondaryBackgroundColor},
-    //                     ]}>
-    //                     Delivered
-    //                   </Text>
-    //                 </Pressable>
-    //               </View>
-    //               {selectedOrderData.length > 0 ? (
-    //                 <FlatList
-    //                   data={selectedOrderData}
-    //                   renderItem={({item}) => <Item item={item} />}
-    //                   keyExtractor={item => item?.id}
-    //                   showsVerticalScrollIndicator={false}
-    //                 />
-    //               ) : (
-    //                 <View
-    //                   style={[{justifyContent: 'center'}, paddingVertical4]}>
-    //                   <Text style={{textAlign: 'center', fontSize: 16}}>
-    //                     No Data Available
-    //                   </Text>
-    //                 </View>
-    //               )}
-    //             </View>
-    //             <Pressable
-    //               onPress={() => {
-    //                 navigation.push('ordercreate');
-    //               }}
-    //               style={[
-    //                 {
-    //                   backgroundColor: gulluColor,
-    //                   height: 70,
-    //                   width: 70,
-    //                   padding: 0,
-    //                   margin: 0,
-    //                   borderRadius: 100,
-    //                   right: 10,
-    //                   position: 'absolute',
-    //                   bottom: 0,
-    //                 },
-    //               ]}>
-    //               <Text
-    //                 style={[
-    //                   {
-    //                     fontSize: 50,
-    //                     padding: 0,
-    //                     margin: 0,
-    //                     top: -3,
-    //                     color: goldenColor,
-    //                   },
-    //                   textAlignCenter,
-    //                 ]}>
-    //                 +
-    //               </Text>
-    //             </Pressable>
-    //           </View>
-    //         )}
-    //       </View>
-    //       {/* <View style={[{}, height9]}>
-    //         <FooterComponent navigation={navigation} />
-    //       </View> */}
-    //     </View>
-    //   </View>
-    // </SafeAreaView>
+  return (
     <SafeAreaView style={styles.orderListBaseContainer}>
       <View style={styles.orderListHeaderBaseContainer}>
         <HeaderComponent />
@@ -652,7 +452,7 @@ function OrderList({navigation}: any): JSX.Element {
           <InputComponents
             backgroundColor={COLOR.whiteColor}
             borderInclude={false}
-            placeholder="Search Vendors"
+            placeholder="Search Orders"
             value={search}
             onChangeText={(text: any) => {
               setSearch(text);
@@ -666,16 +466,30 @@ function OrderList({navigation}: any): JSX.Element {
             }
           />
         </View>
-        <View style={styles.orderListContentReportButtonBaseContainer}>
+        <View style={styles.orderListAddOrderButtonBaseContainer}>
           <CustomButton
-            title="Download Report"
+            IconComponent={IoniconsIcon}
+            iconName="add-outline"
+            iconColor={COLOR.baseColor}
+            radius={60}
+            backgroundColor={`${COLOR.whiteColor}`}
+            iconSize={30}
+            elevation={true}
+            onClick={() => {
+              navigation.push(ROUTES.orderCreateScreen);
+            }}
+          />
+        </View>
+        {/* <View style={styles.orderListContentReportButtonBaseContainer}>
+          <CustomButton
+            title={`Download ${tabData[selectedTab - 1].title} Report`}
             backgroundColor={COLOR.baseColor}
             color={COLOR.whiteColor}
             onClick={() => {
               handleClick();
             }}
           />
-        </View>
+        </View> */}
         <View style={styles.orderListContentTabBaseContainer}>
           <CustomTab
             data={tabData}
@@ -685,20 +499,42 @@ function OrderList({navigation}: any): JSX.Element {
         </View>
         <View style={styles.orderListContentListBaseContainer}>
           {loader ? (
-            <View></View>
+            <View style={styles.orderListContentListLoaderBaseContainer}>
+              <ActivityIndicator color={COLOR.baseColor} size={30} />
+            </View>
           ) : (
-            <FlatList
-              data={
-                selectedTab == 1
-                  ? pending
-                  : selectedTab == 2
-                  ? ready
-                  : delivered
-              }
-              renderItem={({item}) => <Item item={item} />}
-              keyExtractor={item => item?.id}
-              showsVerticalScrollIndicator={false}
-            />
+            <View style={styles.orderListContentListContainer}>
+              {selectedOrderData && selectedOrderData.length > 0 ? (
+                <FlatList
+                  data={selectedOrderData}
+                  renderItem={({item}) => <Item item={item} />}
+                  keyExtractor={item => item?.id}
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={
+                    styles.orderListContentFlatlistContainer
+                  }
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={isRefreshing}
+                      onRefresh={onRefresh}
+                      colors={[COLOR.baseColor]}
+                      tintColor={COLOR.baseColor}
+                    />
+                  }
+                />
+              ) : (
+                <View style={[{justifyContent: 'center'}, paddingVertical4]}>
+                  <Text
+                    style={{
+                      textAlign: 'center',
+                      fontSize: 16,
+                      color: COLOR.placeholderColor,
+                    }}>
+                    No Data Available
+                  </Text>
+                </View>
+              )}
+            </View>
           )}
         </View>
       </View>
@@ -728,15 +564,62 @@ const styles = StyleSheet.create({
     right: 0,
     padding: 20,
   },
+  orderListAddOrderButtonBaseContainer: {
+    position: 'absolute',
+    right: 20,
+    bottom: DIMENSIONS.height / 9,
+    zIndex: 10,
+  },
   orderListContentReportButtonBaseContainer: {
     paddingHorizontal: 20,
   },
   orderListContentTabBaseContainer: {
     paddingHorizontal: 20,
   },
+  orderListContentListLoaderBaseContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  orderListContentListContainer: {
+    flex: 1,
+  },
   orderListContentListBaseContainer: {
     flex: 1,
-    backgroundColor: 'red',
+  },
+  orderListContentFlatlistContainer: {
+    paddingHorizontal: 20,
+    gap: 20,
+    paddingBottom: 60,
+  },
+  orderListItemBaseContainer: {
+    flexDirection: 'row',
+    padding: 10,
+    backgroundColor: COLOR.whiteColor,
+    borderWidth: 1,
+    borderColor: `${COLOR.placeholderColor}44`,
+    borderRadius: 15,
+    gap: 20,
+  },
+  orderListItemDetailsBaseContainer: {
+    flex: 2,
+  },
+  orderListItemDetailsContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  orderListItemHeaderText: {
+    color: COLOR.placeholderColor,
+  },
+  orderListItemContentText: {
+    color: COLOR.blackColor,
+    fontWeight: 'bold',
+  },
+  orderListItemImageBaseContainer: {
+    flex: 1,
+    backgroundColor: COLOR.lightGreyColor,
+    borderRadius: 10,
   },
 });
 

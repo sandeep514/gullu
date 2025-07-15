@@ -11,4 +11,5 @@ export const API_URLS = {
   createSalesman: '/users/create',
   editSalesman: '/users/edit',
   getOrderList: '/orders/list',
+  updateOrderStatus: '/update/order/status',
 };

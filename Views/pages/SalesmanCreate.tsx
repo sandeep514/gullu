@@ -69,6 +69,7 @@ import COLOR from '../config/color';
 import CustomButton from '../components/CustomButton';
 import Toast from 'react-native-toast-message';
 import LOCALSTORAGE from '../config/localStorage';
+import ROUTES from '../config/routes';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -137,7 +138,7 @@ function SalesmanCreate({navigation}: any): JSX.Element {
                   });
                   navigation.reset({
                     index: 0,
-                    routes: [{name: 'salesmanlist' as never}],
+                    routes: [{name: ROUTES.salesmanlistScreen as never}],
                   });
                 } else {
                   Toast.show({
@@ -149,7 +150,7 @@ function SalesmanCreate({navigation}: any): JSX.Element {
                 }
               })
               .catch(err => {
-                console.log(JSON.stringify(err));
+                // console.log(JSON.stringify(err));
                 setIsLoading(false);
                 Toast.show({
                   type: 'error',

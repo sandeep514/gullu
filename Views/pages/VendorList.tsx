@@ -61,6 +61,7 @@ import ROUTES from '../config/routes';
 import DIMENSIONS from '../config/dimensions';
 import CustomButton from '../components/CustomButton';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {useIsFocused} from '@react-navigation/native';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -75,10 +76,13 @@ function VendorList({navigation}: any): JSX.Element {
   const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const IoniconsIcon = Ionicons as unknown as React.ComponentType<any>;
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    getVendorListData();
-  }, []);
+    if (isFocused) {
+      getVendorListData();
+    }
+  }, [isFocused]);
 
   useEffect(() => {
     searchOrder(search);
@@ -256,6 +260,7 @@ const styles = StyleSheet.create({
   },
   vendorContentBaseContainer: {
     flex: 1,
+    backgroundColor: COLOR.whiteColor,
   },
   vendorContentSearchBaseContainer: {
     position: 'absolute',
