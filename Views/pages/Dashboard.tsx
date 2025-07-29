@@ -410,26 +410,24 @@ function Dashboard({navigation}: any) {
                   {item.salesman.name ?? 'NA'}
                 </Text>
               </View>
-              {role != '2' && (
-                <View
-                  style={
-                    styles.dashboardListItemContentImageDetailContentContainer
-                  }>
-                  <Text
-                    style={[
-                      styles.dashboardListItemContentImageDetailContentText,
-                    ]}>
-                    Vendor
-                  </Text>
-                  <Text
-                    style={[
-                      styles.dashboardListItemContentImageDetailContentText,
-                      {color: COLOR.blackColor},
-                    ]}>
-                    {sliceString(item.vendor.name) ?? 'NA'}
-                  </Text>
-                </View>
-              )}
+              <View
+                style={
+                  styles.dashboardListItemContentImageDetailContentContainer
+                }>
+                <Text
+                  style={[
+                    styles.dashboardListItemContentImageDetailContentText,
+                  ]}>
+                  Vendor
+                </Text>
+                <Text
+                  style={[
+                    styles.dashboardListItemContentImageDetailContentText,
+                    {color: COLOR.blackColor},
+                  ]}>
+                  {sliceString(item.vendor.name) ?? 'NA'}
+                </Text>
+              </View>
             </View>
           </View>
           <View style={styles.dashboardListItemContentDateBaseContainer}>
@@ -451,18 +449,20 @@ function Dashboard({navigation}: any) {
                 </Text>
               </View>
             )}
-            <View
-              style={[
-                styles.dashboardListItemContentDateContainer,
-                {alignItems: 'flex-end'},
-              ]}>
-              <Text style={styles.dashboardListItemContentDateHeaderText}>
-                Delivery Date
-              </Text>
-              <Text style={styles.dashboardListItemContentDateText}>
-                {item.delivery_date ?? 'NA'}
-              </Text>
-            </View>
+            {role != '2' && (
+              <View
+                style={[
+                  styles.dashboardListItemContentDateContainer,
+                  {alignItems: 'flex-end'},
+                ]}>
+                <Text style={styles.dashboardListItemContentDateHeaderText}>
+                  Delivery Date
+                </Text>
+                <Text style={styles.dashboardListItemContentDateText}>
+                  {item.delivery_date ?? 'NA'}
+                </Text>
+              </View>
+            )}
           </View>
         </View>
         <View style={styles.dashboardListItemButtonBaseContainer}>

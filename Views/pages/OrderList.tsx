@@ -405,14 +405,12 @@ function OrderList({navigation}: any): JSX.Element {
             {sliceString(item?.salesman?.name)}
           </Text>
         </View>
-        {role != '2' && (
-          <View style={styles.orderListItemDetailsContainer}>
-            <Text style={styles.orderListItemHeaderText}>Vendor</Text>
-            <Text style={styles.orderListItemContentText}>
-              {sliceString(item?.vendor?.name)}
-            </Text>
-          </View>
-        )}
+        <View style={styles.orderListItemDetailsContainer}>
+          <Text style={styles.orderListItemHeaderText}>Vendor</Text>
+          <Text style={styles.orderListItemContentText}>
+            {sliceString(item?.vendor?.name)}
+          </Text>
+        </View>
       </View>
       <View style={styles.orderListItemImageBaseContainer}>
         {item?.attachments.length > 0 ? (
