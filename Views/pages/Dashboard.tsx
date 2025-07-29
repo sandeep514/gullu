@@ -410,24 +410,26 @@ function Dashboard({navigation}: any) {
                   {item.salesman.name ?? 'NA'}
                 </Text>
               </View>
-              <View
-                style={
-                  styles.dashboardListItemContentImageDetailContentContainer
-                }>
-                <Text
-                  style={[
-                    styles.dashboardListItemContentImageDetailContentText,
-                  ]}>
-                  Vendor
-                </Text>
-                <Text
-                  style={[
-                    styles.dashboardListItemContentImageDetailContentText,
-                    {color: COLOR.blackColor},
-                  ]}>
-                  {sliceString(item.vendor.name) ?? 'NA'}
-                </Text>
-              </View>
+              {role != '2' && (
+                <View
+                  style={
+                    styles.dashboardListItemContentImageDetailContentContainer
+                  }>
+                  <Text
+                    style={[
+                      styles.dashboardListItemContentImageDetailContentText,
+                    ]}>
+                    Vendor
+                  </Text>
+                  <Text
+                    style={[
+                      styles.dashboardListItemContentImageDetailContentText,
+                      {color: COLOR.blackColor},
+                    ]}>
+                    {sliceString(item.vendor.name) ?? 'NA'}
+                  </Text>
+                </View>
+              )}
             </View>
           </View>
           <View style={styles.dashboardListItemContentDateBaseContainer}>
@@ -439,14 +441,16 @@ function Dashboard({navigation}: any) {
                 {item.ready_date ?? 'NA'}
               </Text>
             </View>
-            <View style={[styles.dashboardListItemContentDateContainer]}>
-              <Text style={styles.dashboardListItemContentDateHeaderText}>
-                Buffer Date
-              </Text>
-              <Text style={styles.dashboardListItemContentDateText}>
-                {item.buffered_ready_date ?? 'NA'}
-              </Text>
-            </View>
+            {role != '2' && (
+              <View style={[styles.dashboardListItemContentDateContainer]}>
+                <Text style={styles.dashboardListItemContentDateHeaderText}>
+                  Buffer Date
+                </Text>
+                <Text style={styles.dashboardListItemContentDateText}>
+                  {item.buffered_ready_date ?? 'NA'}
+                </Text>
+              </View>
+            )}
             <View
               style={[
                 styles.dashboardListItemContentDateContainer,

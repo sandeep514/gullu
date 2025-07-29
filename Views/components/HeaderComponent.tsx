@@ -143,7 +143,10 @@ function HeaderComponent({
         {isHomeScreen && (
           <View style={styles.headerContentUserBaseContainer}>
             <View style={styles.headerContentUserDetailsBaseContainer}>
-              <Text style={styles.headerContentUserDetailsText}>
+              <Text
+                style={styles.headerContentUserDetailsText}
+                numberOfLines={1}
+                ellipsizeMode="tail">
                 Hello there,{' '}
                 <Text style={{fontWeight: 'bold', textTransform: 'capitalize'}}>
                   {userName}

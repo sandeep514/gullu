@@ -104,10 +104,11 @@ function OrderList({navigation}: any): JSX.Element {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [selectedOrderData, setSelectedOrderData] = useState<any>();
   const IoniconsIcon = Ionicons as unknown as React.ComponentType<any>;
+  const [role, setRole] = useState<String | null>('');
 
   useEffect(() => {
-    AsyncStorage.getItem('role').then(userRole => {
-      console.log(userRole);
+    AsyncStorage.getItem(LOCALSTORAGE.ROLE).then(userRole => {
+      setRole(userRole);
     });
   }, []);
 
@@ -404,12 +405,14 @@ function OrderList({navigation}: any): JSX.Element {
             {sliceString(item?.salesman?.name)}
           </Text>
         </View>
-        <View style={styles.orderListItemDetailsContainer}>
-          <Text style={styles.orderListItemHeaderText}>Vendor</Text>
-          <Text style={styles.orderListItemContentText}>
-            {sliceString(item?.vendor?.name)}
-          </Text>
-        </View>
+        {role != '2' && (
+          <View style={styles.orderListItemDetailsContainer}>
+            <Text style={styles.orderListItemHeaderText}>Vendor</Text>
+            <Text style={styles.orderListItemContentText}>
+              {sliceString(item?.vendor?.name)}
+            </Text>
+          </View>
+        )}
       </View>
       <View style={styles.orderListItemImageBaseContainer}>
         {item?.attachments.length > 0 ? (
@@ -600,6 +603,8 @@ const styles = StyleSheet.create({
     borderColor: `${COLOR.placeholderColor}44`,
     borderRadius: 15,
     gap: 20,
+    elevation: 10,
+    shadowColor: COLOR.placeholderColor,
   },
   orderListItemDetailsBaseContainer: {
     flex: 2,
