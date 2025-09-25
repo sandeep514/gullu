@@ -5,7 +5,7 @@
  * @format
  */
 
-import {useCallback, useEffect, useState} from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Pressable,
   SafeAreaView,
@@ -46,12 +46,12 @@ import {
 import FooterComponent from '../components/FooterComponent';
 import HeaderComponent from '../components/HeaderComponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {get, pendingOrders} from '../services/services';
-import {imagePath} from '../services/Client';
-import {useIsFocused} from '@react-navigation/native';
+import { get, pendingOrders } from '../services/services';
+import { imagePath } from '../services/Client';
+import { useIsFocused } from '@react-navigation/native';
 import NetInfo from '@react-native-community/netinfo';
 import InputComponents from '../components/InputComponents';
-import {memo} from 'react';
+import { memo } from 'react';
 import LOCALSTORAGE from '../config/localStorage';
 import COLOR from '../config/color';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -63,7 +63,7 @@ import SmallButton from '../components/SmallButton';
 import DIMENSIONS from '../config/dimensions';
 import ROUTES from '../config/routes';
 
-function Dashboard({navigation}: any) {
+function Dashboard({ navigation }: any) {
   const [loader, setLoader] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [role, setRole] = useState<String | null>();
@@ -173,7 +173,7 @@ function Dashboard({navigation}: any) {
       .then(roleId => {
         setRole(roleId);
       })
-      .catch(err => {});
+      .catch(err => { });
     getData();
   }, []);
 
@@ -315,12 +315,12 @@ function Dashboard({navigation}: any) {
     return data.result.full_short_link;
   };
 
-  const Item = ({item}: any) => {
+  const Item = ({ item }: any) => {
     return (
       <TouchableOpacity
         style={styles.dashboardListItemBaseContainer}
         onPress={() => {
-          navigation.push(ROUTES.orderEditScreen, {orderData: item});
+          navigation.push(ROUTES.orderEditScreen, { orderData: item });
         }}
         activeOpacity={0.9}>
         <View style={styles.dashboardListItemContentBaseContainer}>
@@ -343,11 +343,14 @@ function Dashboard({navigation}: any) {
                   styles.dashboardListItemContentImageDetailContentContainer
                 }>
                 <Text
+                  numberOfLines={1}
+                  ellipsizeMode='tail'
                   style={[
                     styles.dashboardListItemContentImageDetailContentText,
                     {
                       fontWeight: 'bold',
                       color: COLOR.blackColor,
+                      width: '60%',
                     },
                   ]}>
                   {item.item.name ?? 'NA'}
@@ -373,7 +376,7 @@ function Dashboard({navigation}: any) {
                   Order ID #{`${item.order_number ?? 'NA'}`}
                 </Text>
               </View>
-              <View style={{height: 10}} />
+              <View style={{ height: 10 }} />
               <View
                 style={
                   styles.dashboardListItemContentImageDetailContentContainer
@@ -387,29 +390,33 @@ function Dashboard({navigation}: any) {
                 <Text
                   style={[
                     styles.dashboardListItemContentImageDetailContentText,
-                    {color: COLOR.blackColor},
+                    { color: COLOR.blackColor },
                   ]}>
                   {item.color ?? 'NA'}
                 </Text>
               </View>
-              <View
-                style={
-                  styles.dashboardListItemContentImageDetailContentContainer
-                }>
-                <Text
-                  style={[
-                    styles.dashboardListItemContentImageDetailContentText,
-                  ]}>
-                  Consultant
-                </Text>
-                <Text
-                  style={[
-                    styles.dashboardListItemContentImageDetailContentText,
-                    {color: COLOR.blackColor},
-                  ]}>
-                  {item.salesman.name ?? 'NA'}
-                </Text>
-              </View>
+              {
+                role != '2'
+                &&
+                <View
+                  style={
+                    styles.dashboardListItemContentImageDetailContentContainer
+                  }>
+                  <Text
+                    style={[
+                      styles.dashboardListItemContentImageDetailContentText,
+                    ]}>
+                    Consultant
+                  </Text>
+                  <Text
+                    style={[
+                      styles.dashboardListItemContentImageDetailContentText,
+                      { color: COLOR.blackColor },
+                    ]}>
+                    {item.salesman.name ?? 'NA'}
+                  </Text>
+                </View>
+              }
               <View
                 style={
                   styles.dashboardListItemContentImageDetailContentContainer
@@ -423,7 +430,7 @@ function Dashboard({navigation}: any) {
                 <Text
                   style={[
                     styles.dashboardListItemContentImageDetailContentText,
-                    {color: COLOR.blackColor},
+                    { color: COLOR.blackColor },
                   ]}>
                   {sliceString(item.vendor.name) ?? 'NA'}
                 </Text>
@@ -453,7 +460,7 @@ function Dashboard({navigation}: any) {
               <View
                 style={[
                   styles.dashboardListItemContentDateContainer,
-                  {alignItems: 'flex-end'},
+                  { alignItems: 'flex-end' },
                 ]}>
                 <Text style={styles.dashboardListItemContentDateHeaderText}>
                   Delivery Date
@@ -505,10 +512,10 @@ function Dashboard({navigation}: any) {
                 selectedTab == 2 && search == ''
                   ? COLOR.redColor
                   : selectedTab == 3 && search == ''
-                  ? COLOR.yellowColor
-                  : selectedTab == 4 && search == ''
-                  ? COLOR.greenColor
-                  : COLOR.placeholderColor,
+                    ? COLOR.yellowColor
+                    : selectedTab == 4 && search == ''
+                      ? COLOR.greenColor
+                      : COLOR.placeholderColor,
             },
           ]}
         />
@@ -553,14 +560,12 @@ function Dashboard({navigation}: any) {
             </View>
             <View style={styles.dashboardContentTitleHeaderBaseContainer}>
               <View style={styles.dashboardContentTitleHeaderContainer}>
-                <Text style={styles.dashboardContentTitleText}>{`${
-                  tabData.filter(item => item.value === selectedTab)[0].title
-                } Pending Orders`}</Text>
+                <Text style={styles.dashboardContentTitleText}>{`${tabData.filter(item => item.value === selectedTab)[0].title
+                  } Pending Orders`}</Text>
               </View>
               <View style={styles.dashboardContentTitleCountContainer}>
-                <Text style={styles.dashboardContentTitleCountText}>{`(${
-                  search ? searchableData.length : filterPendingOrders.length
-                })`}</Text>
+                <Text style={styles.dashboardContentTitleCountText}>{`(${search ? searchableData.length : filterPendingOrders.length
+                  })`}</Text>
               </View>
             </View>
           </>
@@ -571,7 +576,7 @@ function Dashboard({navigation}: any) {
               <ActivityIndicator color={COLOR.baseColor} size={30} />
             </View>
           ) : (
-            <FlatList<{id: any}>
+            <FlatList<{ id: any }>
               refreshControl={
                 <RefreshControl
                   refreshing={isRefreshing}
@@ -581,7 +586,7 @@ function Dashboard({navigation}: any) {
                 />
               }
               data={search ? searchableData : filterPendingOrders}
-              renderItem={({item}) => <Item item={item} />}
+              renderItem={({ item }) => <Item item={item} />}
               keyExtractor={item => item?.id}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={[

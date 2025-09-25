@@ -1,4 +1,4 @@
-import React, {memo, useEffect, useState} from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import {
   Button,
   SafeAreaView,
@@ -15,7 +15,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import ImageViewer from 'react-native-image-zoom-viewer';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 import {
   flexDirectionRow,
   h4,
@@ -35,10 +35,10 @@ import {
 } from '../assets/styles';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
-import {readFile} from 'react-native-fs';
+import { readFile } from 'react-native-fs';
 import Video from 'react-native-video';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {imagePath} from '../services/Client';
+import { imagePath } from '../services/Client';
 import {
   get,
   showToast,
@@ -46,10 +46,10 @@ import {
   updateOrderStatusWithImage,
 } from '../services/services';
 import RNFetchBlob from 'rn-fetch-blob';
-import {RNS3} from 'react-native-s3-upload';
-import {S3} from 'aws-sdk';
-import {launchImageLibrary} from 'react-native-image-picker';
-import {useImageModal} from '../hooks/CustomModal';
+import { RNS3 } from 'react-native-s3-upload';
+import { S3 } from 'aws-sdk';
+import { launchImageLibrary } from 'react-native-image-picker';
+import { useImageModal } from '../hooks/CustomModal';
 import NavBarComponent from '../components/NavBarComponent';
 import COLOR from '../config/color';
 import CustomButton from '../components/CustomButton';
@@ -58,9 +58,10 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import LOCALSTORAGE from '../config/localStorage';
 import ROUTES from '../config/routes';
 
-function OrderEdit({navigation, route}: any): JSX.Element {
+function OrderEdit({ navigation, route }: any): JSX.Element {
   const [item, setItem] = useState<any>();
   const [role, setRole] = useState<any>();
+  const [name, setName] = useState<any>();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisibleImage, setModalVisibleImage] = useState(false);
   const [loader, setLoader] = useState(false);
@@ -77,7 +78,7 @@ function OrderEdit({navigation, route}: any): JSX.Element {
   const [UplaodedImage, setUplaodedImage] = useState();
   const [showBox, setShowBox] = useState(true);
   const [uploadingAttachment, setuploadingAttachment] = useState(false);
-  const {showImageModal} = useImageModal();
+  const { showImageModal } = useImageModal();
 
   const videoPlayer = React.useRef();
 
@@ -122,12 +123,17 @@ function OrderEdit({navigation, route}: any): JSX.Element {
       .then(token => {
         // console.log(token);
       })
-      .catch(err => {});
+      .catch(err => { });
     AsyncStorage.getItem(LOCALSTORAGE.ROLE)
       .then(role => {
         setRole(role);
       })
-      .catch(err => {});
+      .catch(err => { });
+    AsyncStorage.getItem(LOCALSTORAGE.NAME)
+      .then(name => {
+        setName(name);
+      })
+      .catch(err => { });
   }, []);
 
   const uploadFileToS3 = async (
@@ -278,7 +284,7 @@ function OrderEdit({navigation, route}: any): JSX.Element {
 
             navigation.reset({
               index: 0,
-              routes: [{name: ROUTES.landingPage as never}],
+              routes: [{ name: ROUTES.landingPage as never }],
             });
           })
           .catch(err => {
@@ -293,7 +299,7 @@ function OrderEdit({navigation, route}: any): JSX.Element {
 
   const downloadFile = (url: any, order_number: any) => {
     console.log(url);
-    const {config, fs} = RNFetchBlob;
+    const { config, fs } = RNFetchBlob;
     let PictureDir = fs.dirs.PictureDir;
 
     let options = {
@@ -346,11 +352,10 @@ function OrderEdit({navigation, route}: any): JSX.Element {
             <View style={styles.orderEditContentDetailsContainer}>
               <Text style={styles.orderEditContentDetailsHeaderText}>Item</Text>
               <Text style={styles.orderEditContentDetailsContentText}>
-                {`${
-                  item && item?.item?.name
+                {`${item && item?.item?.name
                     ? item?.item?.name
                     : (item && item.item) || ''
-                }`}
+                  }`}
               </Text>
             </View>
             <View style={styles.orderEditContentDetailsContainer}>
@@ -413,7 +418,7 @@ function OrderEdit({navigation, route}: any): JSX.Element {
             <View style={[styles.orderEditContentAttachmentContainer]}>
               {item?.attachments.map((attachment: any, index: number) => {
                 return attachment.attachment_type.includes('video') ? (
-                  <View style={{marginVertical: 20, width: '100%'}}>
+                  <View style={{ marginVertical: 20, width: '100%' }}>
                     <Modal
                       animationType="slide"
                       transparent={true}
@@ -450,20 +455,20 @@ function OrderEdit({navigation, route}: any): JSX.Element {
                             />
                             {loadStart ? (
                               <View style={[{}, justifyContentCenter]}>
-                                <Text style={{textAlign: 'center'}}>
+                                <Text style={{ textAlign: 'center' }}>
                                   Loading Video...
                                 </Text>
                               </View>
                             ) : null}
                           </View>
 
-                          <View style={{flexDirection: 'row'}}>
+                          <View style={{ flexDirection: 'row' }}>
                             <View>
                               <Pressable
                                 style={[
                                   styles.button,
                                   styles.buttonClose,
-                                  {paddingHorizontal: 20},
+                                  { paddingHorizontal: 20 },
                                 ]}
                                 onPress={() => {
                                   downloadFile(
@@ -479,7 +484,7 @@ function OrderEdit({navigation, route}: any): JSX.Element {
                                 style={[
                                   styles.button,
                                   styles.buttonClose,
-                                  {paddingHorizontal: 20},
+                                  { paddingHorizontal: 20 },
                                 ]}
                                 onPress={() => setModalVisible(!modalVisible)}>
                                 <Text style={styles.textStyle}>Hide</Text>
@@ -537,7 +542,7 @@ function OrderEdit({navigation, route}: any): JSX.Element {
                             uri: imagePath + '' + attachment.attachment,
                           }}
                           resizeMode="contain"
-                          style={{height: '100%', width: '100%'}}
+                          style={{ height: '100%', width: '100%' }}
                         />
                       ) : (
                         <MaterialIconsIcon
@@ -564,21 +569,21 @@ function OrderEdit({navigation, route}: any): JSX.Element {
                       ? item.status == 1
                         ? COLOR.redColor
                         : item.status == 2
-                        ? COLOR.yellowColor
-                        : COLOR.greenColor
+                          ? COLOR.yellowColor
+                          : COLOR.greenColor
                       : COLOR.placeholderColor,
                     fontWeight: 'bold',
                   }}>
                   {item?.status == 1
                     ? 'Pending'
                     : item?.status == 2
-                    ? 'Ready'
-                    : 'Delivered'}
+                      ? 'Ready'
+                      : 'Delivered'}
                 </Text>
                 <Text>Order Placed on {item?.date} </Text>
               </View>
 
-              <View style={{padding: 10}}>
+              <View style={{ padding: 10 }}>
                 <View
                   style={{
                     borderLeftColor: COLOR.placeholderColor,
@@ -590,24 +595,24 @@ function OrderEdit({navigation, route}: any): JSX.Element {
               </View>
 
               {(item?.status == 2 || item?.status == 3) && (
-                <View style={{width: '100%'}}>
-                  <Text style={{color: COLOR.greenColor, fontWeight: 'bold'}}>
+                <View style={{ width: '100%' }}>
+                  <Text style={{ color: COLOR.greenColor, fontWeight: 'bold' }}>
                     Order Ready{' '}
                   </Text>
                 </View>
               )}
 
               {role == 1 && item?.status == 1 ? (
-                <View style={{width: '100%'}}>
-                  <Text style={{color: COLOR.placeholderColor}}>
+                <View style={{ width: '100%' }}>
+                  <Text style={{ color: COLOR.placeholderColor }}>
                     Order not Ready yet.
                   </Text>
                 </View>
               ) : null}
 
               {role == 3 && item?.status == 1 ? (
-                <View style={{width: '100%'}}>
-                  <Text style={{color: COLOR.placeholderColor}}>
+                <View style={{ width: '100%' }}>
+                  <Text style={{ color: COLOR.placeholderColor }}>
                     Order not Ready yet.
                   </Text>
                 </View>
@@ -645,7 +650,7 @@ function OrderEdit({navigation, route}: any): JSX.Element {
                   />
                 </View>
               )}
-              <View style={{padding: 10}}>
+              <View style={{ padding: 10 }}>
                 <View
                   style={{
                     borderLeftColor: COLOR.placeholderColor,
@@ -656,8 +661,8 @@ function OrderEdit({navigation, route}: any): JSX.Element {
                 />
               </View>
               {item?.status == 3 ? (
-                <View style={{width: '100%'}}>
-                  <Text style={{color: COLOR.greenColor, fontWeight: 'bold'}}>
+                <View style={{ width: '100%' }}>
+                  <Text style={{ color: COLOR.greenColor, fontWeight: 'bold' }}>
                     Order Delivered
                   </Text>
                   {UplaodedImage != undefined ? (
@@ -666,7 +671,7 @@ function OrderEdit({navigation, route}: any): JSX.Element {
                         uri: UplaodedImage,
                       }}
                       resizeMode="contain"
-                      style={{height: '100%', width: '100%'}}
+                      style={{ height: '100%', width: '100%' }}
                     />
                   ) : (
                     <View
@@ -691,7 +696,7 @@ function OrderEdit({navigation, route}: any): JSX.Element {
                             )[0].attachment,
                         }}
                         resizeMode="contain"
-                        style={{height: '100%', width: '100%'}}
+                        style={{ height: '100%', width: '100%' }}
                       />
                     </View>
                   )}
@@ -699,14 +704,14 @@ function OrderEdit({navigation, route}: any): JSX.Element {
               ) : null}
 
               {item?.status != 3 && (
-                <View style={{width: '100%'}}>
-                  <Text style={{color: COLOR.placeholderColor}}>
+                <View style={{ width: '100%' }}>
+                  <Text style={{ color: COLOR.placeholderColor }}>
                     Order not delivered yet.
                   </Text>
                 </View>
               )}
               {(item?.status != 3 && role == 3) ||
-              (item?.status != 3 && role == 1) ? (
+                (item?.status != 3 && role == 1) ? (
                 <View>
                   {/* <View style={{width: '70%'}}>
                     <Pressable
@@ -736,7 +741,7 @@ function OrderEdit({navigation, route}: any): JSX.Element {
               ) : null}
             </View>
           </View>
-          {role == 1 && item?.status != 3 && (
+          {role == 1 && name == 'admin' && item?.status != 3 && (
             <View style={styles.orderEditContentDeleteBaseContainer}>
               <Text style={styles.orderEditContentAttachmentsHeaderText}>
                 Delete Order

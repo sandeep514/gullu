@@ -1,4 +1,4 @@
-import React, {memo, useEffect, useMemo, useState} from 'react';
+import React, { memo, useEffect, useMemo, useState } from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -13,12 +13,13 @@ import {
   Modal,
   ImageBackground,
   Pressable,
+  Alert,
 } from 'react-native';
 import DocumentPicker, {
   isInProgress,
   types,
 } from 'react-native-document-picker';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 import {
   flexDirectionRow,
   h3,
@@ -43,7 +44,7 @@ import {
 import InputComponents from '../components/InputComponents';
 import HeaderComponent from '../components/HeaderComponent';
 import FooterComponent from '../components/FooterComponent';
-import {readFile} from 'react-native-fs';
+import { readFile } from 'react-native-fs';
 import Video from 'react-native-video';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
@@ -54,8 +55,8 @@ import {
 } from '../services/services';
 import DatePicker from '@react-native-community/datetimepicker';
 import NetInfo from '@react-native-community/netinfo';
-import {S3} from 'aws-sdk';
-import {RNS3} from 'react-native-s3-upload';
+import { S3 } from 'aws-sdk';
+import { RNS3 } from 'react-native-s3-upload';
 
 import {
   ImageLibraryOptions,
@@ -63,7 +64,7 @@ import {
 } from 'react-native-image-picker';
 import NavBarComponent from '../components/NavBarComponent';
 import COLOR from '../config/color';
-import RadioGroup, {RadioGroupProps} from 'react-native-radio-buttons-group';
+import RadioGroup, { RadioGroupProps } from 'react-native-radio-buttons-group';
 import CustomModalSelect from '../components/CustomModalSelect';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomButton from '../components/CustomButton';
@@ -71,7 +72,7 @@ import LOCALSTORAGE from '../config/localStorage';
 import Toast from 'react-native-toast-message';
 import ROUTES from '../config/routes';
 
-function OrderCreate({navigation}: any): JSX.Element {
+function OrderCreate({ navigation }: any): JSX.Element {
   let salesmanData = {};
   const [activityIndicator, setActivityIndicator] = useState(false);
   const [order_number, setOrderNumber] = useState('');
@@ -222,18 +223,30 @@ function OrderCreate({navigation}: any): JSX.Element {
       base64: true,
     };
     launchImageLibrary(options, (response: any) => {
-      console.log('Response = ', response);
+      console.log('Response = ', response, 'type', type);
 
       if (response.didCancel) {
         return;
-      } else if (response.errorCode == 'camera_unavailable') {
-        return;
-      } else if (response.errorCode == 'permission') {
-        return;
-      } else if (response.errorCode == 'others') {
+      }
+
+      if (response.errorCode == 'others' && response.errorMessage.includes('For input string: "9223372036854775807"')) {
+        Alert.alert('Error', 'Max Video upload size is 25MB.');
         return;
       }
-      if (response.assets[0].fileSize <= 30000000) {
+
+      if (response.errorCode == 'camera_unavailable') {
+        return;
+      }
+      if (response.errorCode == 'permission') {
+        return;
+      }
+      if (response.errorCode == 'others') {
+        return;
+      }
+
+      if (response.assets[0].fileSize <= 25000000) {
+        console.log('response', response);
+
         setPrductVideoType(response.assets[0].type);
         setProductVideoData(response.assets);
         let sourceUri = response.assets[0].uri;
@@ -246,22 +259,100 @@ function OrderCreate({navigation}: any): JSX.Element {
           'productVideo',
         );
       } else {
-        showToast('Max Video upload size is 30MB.');
+        Alert.alert('Error', 'Max Video upload size is 25MB.');
       }
-
-      //   setFilePath(response.assets[0]);
-      // RNVideoHelper.compress(response.assets[0].uri, {
-      // 	startTime: 10, // optional, in seconds, defaults to 0
-      // 	endTime: 100, //  optional, in seconds, defaults to video duration
-      // 	quality: 'low', // default low, can be medium or high
-      // 	defaultOrientation: 0 // By default is 0, some devices not save this property in metadata. Can be between 0 - 360
-      // }).progress(value => {
-      // 	console.warn('progress', value); // Int with progress value from 0 to 1
-      // }).then(compressedUri => {
-      // 	console.warn('compressedUri', 'file:///'+compressedUri); // String with path to temporary compressed video
-      // });
     });
   };
+  // const chooseFile = (type: any) => {
+  //   let options: ImageLibraryOptions = {
+  //     mediaType: type,
+  //     maxWidth: 300,
+  //     maxHeight: 550,
+  //     quality: 0,
+  //     base64: true,
+  //   };
+  //   launchImageLibrary(options, (response: any) => {
+  //     console.log('Response = ', response, 'type', type);
+
+  //     if (response.didCancel) {
+  //       return;
+  //     }
+
+  //     if (response.errorCode == 'others' && response.errorMessage.includes('For input string: "9223372036854775807"')) {
+  //       Alert.alert('Error', 'Max Video upload size is 25MB.');
+  //       return;
+  //     }
+
+  //     else if (response.errorCode == 'camera_unavailable') {
+  //       return;
+  //     } else if (response.errorCode == 'permission') {
+  //       return;
+  //     } else if (response.errorCode == 'others') {
+  //       return;
+  //     }
+
+  //     if (response.assets[0].fileSize <= 25000000) {
+  //       console.log('response', response);
+
+  //       setPrductVideoType(response.assets[0].type);
+  //       setProductVideoData(response.assets);
+  //       let sourceUri = response.assets[0].uri;
+
+  //       uploadFileToS3(
+  //         sourceUri,
+  //         response.assets[0].fileName,
+  //         response.assets[0].fileSize,
+  //         response.assets[0].type,
+  //         'productVideo',
+  //       );
+  //     } else {
+  //       showToast('Max Video upload size is 25MB.');
+  //     }
+  //   });
+  //   // launchImageLibrary(options, (response: any) => {
+
+
+  //   //   if (response.didCancel) {
+  //   //     return;
+  //   //   } else if (response.errorCode == 'camera_unavailable') {
+  //   //     return;
+  //   //   } else if (response.errorCode == 'permission') {
+  //   //     return;
+  //   //   } else if (response.errorCode == 'others') {
+  //   //     return;
+  //   //   }
+
+  //   //   if (response.assets[0].fileSize <= 25000000) {
+  //   //     console.log('response', response);
+
+  //   //     setPrductVideoType(response.assets[0].type);
+  //   //     setProductVideoData(response.assets);
+  //   //     let sourceUri = response.assets[0].uri;
+
+  //   //     uploadFileToS3(
+  //   //       sourceUri,
+  //   //       response.assets[0].fileName,
+  //   //       response.assets[0].fileSize,
+  //   //       response.assets[0].type,
+  //   //       'productVideo',
+  //   //     );
+  //   //   } else {
+  //   //     showToast('Max Video upload size is 25MB.');
+  //   //   }
+
+  //   //   //   setFilePath(response.assets[0]);
+  //   //   // RNVideoHelper.compress(response.assets[0].uri, {
+  //   //   // 	startTime: 10, // optional, in seconds, defaults to 0
+  //   //   // 	endTime: 100, //  optional, in seconds, defaults to video duration
+  //   //   // 	quality: 'low', // default low, can be medium or high
+  //   //   // 	defaultOrientation: 0 // By default is 0, some devices not save this property in metadata. Can be between 0 - 360
+  //   //   // }).progress(value => {
+  //   //   // 	console.warn('progress', value); // Int with progress value from 0 to 1
+  //   //   // }).then(compressedUri => {
+  //   //   // 	console.warn('compressedUri', 'file:///'+compressedUri); // String with path to temporary compressed video
+  //   //   // });
+  //   // });
+  // };
   async function getUriToBase64(uri: any) {
     const base64String = await readFile(uri, 'base64');
     return base64String;
@@ -277,7 +368,7 @@ function OrderCreate({navigation}: any): JSX.Element {
       .then(token => {
         setApiToken(token);
       })
-      .catch(err => {});
+      .catch(err => { });
 
     return () => {
       setshowReadyDate(false);
@@ -351,54 +442,74 @@ function OrderCreate({navigation}: any): JSX.Element {
     var dataReadyDate =
       readyDate != undefined
         ? new Date(readyDate).getFullYear() +
-          '-' +
-          (new Date(readyDate).getMonth() + 1) +
-          '-' +
-          new Date(readyDate).getDate()
+        '-' +
+        (new Date(readyDate).getMonth() + 1) +
+        '-' +
+        new Date(readyDate).getDate()
         : undefined;
     var dataBufferReadyDate =
       readyDate != undefined
         ? new Date(bufferReadyDate).getFullYear() +
-          '-' +
-          (new Date(bufferReadyDate).getMonth() + 1) +
-          '-' +
-          new Date(bufferReadyDate).getDate()
+        '-' +
+        (new Date(bufferReadyDate).getMonth() + 1) +
+        '-' +
+        new Date(bufferReadyDate).getDate()
         : undefined;
     var dataDeliveryDate =
       readyDate != undefined
         ? new Date(deliveryDate).getFullYear() +
-          '-' +
-          (new Date(deliveryDate).getMonth() + 1) +
-          '-' +
-          new Date(deliveryDate).getDate()
+        '-' +
+        (new Date(deliveryDate).getMonth() + 1) +
+        '-' +
+        new Date(deliveryDate).getDate()
         : undefined;
     var dataVendorDate =
       vendorDate != undefined
         ? new Date(vendorDate).getFullYear() +
-          '-' +
-          (new Date(vendorDate).getMonth() + 1) +
-          '-' +
-          new Date(vendorDate).getDate()
+        '-' +
+        (new Date(vendorDate).getMonth() + 1) +
+        '-' +
+        new Date(vendorDate).getDate()
         : undefined;
 
+    // var dataProductPhotoData =
+    //   Object.values(productPhotoData[0]?.name).length > 0
+    //     ? productPhotoData[0]?.name
+    //     : '';
+    // var dataProductMeasurementData =
+    //   Object.values(productMeasurementData[0]?.name).length > 0
+    //     ? productMeasurementData[0]?.name
+    //     : '';
+    // var dataProductOriginalMeasurement =
+    //   Object.values(productOriginalMeasurement[0]?.name).length > 0
+    //     ? productOriginalMeasurement[0]?.name
+    //     : '';
+    // var dataProductUploadSlip =
+    //   Object.values(productSlipPhoto[0]?.name).length > 0
+    //     ? productSlipPhoto[0]?.name
+    //     : '';
+    // var dataProductVideoData =
+    //   Object.values(productVideoData).length > 0
+    //     ? productVideoData[0]?.fileName
+    //     : '';
     var dataProductPhotoData =
-      Object.values(productPhotoData[0].name).length > 0
+      productPhotoData && productPhotoData.length > 0 && productPhotoData[0]?.name
         ? productPhotoData[0].name
         : '';
     var dataProductMeasurementData =
-      Object.values(productMeasurementData[0].name).length > 0
+      productMeasurementData && productMeasurementData.length > 0 && productMeasurementData[0]?.name
         ? productMeasurementData[0].name
         : '';
     var dataProductOriginalMeasurement =
-      Object.values(productOriginalMeasurement[0].name).length > 0
+      productOriginalMeasurement && productOriginalMeasurement.length > 0 && productOriginalMeasurement[0]?.name
         ? productOriginalMeasurement[0].name
         : '';
     var dataProductUploadSlip =
-      Object.values(productSlipPhoto[0].name).length > 0
+      productSlipPhoto && productSlipPhoto.length > 0 && productSlipPhoto[0]?.name
         ? productSlipPhoto[0].name
         : '';
     var dataProductVideoData =
-      Object.values(productVideoData).length > 0
+      productVideoData && productVideoData.length > 0 && productVideoData[0]?.fileName
         ? productVideoData[0].fileName
         : '';
 
@@ -469,6 +580,8 @@ function OrderCreate({navigation}: any): JSX.Element {
       let response = await ress.json();
       // console.log('response line 472');
       // console.log(response);
+      console.log('response', response);
+      
       if (response.data.status == true || response.data.status == 'true') {
         // console.log('------> order created line 475');
         defaultTimeInterval = 5;
@@ -549,7 +662,7 @@ function OrderCreate({navigation}: any): JSX.Element {
             });
             navigation.reset({
               index: 0,
-              routes: [{name: ROUTES.landingPage as never}],
+              routes: [{ name: ROUTES.landingPage as never }],
             });
             setActivityIndicator(false);
           }
@@ -560,7 +673,7 @@ function OrderCreate({navigation}: any): JSX.Element {
         Toast.show({
           type: 'error',
           text1: 'Error',
-          text2: 'Something went wrong',
+          text2: response?.data?.message,
         });
         setActivityIndicator(false);
       }
@@ -673,20 +786,20 @@ function OrderCreate({navigation}: any): JSX.Element {
   const getItemList = () => {
     AsyncStorage.getItem('id')
       .then(token => {
-        let postedData = {role: 'vendor', api_token: token};
+        let postedData = { role: 'vendor', api_token: token };
         get('item/get', postedData)
           .then(res => {
             SetItemList(res.data.data.data);
             SetItemListAll(res.data.data.data);
           })
-          .catch(err => {});
+          .catch(err => { });
       })
-      .catch(err => {});
+      .catch(err => { });
   };
   const getVendorListData = () => {
     AsyncStorage.getItem('id')
       .then(async token => {
-        let postedData = {role: 'vendor', api_token: token};
+        let postedData = { role: 'vendor', api_token: token };
         // get('users/get', postedData)
         await getVendorList('vendor', token)
           .then(res => {
@@ -698,12 +811,12 @@ function OrderCreate({navigation}: any): JSX.Element {
             // console.log(err)
           });
       })
-      .catch(err => {});
+      .catch(err => { });
   };
   const getSalesmanListData = () => {
     AsyncStorage.getItem('id')
       .then(async token => {
-        let postedData = {role: 'salesman', api_token: token};
+        let postedData = { role: 'salesman', api_token: token };
         // get('users/get', postedData)
         await getSalesmanList('salesman', token)
           .then(res => {
@@ -714,7 +827,7 @@ function OrderCreate({navigation}: any): JSX.Element {
             // console.log(err)
           });
       })
-      .catch(err => {});
+      .catch(err => { });
   };
 
   const handleError = (err: unknown) => {
@@ -731,67 +844,67 @@ function OrderCreate({navigation}: any): JSX.Element {
   };
 
   const isDarkMode = useColorScheme() === 'dark';
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
-  const Item = ({item}: any) => (
+  const Item = ({ item }: any) => (
     <Pressable
       onPress={() => {
         setItem(item.id),
           SetSelectedItemId(item.id),
-          SetSelectedItemName(item.name),
+          SetSelectedItemName(item?.name),
           setModalVisibleItem(false);
       }}
       style={styles.item}>
       <View style={[{}, flexDirectionRow]}>
-        <View style={[marginRight10, {width: '100%', overflow: 'hidden'}]}>
+        <View style={[marginRight10, { width: '100%', overflow: 'hidden' }]}>
           <View style={[{}, flexDirectionRow]}>
-            <Text style={[{fontWeight: 'bold'}, h5, marginRight10]}>
-              {item.name}
+            <Text style={[{ fontWeight: 'bold' }, h5, marginRight10]}>
+              {item?.name}
             </Text>
-            <Text style={[{marginTop: 0}, h5]}>{item.order_number}</Text>
+            <Text style={[{ marginTop: 0 }, h5]}>{item.order_number}</Text>
           </View>
         </View>
       </View>
     </Pressable>
   );
-  const VendorItem = ({item}: any) => (
+  const VendorItem = ({ item }: any) => (
     <Pressable
       onPress={() => {
         SetSelectedVendorId(item.id),
-          SetSelectedVendorName(item.name),
+          SetSelectedVendorName(item?.name),
           setModalVisibleVendor(false);
       }}
       style={styles.item}>
       <View style={[{}, flexDirectionRow]}>
-        <View style={[marginRight10, {width: '100%', overflow: 'hidden'}]}>
+        <View style={[marginRight10, { width: '100%', overflow: 'hidden' }]}>
           <View style={[{}, flexDirectionRow]}>
-            <Text style={[{fontWeight: 'bold'}, h5, marginRight10]}>
-              {item.name}
+            <Text style={[{ fontWeight: 'bold' }, h5, marginRight10]}>
+              {item?.name}
             </Text>
-            <Text style={[{marginTop: 0}, h5]}>{item.order_number}</Text>
+            <Text style={[{ marginTop: 0 }, h5]}>{item.order_number}</Text>
           </View>
         </View>
       </View>
     </Pressable>
   );
-  const SalesmanListItem = ({item}: any) => (
+  const SalesmanListItem = ({ item }: any) => (
     <Pressable
       onPress={() => {
         console.log(item),
           SetSelectedSalesmanId(item.id),
-          SetSelectedSalesmanName(item.name),
+          SetSelectedSalesmanName(item?.name),
           setModalVisibleSalesman(false);
       }}
       style={styles.item}>
       <View style={[{}, flexDirectionRow]}>
-        <View style={[marginRight10, {width: '100%', overflow: 'hidden'}]}>
+        <View style={[marginRight10, { width: '100%', overflow: 'hidden' }]}>
           <View style={[{}, flexDirectionRow]}>
-            <Text style={[{fontWeight: 'bold'}, h5, marginRight10]}>
-              {item.name}
+            <Text style={[{ fontWeight: 'bold' }, h5, marginRight10]}>
+              {item?.name}
             </Text>
-            <Text style={[{marginTop: 0}, h5]}>{item.order_number}</Text>
+            <Text style={[{ marginTop: 0 }, h5]}>{item.order_number}</Text>
           </View>
         </View>
       </View>
@@ -835,7 +948,7 @@ function OrderCreate({navigation}: any): JSX.Element {
       let newSearchableArray = [];
       if (ItemList.length > 0) {
         ItemList.filter(list => {
-          let searchableLowercase = list.name.toLowerCase();
+          let searchableLowercase = list?.name.toLowerCase();
           if (searchableLowercase.includes(searchedValue.toLowerCase())) {
             newSearchableArray.push(list);
           }
@@ -855,7 +968,7 @@ function OrderCreate({navigation}: any): JSX.Element {
       let newSearchableArray = [];
       if (vendorList.length > 0) {
         vendorList.filter(list => {
-          let searchableLowercase = list.name.toLowerCase();
+          let searchableLowercase = list?.name.toLowerCase();
           if (searchableLowercase.includes(searchedValue.toLowerCase())) {
             newSearchableArray.push(list);
           }
@@ -875,7 +988,7 @@ function OrderCreate({navigation}: any): JSX.Element {
       let newSearchableArray = [];
       if (salesmanList.length > 0) {
         salesmanList.filter(list => {
-          let searchableLowercase = list.name.toLowerCase();
+          let searchableLowercase = list?.name.toLowerCase();
           if (searchableLowercase.includes(searchedValue.toLowerCase())) {
             newSearchableArray.push(list);
           }
@@ -896,8 +1009,8 @@ function OrderCreate({navigation}: any): JSX.Element {
     type,
     variant,
   ) => {
-    console.log('type');
-    console.log(type);
+    console.log('type', type, 'filesize', fileSize);
+
     setuploadingAttachment(true);
     const fileUri = ImageURI; // File path on the device
     const fileName = filename; // Unique name for the file on S3
@@ -1059,6 +1172,7 @@ function OrderCreate({navigation}: any): JSX.Element {
       <View style={styles.orderCreateContentContainer}>
         <ScrollView
           contentContainerStyle={styles.orderCreateContentListContainer}>
+          <Text style={{ fontSize: 15, fontWeight: '500' }}>Order Number</Text>
           <InputComponents
             placeholder="Order Number"
             onChangeText={(value: any) => {
@@ -1066,6 +1180,7 @@ function OrderCreate({navigation}: any): JSX.Element {
             }}
             style={inputStyleBlack}
           />
+          <Text style={{ fontSize: 15, fontWeight: '500' }}>Barcode</Text>
           <InputComponents
             placeholder="Barcode"
             value={barcode}
@@ -1077,6 +1192,7 @@ function OrderCreate({navigation}: any): JSX.Element {
 
           {/* <InputComponents placeholder="Select Vendor" onChangeText={(value:any) => { setVendor(value) }} style={inputStyleBlack} />
     					<InputComponents placeholder="Select Salesman" onChangeText={(value:any) => { setSalesman(value) }} style={inputStyleBlack} /> */}
+          <Text style={{ fontSize: 15, fontWeight: '500' }}>VD Code</Text>
           <InputComponents
             placeholder="VD Code"
             onChangeText={(value: any) => {
@@ -1084,6 +1200,7 @@ function OrderCreate({navigation}: any): JSX.Element {
             }}
             style={inputStyleBlack}
           />
+          <Text style={{ fontSize: 15, fontWeight: '500' }}>Color</Text>
           <InputComponents
             placeholder="Color"
             onChangeText={(value: any) => {
@@ -1091,7 +1208,7 @@ function OrderCreate({navigation}: any): JSX.Element {
             }}
             style={inputStyleBlack}
           />
-
+          <Text style={{ fontSize: 15, fontWeight: '500' }}>Design Number</Text>
           <InputComponents
             placeholder="Design Number"
             onChangeText={(value: any) => {
@@ -1099,6 +1216,7 @@ function OrderCreate({navigation}: any): JSX.Element {
             }}
             style={inputStyleBlack}
           />
+          <Text style={{ fontSize: 15, fontWeight: '500' }}>Select Item</Text>
 
           <CustomModalSelect
             placeholder="Select Item"
@@ -1112,6 +1230,7 @@ function OrderCreate({navigation}: any): JSX.Element {
             }
             onClick={() => setModalVisibleItem(true)}
           />
+          <Text style={{ fontSize: 15, fontWeight: '500' }}>Select Vendor</Text>
 
           <CustomModalSelect
             placeholder="Select Vendor"
@@ -1125,6 +1244,7 @@ function OrderCreate({navigation}: any): JSX.Element {
             }
             onClick={() => setModalVisibleVendor(true)}
           />
+          <Text style={{ fontSize: 15, fontWeight: '500' }}>Select Salesman</Text>
 
           <CustomModalSelect
             placeholder="Select Salesman"
@@ -1138,6 +1258,7 @@ function OrderCreate({navigation}: any): JSX.Element {
             }
             onClick={() => setModalVisibleSalesman(true)}
           />
+          <Text style={{ fontSize: 15, fontWeight: '500' }}>Select Ready Date</Text>
 
           <CustomModalSelect
             placeholder="Select Ready Date"
@@ -1151,6 +1272,7 @@ function OrderCreate({navigation}: any): JSX.Element {
             }
             onClick={() => openReadyDate()}
           />
+          <Text style={{ fontSize: 15, fontWeight: '500' }}>Select Buffer Ready Date</Text>
 
           <CustomModalSelect
             placeholder="Buffer Ready Date"
@@ -1167,6 +1289,8 @@ function OrderCreate({navigation}: any): JSX.Element {
             onClick={() => openBufferReadyDate()}
           />
 
+          <Text style={{ fontSize: 15, fontWeight: '500' }}>Select Delivery Date</Text>
+
           <CustomModalSelect
             placeholder="Select Delivery Date"
             value={deliveryDate ? deliveryDate.toString().substring(4, 15) : ''}
@@ -1179,6 +1303,8 @@ function OrderCreate({navigation}: any): JSX.Element {
             }
             onClick={() => openDeliveryDate()}
           />
+
+          <Text style={{ fontSize: 15, fontWeight: '500' }}>Select Vendor Date</Text>
 
           <CustomModalSelect
             placeholder="Select Vendor Date"
@@ -1205,10 +1331,10 @@ function OrderCreate({navigation}: any): JSX.Element {
             }}>
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
-                <View style={{paddingBottom: 10}}>
-                  <Text style={{color: COLOR.whiteColor}}>Select Item</Text>
+                <View style={{ paddingBottom: 10 }}>
+                  <Text style={{ color: COLOR.whiteColor }}>Select Item</Text>
                 </View>
-                <View style={{width: '100%'}}>
+                <View style={{ width: '100%' }}>
                   <InputComponents
                     placeholder="Search Item"
                     onChangeText={(value: any) => {
@@ -1219,7 +1345,7 @@ function OrderCreate({navigation}: any): JSX.Element {
                 </View>
                 <FlatList
                   data={ItemList}
-                  renderItem={({item}) => {
+                  renderItem={({ item }) => {
                     return (
                       <View>
                         <Item item={item} />
@@ -1248,10 +1374,10 @@ function OrderCreate({navigation}: any): JSX.Element {
             }}>
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
-                <View style={{paddingBottom: 10}}>
+                <View style={{ paddingBottom: 10 }}>
                   <Text>Select Vendor</Text>
                 </View>
-                <View style={{width: '100%'}}>
+                <View style={{ width: '100%' }}>
                   <InputComponents
                     placeholder="Search Vendor"
                     onChangeText={(value: any) => {
@@ -1262,7 +1388,7 @@ function OrderCreate({navigation}: any): JSX.Element {
                 </View>
                 <FlatList
                   data={vendorList}
-                  renderItem={({item}) => {
+                  renderItem={({ item }) => {
                     return (
                       <View>
                         <VendorItem item={item} />
@@ -1291,10 +1417,10 @@ function OrderCreate({navigation}: any): JSX.Element {
             }}>
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
-                <View style={{paddingBottom: 10}}>
+                <View style={{ paddingBottom: 10 }}>
                   <Text>Select Salesman</Text>
                 </View>
-                <View style={{width: '100%'}}>
+                <View style={{ width: '100%' }}>
                   <InputComponents
                     placeholder="Search Vendor"
                     onChangeText={(value: any) => {
@@ -1305,7 +1431,7 @@ function OrderCreate({navigation}: any): JSX.Element {
                 </View>
                 <FlatList
                   data={salesmanList}
-                  renderItem={({item}) => <SalesmanListItem item={item} />}
+                  renderItem={({ item }) => <SalesmanListItem item={item} />}
                   keyExtractor={item => item.id}
                   showsVerticalScrollIndicator={false}
                 />
@@ -1323,7 +1449,7 @@ function OrderCreate({navigation}: any): JSX.Element {
           {showReadyDate ? (
             <View>
               <DatePicker
-                style={{width: 200}}
+                style={{ width: 200 }}
                 date={getAddedDate(3)}
                 value={getAddedDate(3)}
                 mode="date"
@@ -1356,7 +1482,7 @@ function OrderCreate({navigation}: any): JSX.Element {
           ) : null}
           {showDeliveryDate ? (
             <DatePicker
-              style={{width: 200}}
+              style={{ width: 200 }}
               date={getAddedDate(6)}
               value={getAddedDate(6)}
               mode="date"
@@ -1388,7 +1514,7 @@ function OrderCreate({navigation}: any): JSX.Element {
           ) : null}
           {showVendorDate ? (
             <DatePicker
-              style={{width: 200}}
+              style={{ width: 200 }}
               date={getAddedDate(6)}
               value={getAddedDate(6)}
               mode="date"
@@ -1420,7 +1546,7 @@ function OrderCreate({navigation}: any): JSX.Element {
           ) : null}
           {showBufferReadyDate ? (
             <DatePicker
-              style={{width: 200}}
+              style={{ width: 200 }}
               date={getAddedDate(6)}
               value={getAddedDate(6)}
               mode="date"
@@ -1460,15 +1586,15 @@ function OrderCreate({navigation}: any): JSX.Element {
               }}>
               Sample Choli
             </Text>
-            <View style={{flexDirection: 'row', marginTop: 10}}>
+            <View style={{ flexDirection: 'row', marginTop: 10 }}>
               <RadioGroup
                 radioButtons={radioButtonsSampleCholi}
                 selectedId={sampleCholi}
                 onPress={e => {
                   setSampleCholi(e);
                 }}
-                containerStyle={{flexDirection: 'row'}}
-                labelStyle={{color: COLOR.blackColor}}
+                containerStyle={{ flexDirection: 'row' }}
+                labelStyle={{ color: COLOR.blackColor }}
               />
             </View>
           </View>
@@ -1499,27 +1625,35 @@ function OrderCreate({navigation}: any): JSX.Element {
                   alignItems: 'flex-start',
                   gap: 10,
                 }}
-                labelStyle={{color: COLOR.blackColor}}
+                labelStyle={{ color: COLOR.blackColor }}
               />
             </View>
           </View>
 
-          <View style={{gap: 20}}>
+          <View style={{ gap: 20 }}>
+            <Text style={{ fontSize: 15, fontWeight: '500' }}>Customer Name</Text>
+
             <InputComponents
               placeholder="Customer Name"
               value={customerName}
               onChangeText={(text: string) => setCustomerName(text)}
             />
+            <Text style={{ fontSize: 15, fontWeight: '500' }}>Mobile Number</Text>
+
             <InputComponents
               placeholder="Mobile Number"
               value={mobile}
               onChangeText={(text: string) => setMobile(text)}
             />
+            <Text style={{ fontSize: 15, fontWeight: '500' }}>Address</Text>
+
             <InputComponents
               placeholder="Address"
               value={address}
               onChangeText={(text: string) => setAddress(text)}
             />
+            <Text style={{ fontSize: 15, fontWeight: '500' }}>City</Text>
+
             <InputComponents
               placeholder="City"
               value={city}
@@ -1527,7 +1661,7 @@ function OrderCreate({navigation}: any): JSX.Element {
             />
           </View>
 
-          <View style={{gap: 20}}>
+          <View style={{ gap: 20 }}>
             {/* <TouchableOpacity
               onPress={async () => {
                 try {
@@ -1584,7 +1718,15 @@ function OrderCreate({navigation}: any): JSX.Element {
                     type: [types.images],
                   });
 
+
+                  if (pickerResult[0].type == 'image/jpeg' && pickerResult[0]?.size > 5000000) {
+                    Alert.alert('Error', 'Image should be less than 5MB');
+                    return;
+                  }
+
+
                   let sourceUri = pickerResult[0].fileCopyUri;
+
                   uploadFileToS3(
                     sourceUri,
                     pickerResult[0]['name'],
@@ -1608,14 +1750,14 @@ function OrderCreate({navigation}: any): JSX.Element {
             />
 
             {productPhotoData != undefined && productPhotoData.length > 0 ? (
-              <View style={{height: 200, width: 200}}>
+              <View style={{ height: 200, width: 200 }}>
                 <ImageBackground
-                  source={{uri: productPhotoData[0].fileCopyUri}}
-                  style={{height: '100%', width: '100%'}}
+                  source={{ uri: productPhotoData[0].fileCopyUri }}
+                  style={{ height: '100%', width: '100%' }}
                   resizeMode="center"></ImageBackground>
               </View>
             ) : // <Image source={{uri:productPhotoData[0].fileCopyUri}} style={{ height: 200,width: 200 }}/>
-            null}
+              null}
 
             {/* <TouchableOpacity
               onPress={async () => {
@@ -1688,6 +1830,11 @@ function OrderCreate({navigation}: any): JSX.Element {
                     copyTo: 'cachesDirectory',
                     type: [types.images],
                   });
+
+                  if (pickerResult[0].type == 'image/jpeg' && pickerResult[0]?.size > 5000000) {
+                    Alert.alert('Error', 'Image should be less than 5MB');
+                    return;
+                  }
                   setPrductMeasureType(pickerResult[0].type);
                   setPrductMeasurementData(pickerResult);
 
@@ -1728,11 +1875,11 @@ function OrderCreate({navigation}: any): JSX.Element {
             />
 
             {productMeasurementData != undefined &&
-            productMeasurementData.length > 0 ? (
-              <View style={{height: 200, width: 200}}>
+              productMeasurementData.length > 0 ? (
+              <View style={{ height: 200, width: 200 }}>
                 <ImageBackground
-                  source={{uri: productMeasurementData[0].fileCopyUri}}
-                  style={{height: '100%', width: '100%'}}
+                  source={{ uri: productMeasurementData[0].fileCopyUri }}
+                  style={{ height: '100%', width: '100%' }}
                   resizeMode="center"></ImageBackground>
               </View>
             ) : null}
@@ -1808,6 +1955,12 @@ function OrderCreate({navigation}: any): JSX.Element {
                     copyTo: 'cachesDirectory',
                     type: [types.images],
                   });
+
+                  if (pickerResult[0].type == 'image/jpeg' && pickerResult[0]?.size > 5000000) {
+                    Alert.alert('Error', 'Image should be less than 5MB');
+                    return;
+                  }
+
                   setPrductMeasureType(pickerResult[0].type);
                   setProductOriginalMeasurement(pickerResult);
 
@@ -1848,11 +2001,11 @@ function OrderCreate({navigation}: any): JSX.Element {
             />
 
             {productOriginalMeasurement != undefined &&
-            productOriginalMeasurement.length > 0 ? (
-              <View style={{height: 200, width: 200}}>
+              productOriginalMeasurement.length > 0 ? (
+              <View style={{ height: 200, width: 200 }}>
                 <ImageBackground
-                  source={{uri: productOriginalMeasurement[0].fileCopyUri}}
-                  style={{height: '100%', width: '100%'}}
+                  source={{ uri: productOriginalMeasurement[0].fileCopyUri }}
+                  style={{ height: '100%', width: '100%' }}
                   resizeMode="center"></ImageBackground>
               </View>
             ) : null}
@@ -1928,6 +2081,15 @@ function OrderCreate({navigation}: any): JSX.Element {
                     copyTo: 'cachesDirectory',
                     type: [types.images],
                   });
+
+                  console.log('log', pickerResult[0]);
+
+
+                  if (pickerResult[0].type == 'image/jpeg' && pickerResult[0]?.size > 5000000) {
+                    Alert.alert('Error', 'Image should be less than 5MB');
+                    return;
+                  }
+
                   // setPrductMeasureType(pickerResult[0].type);
                   setProductSlipPhoto(pickerResult);
 
@@ -1968,10 +2130,10 @@ function OrderCreate({navigation}: any): JSX.Element {
             />
 
             {productSlipPhoto != undefined && productSlipPhoto.length > 0 ? (
-              <View style={{height: 200, width: 200}}>
+              <View style={{ height: 200, width: 200 }}>
                 <ImageBackground
-                  source={{uri: productSlipPhoto[0].fileCopyUri}}
-                  style={{height: '100%', width: '100%'}}
+                  source={{ uri: productSlipPhoto[0].fileCopyUri }}
+                  style={{ height: '100%', width: '100%' }}
                   resizeMode="center"></ImageBackground>
               </View>
             ) : null}
@@ -2090,9 +2252,9 @@ function OrderCreate({navigation}: any): JSX.Element {
               onClick={() => chooseFile('video')}
             />
             {productVideoData != undefined && productVideoData.length > 0 ? (
-              <View style={{width: '100%', height: 400}}>
+              <View style={{ width: '100%', height: 400 }}>
                 <Video
-                  source={{uri: productVideoData[0].uri}}
+                  source={{ uri: productVideoData[0].uri }}
                   style={styles.backgroundVideo}
                   controls={false}
                   ref={ref => (videoPlayer.current = ref)}
@@ -2130,7 +2292,7 @@ function OrderCreate({navigation}: any): JSX.Element {
                   alignItems: 'flex-start',
                   gap: 10,
                 }}
-                labelStyle={{color: COLOR.blackColor}}
+                labelStyle={{ color: COLOR.blackColor }}
               />
             </View>
           </View>
