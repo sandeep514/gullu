@@ -353,8 +353,8 @@ function OrderEdit({ navigation, route }: any): JSX.Element {
               <Text style={styles.orderEditContentDetailsHeaderText}>Item</Text>
               <Text style={styles.orderEditContentDetailsContentText}>
                 {`${item && item?.item?.name
-                    ? item?.item?.name
-                    : (item && item.item) || ''
+                  ? item?.item?.name
+                  : (item && item.item) || ''
                   }`}
               </Text>
             </View>
@@ -730,13 +730,17 @@ function OrderEdit({ navigation, route }: any): JSX.Element {
                       ) : null}
                     </Pressable>
                   </View> */}
-                  <CustomButton
-                    backgroundColor={COLOR.baseColor}
-                    color={COLOR.whiteColor}
-                    title="Update Order Status To Delivered"
-                    isLoading={loader}
-                    onClick={() => uploadDeliveredProductImage()}
-                  />
+                  {
+                    (role == 1 && name == 'admin')
+                    &&
+                    <CustomButton
+                      backgroundColor={COLOR.baseColor}
+                      color={COLOR.whiteColor}
+                      title="Update Order Status To Delivered"
+                      isLoading={loader}
+                      onClick={() => uploadDeliveredProductImage()}
+                    />
+                  }
                 </View>
               ) : null}
             </View>

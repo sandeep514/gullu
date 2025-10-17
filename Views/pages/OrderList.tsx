@@ -272,7 +272,6 @@ function OrderList({navigation}: any): JSX.Element {
         setLoader(true);
         await getOrderList('salesman', token)
           .then(res => {
-            // console.log(JSON.stringify(res));
             let pending = res.data.data['pending'];
             let ready = res.data.data['ready'];
             let delivered = res.data.data['delivered'];
